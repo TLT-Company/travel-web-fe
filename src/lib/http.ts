@@ -132,29 +132,3 @@ class Http {
 
 export const http = new Http();
 
-// // Specific API services
-// export const documentExportService = {
-//   getAll: () => api.get('/document-export/'),
-//   getById: (id: number) => api.get(`/document-export/${id}/`),
-//   create: (data: any) => api.post('/document-export/', data),
-//   update: (id: number, data: any) => api.put(`/document-export/${id}/`, data),
-//   delete: (id: number) => api.delete(`/document-export/${id}/`),
-//   download: (id: number) => {
-//     const url = buildApiUrl(`/document-export/download/${id}/`);
-//     return fetch(url, {
-//       method: 'GET',
-//       headers: {
-//         ...API_CONFIG.HEADERS,
-//       },
-//     });
-//   },
-// };
-
-// // Add more services as needed
-// export const userService = {
-//   getAll: () => api.get('/users/'),
-//   getById: (id: number) => api.get(`/users/${id}/`),
-//   create: (data: any) => api.post('/users/', data),
-//   update: (id: number, data: any) => api.put(`/users/${id}/`, data),
-//   delete: (id: number) => api.delete(`/users/${id}/`),
-// }; 
