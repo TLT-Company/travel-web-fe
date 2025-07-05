@@ -2,19 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Button from '../ui/button/Button';
-import { documentExportService, ApiResponse } from '../../services/api';
-
-interface DocumentExport {
-  id: number;
-  kind: string;
-  file_path: string;
-  file_name: string;
-  status: string;
-  created_at: string;
-  updated_at: string;
-}
-
-
+import { documentExportService, DocumentExport } from '../../services/export-tour.service';
 
 const ListThongHanh = () => {
   const [data, setData] = useState<DocumentExport[]>([]);
