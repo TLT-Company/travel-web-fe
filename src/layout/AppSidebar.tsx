@@ -66,6 +66,17 @@ const navItems: NavItem[] = [
       { name: "404 Error", path: "/error-404", pro: false },
     ],
   },
+  {
+    icon: <ListIcon />,
+    name: "Tours",
+    subItems: [
+      { name: "Danh sách tours", path: "/admin/tours", pro: false },
+      {
+        name: "Chi tiết booking đã hoàn thành",
+        path: "/admin/tours/completed_bookings", pro: false
+      },
+    ],
+  },
 ];
 
 const othersItems: NavItem[] = [
