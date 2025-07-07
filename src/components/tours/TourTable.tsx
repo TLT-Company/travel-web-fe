@@ -87,7 +87,7 @@ const TourTable: FC<TourTableProps> = ({ tours, loading }) => {
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
-                      {tour.price.toLocaleString()} VND
+                      {Number(tour.price).toLocaleString()} VND
                     </TableCell>
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm

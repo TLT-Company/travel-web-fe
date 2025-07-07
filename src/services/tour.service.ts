@@ -19,6 +19,12 @@ interface Booking {
   };
 }
 
+interface Creator {
+  id: number;
+  email: string;
+  role: string;
+}
+
 export interface Tour {
   id: number;
   name: string;
@@ -28,6 +34,7 @@ export interface Tour {
   end_date: string;
   location: string;
   bookings?: Booking[];
+  creator?: Creator
 }
 
 export interface ApiResponse<T = unknown> {
@@ -36,8 +43,29 @@ export interface ApiResponse<T = unknown> {
   data: T;
 }
 
-// Document Export Service
+interface FormSearchTourParams {
+  name?: string,
+  location?: string,
+  start_date?: string,
+  end_date?: string,
+  price_min?: string,
+  price_max?: string,
+}
+
+// Tour Service
 export const tourService = {
-  getAll: () => http.get<Tour[]>('/tours'),
+  getAll: () => http.get<Tour[]>("/tours"),
   getById: (id: number) => http.get<Tour>(`/tours/${id}`),
+  getTourBySearch: (queryParams?: FormSearchTourParams) => {
+    const query = new URLSearchParams(
+      Object.entries(queryParams || {}).reduce((acc, [key, value]) => {
+        if (value !== undefined && value !== '' && value !== null) {
+          acc[key] = String(value);
+        }
+        return acc;
+      }, {} as Record<string, string>)
+    );
+
+    return http.get<Tour[]>(`/tours/search/getTourBySearch?${query}`);
+  },
 }

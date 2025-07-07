@@ -5,6 +5,7 @@ import LoadingOverlay from "../common/LoadingOverlay";
 import { tourService, Tour } from "@/services/tour.service";
 import Pagination from "../tables/Pagination";
 import TourTable from "./TourTable";
+import FormSearchTour from "./FormSearchTour";
 
 export default function ToursPage() {
   const [tours, setTours] = useState<Tour[]>([]);
@@ -17,20 +18,7 @@ export default function ToursPage() {
       try {
         const result = await tourService.getAll();
 
-        if (result.success) {
-          const tours = result.data.map((tour: Tour) => ({
-            id: tour.id,
-            name: tour.name,
-            description: tour.description,
-            price: Number(tour.price),
-            start_date: tour.start_date,
-            end_date: tour.end_date,
-            location: tour.location,
-          }));
-          setTours(tours);
-        } else {
-          setTours([]);
-        }
+        setTours(result.success ? result.data : []);
       } catch (e) {
         console.log("Error fetching tours: ", e);
       } finally {
@@ -55,6 +43,14 @@ export default function ToursPage() {
 
   return (
     <div>
+      <FormSearchTour
+        onSearchResult={(result) => {
+          setTours(result);
+          setCurrentPage(1);
+        }}
+        loading={loading}
+      />
+
       <TourTable tours={currentTours} loading={loading} />
 
       {totalPages > 1 && (
