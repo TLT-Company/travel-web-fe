@@ -43,18 +43,21 @@ export interface ApiResponse<T = unknown> {
   data: T;
 }
 
-interface FormSearchTourParams {
+export interface FormSearchTourParams {
   name?: string,
   location?: string,
   start_date?: string,
   end_date?: string,
   price_min?: string,
   price_max?: string,
+  page?: number,
+  limit?: number,
 }
 
 // Tour Service
 export const tourService = {
-  getAll: () => http.get<Tour[]>("/tours"),
+  getAll: (page = 1, limit = 20) =>
+    http.get<Tour[]>(`/tours?page=${page}&limit=${limit}`),
   getById: (id: number) => http.get<Tour>(`/tours/${id}`),
   getTourBySearch: (queryParams?: FormSearchTourParams) => {
     const query = new URLSearchParams(

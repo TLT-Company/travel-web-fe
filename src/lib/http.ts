@@ -1,7 +1,9 @@
+import { SetStateAction } from 'react';
 import { API_CONFIG, buildApiUrl } from '../config/api';
 
 // Common API response interface
 export interface ApiResponse<T = any> {
+  count: SetStateAction<number>;
   success: boolean;
   message: string;
   data: T;

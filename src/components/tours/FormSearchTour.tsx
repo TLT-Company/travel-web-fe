@@ -1,55 +1,32 @@
 "use client";
 
-import React, { FC, ChangeEvent, FormEvent, useState } from "react";
+import React, { FC, ChangeEvent, FormEvent } from "react";
 import Form from "@/components/form/Form";
 import Label from "@/components/form/Label";
 import Input from "@/components/form/input/InputField";
 import DatePicker from "@/components/form/date-picker";
 import Button from "@/components/ui/button/Button";
-import { Tour, tourService } from "@/services/tour.service";
+import { FormSearchTourParams } from "@/services/tour.service";
 
 interface FormSearchTourProps {
-  onSearchResult: (tours: Tour[]) => void;
+  formSearch: FormSearchTourParams;
+  setFormSearch: (params: FormSearchTourParams) => void;
+  onSubmitSearch: (params: FormSearchTourParams) => void;
   loading?: boolean;
 }
 
-interface FormSearchTourParams {
-  name?: string,
-  location?: string,
-  price_min?: string,
-  price_max?: string,
-  start_date?: string,
-  end_date?: string
-}
-
 const FormSearchTour: FC<FormSearchTourProps> = ({
-  onSearchResult, loading
+  formSearch, setFormSearch, onSubmitSearch, loading
 }) => {
-  const [formSearch, setFormSearch] = useState<FormSearchTourParams>({
-    name: "",
-    location: "",
-    price_min: "",
-    price_max: "",
-    start_date: "",
-    end_date: ""
-  });
-
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormSearch((prev) => ({ ...prev, [name]: value }));
+    setFormSearch({ ...formSearch, [name]: value });
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    try {
-      const result = await tourService.getTourBySearch(formSearch);
-
-      onSearchResult(result.success ? result.data : []);
-    } catch (error) {
-      console.log(error);
-      onSearchResult([]);
-    }
+    onSubmitSearch(formSearch);
   };
 
   return (
@@ -64,7 +41,7 @@ const FormSearchTour: FC<FormSearchTourProps> = ({
               <Input
                 id="name"
                 name="name"
-                defaultValue={formSearch.name}
+                value={formSearch.name}
                 onChange={handleChange}
                 placeholder="Nhập tên tour..."
               />
@@ -80,7 +57,7 @@ const FormSearchTour: FC<FormSearchTourProps> = ({
               <Input
                 id="location"
                 name="location"
-                defaultValue={formSearch.location}
+                value={formSearch.location}
                 onChange={handleChange}
                 placeholder="Nhập địa điểm"
               />
@@ -96,7 +73,7 @@ const FormSearchTour: FC<FormSearchTourProps> = ({
               <Input
                 id="price_min"
                 name="price_min"
-                defaultValue={formSearch.price_min}
+                value={formSearch.price_min}
                 onChange={handleChange}
                 placeholder="Từ ..."
               />
@@ -106,7 +83,7 @@ const FormSearchTour: FC<FormSearchTourProps> = ({
               <Input
                 id="price_max"
                 name="price_max"
-                defaultValue={formSearch.price_max}
+                value={formSearch.price_max}
                 onChange={handleChange}
                 placeholder="Đến ..."
               />
@@ -122,12 +99,12 @@ const FormSearchTour: FC<FormSearchTourProps> = ({
                 placeholder="Chọn ngày bắt đầu"
                 defaultDate={formSearch.start_date}
                 onChange={([selected]) =>
-                  setFormSearch((prev) => ({
-                    ...prev,
+                  setFormSearch({
+                    ...formSearch,
                     start_date: selected
-                      ? selected.toLocaleDateString("en-CA")
-                      : "",
-                  }))
+                      ? selected.toLocaleDateString("en-CA") :
+                      "",
+                  })
                 }
               />
             </div>
@@ -138,12 +115,12 @@ const FormSearchTour: FC<FormSearchTourProps> = ({
                 placeholder="Chọn ngày kết thúc"
                 defaultDate={formSearch.end_date}
                 onChange={([selected]) =>
-                  setFormSearch((prev) => ({
-                    ...prev,
+                  setFormSearch({
+                    ...formSearch,
                     end_date: selected
-                      ? selected.toLocaleDateString("en-CA")
-                      : "",
-                  }))
+                      ? selected.toLocaleDateString("en-CA") :
+                      "",
+                  })
                 }
               />
             </div>
