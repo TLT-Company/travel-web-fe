@@ -12,6 +12,8 @@ import axios from "axios";
 import { format } from 'date-fns';
 import LoadingOverlay from "../common/LoadingOverlay";
 import { PencilIcon } from "@/icons";
+import { getListTours } from "@/services/tour.service";
+import { toast } from "react-toastify";
 
 interface Tour {
   id: number;
@@ -38,11 +40,9 @@ export default function ToursPage() {
   useEffect(() => {
     const fetchTours = async () => {
       try {
-        const res = await axios.get<TourResponse>(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}tours?page=0`
-        );
-        if (res.data.data) {
-          const tours = res.data.data.map((tour: Tour) => ({
+        const res = await getListTours();
+        if (res.data) {
+          const tours = res.data.map((tour: Tour) => ({
             id: tour.id,
             name: tour.name,
             description: tour.description,
@@ -56,7 +56,7 @@ export default function ToursPage() {
           setTours([]);
         }
       } catch (e) {
-        console.log("Error fetching tours: ", e);
+        toast.error("Lỗi khi lấy danh sách tour");
       } finally {
         setLoading(false);
       }
