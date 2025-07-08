@@ -4,7 +4,9 @@ import { useSidebar } from "@/context/SidebarContext";
 import AppHeader from "@/layout/AppHeader";
 import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
-import React from "react";
+import { redirect } from "next/navigation";
+import React, { useEffect } from "react";
+import { toast } from 'react-toastify';
 
 export default function AdminLayout({
   children,
@@ -19,6 +21,13 @@ export default function AdminLayout({
     : isExpanded || isHovered
     ? "lg:ml-[290px]"
     : "lg:ml-[90px]";
+  useEffect(() => {
+    const token = localStorage.getItem("accessTokenTravel");
+    if (!token) {
+      toast.error("Bạn chưa đăng nhập!");
+      redirect("/admin/signin");
+    }
+  }, []);
 
   return (
     <div className="min-h-screen xl:flex">

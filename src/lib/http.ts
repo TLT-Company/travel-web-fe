@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation';
 import { API_CONFIG, buildApiUrl } from '../config/api';
 
 // Common API response interface
@@ -19,16 +20,40 @@ export class ApiError extends Error {
   }
 }
 
+const injectToken = (
+  headers: HeadersInit = {},
+  withAuth: boolean = true
+): HeadersInit => {
+  const token = localStorage.getItem("accessTokenTravel");
+
+  if (withAuth) {
+    if (!token) {
+      throw new ApiError("Bạn chưa đăng nhập", 401);
+    }
+
+    return {
+      ...headers,
+      Authorization: `Bearer ${token}`,
+    };
+  }
+
+  return headers;
+};
+
+
 // HTTP methods
 class Http {
-  async get<T = any>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  async get<T = any>(endpoint: string, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
     const url = buildApiUrl(endpoint);
+    const withAuth = options.withAuth !== false; 
+    const headers = injectToken({
+      ...API_CONFIG.HEADERS,
+      ...options.headers,
+    }, withAuth);
+    
     const response = await fetch(url, {
       method: 'GET',
-      headers: {
-        ...API_CONFIG.HEADERS,
-        ...options.headers,
-      },
+      headers,
       ...options,
     });
 
@@ -42,14 +67,16 @@ class Http {
     return response.json();
   }
 
-  async post<T = any>(endpoint: string, data: any, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  async post<T = any>(endpoint: string, data: any,  options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
     const url = buildApiUrl(endpoint);
+    const withAuth = options.withAuth !== false;
+    const headers = injectToken({
+      ...API_CONFIG.HEADERS,
+      ...options.headers,
+    }, withAuth);
     const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        ...API_CONFIG.HEADERS,
-        ...options.headers,
-      },
+      headers,
       body: JSON.stringify(data),
       ...options,
     });
@@ -64,14 +91,16 @@ class Http {
     return response.json();
   }
 
-  async put<T = any>(endpoint: string, data: any, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  async put<T = any>(endpoint: string, data: any, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
     const url = buildApiUrl(endpoint);
+    const withAuth = options.withAuth !== false;
+    const headers = injectToken({
+      ...API_CONFIG.HEADERS,
+      ...options.headers,
+    }, withAuth);
     const response = await fetch(url, {
       method: 'PUT',
-      headers: {
-        ...API_CONFIG.HEADERS,
-        ...options.headers,
-      },
+      headers,
       body: JSON.stringify(data),
       ...options,
     });
@@ -86,14 +115,16 @@ class Http {
     return response.json();
   }
 
-  async patch<T = any>(endpoint: string, data: any, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  async patch<T = any>(endpoint: string, data: any, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
     const url = buildApiUrl(endpoint);
+    const withAuth = options.withAuth !== false;
+    const headers = injectToken({
+      ...API_CONFIG.HEADERS,
+      ...options.headers,
+    }, withAuth);
     const response = await fetch(url, {
       method: 'PATCH',
-      headers: {
-        ...API_CONFIG.HEADERS,
-        ...options.headers,
-      },
+      headers,
       body: JSON.stringify(data),
       ...options,
     });
@@ -108,14 +139,16 @@ class Http {
     return response.json();
   }
 
-  async delete<T = any>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  async delete<T = any>(endpoint: string, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
     const url = buildApiUrl(endpoint);
+    const withAuth = options.withAuth !== false;
+    const headers = injectToken({
+      ...API_CONFIG.HEADERS,
+      ...options.headers,
+    }, withAuth);
     const response = await fetch(url, {
       method: 'DELETE',
-      headers: {
-        ...API_CONFIG.HEADERS,
-        ...options.headers,
-      },
+      headers,
       ...options,
     });
 

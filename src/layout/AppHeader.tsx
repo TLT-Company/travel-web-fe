@@ -6,6 +6,7 @@ import { useSidebar } from "@/context/SidebarContext";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState ,useEffect,useRef} from "react";
+import { ToastContainer } from "react-toastify";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
@@ -173,6 +174,7 @@ const AppHeader: React.FC = () => {
     
         </div>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} />
     </header>
   );
 };

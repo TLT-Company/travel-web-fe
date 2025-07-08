@@ -6,10 +6,23 @@ import Button from "@/components/ui/button/Button";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/icons";
 import Link from "next/link";
 import React, { useState } from "react";
+import * as Yup from "yup";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { LoginType } from "../type/login";
+import { loginAdmin } from "@/services/login.service";
+import { toast } from "react-toastify";
+import { redirect, useRouter } from "next/navigation";
+
 
 export default function SignInForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const SigninSchema = Yup.object({
+    email: Yup.string().email("Email không hợp lệ").required("Bắt buộc"),
+    password: Yup.string().min(6, "Ít nhất 6 ký tự").required("Bắt buộc"),
+  });
+
   return (
     <div className="flex flex-col flex-1 lg:w-1/2 w-full">
       <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
@@ -84,36 +97,78 @@ export default function SignInForm() {
                 </span>
               </div>
             </div>
-            <form>
-              <div className="space-y-6">
-                <div>
-                  <Label>
-                    Email <span className="text-error-500">*</span>{" "}
-                  </Label>
-                  <Input placeholder="info@gmail.com" type="email" />
-                </div>
-                <div>
-                  <Label>
-                    Password <span className="text-error-500">*</span>{" "}
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
+            <Formik
+              initialValues={{ email: "", password: "" }}
+              validationSchema={SigninSchema}
+              onSubmit={(values: LoginType) => {
+                loginAdmin(values)
+                  .then((data) => {
+                    localStorage.setItem(
+                      "accessTokenTravel",
+                      data?.token,
+                    );
+                    localStorage.setItem(
+                      "userLoginTravel",
+                      JSON.stringify(data?.data),
+                    );
+                    toast.success("Bạn đã đăng nhập thành công.");
+                    setTimeout(() => {
+                      router.replace("/admin");
+                    }, 2000);
+                  })
+                  .catch((error) => {
+                    toast.error("Username or password incorrect.");
+                  });
+              }}
+            >
+              {({ isSubmitting }) => (
+                <Form className="space-y-6">
+                  {/* Email */}
+                  <div>
+                    <Label>Email <span className="text-error-500">*</span></Label>
+                    <Field
+                      type="email"
+                      name="email"
+                      placeholder="info@gmail.com"
+                      as={Input}
                     />
-                    <span
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                    >
-                      {showPassword ? (
-                        <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
-                      ) : (
-                        <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
-                      )}
-                    </span>
+                    <ErrorMessage
+                      name="email"
+                      component="div"
+                      className="text-red-500 text-sm"
+                    />
                   </div>
-                </div>
-                <div className="flex items-center justify-between">
+
+                  {/* Password */}
+                  <div>
+                    <Label>Password <span className="text-error-500">*</span></Label>
+                    <div className="relative">
+                      <Field
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter your password"
+                        as={Input}
+                      />
+                      <span
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                      >
+                        {showPassword ? (
+                          <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
+                        ) : (
+                          <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
+                        )}
+                      </span>
+                    </div>
+                    <ErrorMessage
+                      name="password"
+                      component="div"
+                      className="text-red-500 text-sm"
+                    />
+                  </div>
+
+                  {/* Submit button */}
+                  <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Checkbox checked={isChecked} onChange={setIsChecked} />
                     <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
@@ -132,8 +187,9 @@ export default function SignInForm() {
                     Sign in
                   </Button>
                 </div>
-              </div>
-            </form>
+                </Form>
+              )}
+            </Formik>
 
             <div className="mt-5">
               <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
