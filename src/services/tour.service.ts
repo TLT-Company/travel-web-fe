@@ -1,4 +1,5 @@
-import { http } from "../lib/http";
+import { http } from "@/lib/http";
+import { SetStateAction } from 'react';
 
 // TypeScript interfaces
 interface Booking {
@@ -41,6 +42,7 @@ export interface ApiResponse<T = unknown> {
   success: boolean;
   message: string;
   data: T;
+  count: SetStateAction<number>;
 }
 
 export interface FormSearchTourParams {
@@ -54,21 +56,17 @@ export interface FormSearchTourParams {
   limit?: number,
 }
 
-// Tour Service
-export const tourService = {
-  getAll: (page = 1, limit = 20) =>
-    http.get<Tour[]>(`/tours?page=${page}&limit=${limit}`),
-  getById: (id: number) => http.get<Tour>(`/tours/${id}`),
-  getTourBySearch: (queryParams?: FormSearchTourParams) => {
-    const query = new URLSearchParams(
-      Object.entries(queryParams || {}).reduce((acc, [key, value]) => {
-        if (value !== undefined && value !== '' && value !== null) {
-          acc[key] = String(value);
-        }
-        return acc;
-      }, {} as Record<string, string>)
-    );
+export const getListTours = async (
+  queryParams?: FormSearchTourParams
+): Promise<ApiResponse<Tour[]>> => {
+  const query = new URLSearchParams(
+    Object.entries(queryParams || {}).reduce((acc, [key, value]) => {
+      if (value !== undefined && value !== '' && value !== null) {
+        acc[key] = String(value);
+      }
+      return acc;
+    }, {} as Record<string, string>)
+  );
 
-    return http.get<Tour[]>(`/tours/search/getTourBySearch?${query}`);
-  },
-}
+  return await http.get<Tour[]>(`/tours?${query}`);
+};

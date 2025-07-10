@@ -3,13 +3,15 @@
 import React, { useEffect, useState } from "react";
 import LoadingOverlay from "../common/LoadingOverlay";
 import {
-  tourService,
   Tour,
-  FormSearchTourParams
+  FormSearchTourParams,
+  getListTours
 } from "@/services/tour.service";
 import Pagination from "../tables/Pagination";
 import TourTable from "./TourTable";
 import FormSearchTour from "./FormSearchTour";
+import { toast } from 'react-toastify';
+
 
 export default function ToursPage() {
   const [tours, setTours] = useState<Tour[]>([]);
@@ -33,31 +35,22 @@ export default function ToursPage() {
     const fetchTours = async () => {
       setLoading(true);
       try {
-        if (searchParams) {
-          const result = await tourService.getTourBySearch({
-            ...searchParams,
-            page: currentPage,
-            limit: toursPerPage,
-          });
+        const result = await getListTours({
+          ...searchParams,
+          page: currentPage,
+          limit: toursPerPage,
+        });
 
-          if (result.success) {
-            setTours(result.data);
-            setTotalTours(result.count);
-          } else {
-            setTours([]);
-            setTotalTours(0);
-          }
+        if (result.success) {
+          setTours(result.data);
+          setTotalTours(result.count);
         } else {
-          const result = await tourService.getAll(currentPage, toursPerPage);
-          if (result.success) {
-            setTours(result.data);
-            setTotalTours(result.count);
-          } else {
-            setTours([]);
-          }
+          setTours([]);
+          setTotalTours(0);
         }
       } catch (e) {
-        console.log("Error fetching tours: ", e);
+        console.log("Error get tours: ", e)
+        toast.error("Lỗi khi lấy danh sách tour");
       } finally {
         setLoading(false);
       }

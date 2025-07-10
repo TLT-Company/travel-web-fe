@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { ToastContainer } from "react-toastify";
 
 export default function AuthLayout({
   children,
@@ -40,6 +41,7 @@ export default function AuthLayout({
           </div>
         </div>
       </ThemeProvider>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 }
