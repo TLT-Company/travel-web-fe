@@ -1,61 +1,55 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
-import axios from "axios";
-import { format } from 'date-fns';
 import LoadingOverlay from "../common/LoadingOverlay";
-import { PencilIcon } from "@/icons";
-import { getListTours } from "@/services/tour.service";
-import { toast } from "react-toastify";
-
-interface Tour {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  start_date: string;
-  end_date: string;
-  location: string;
-}
-
-interface TourResponse {
-  success: boolean;
-  count: number;
-  message: string;
-  data: Tour[];
-}
+import {
+  Tour,
+  FormSearchTourParams,
+  getListTours
+} from "@/services/tour.service";
+import Pagination from "../tables/Pagination";
+import TourTable from "./TourTable";
+import FormSearchTour from "./FormSearchTour";
+import { toast } from 'react-toastify';
 
 
 export default function ToursPage() {
   const [tours, setTours] = useState<Tour[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalTours, setTotalTours] = useState<number>(0);
+  const [
+    searchParams, setSearchParams
+  ] = useState<FormSearchTourParams | null>(null);
+  const [formSearch, setFormSearch] = useState<FormSearchTourParams>({
+    name: "",
+    location: "",
+    price_min: "",
+    price_max: "",
+    start_date: "",
+    end_date: "",
+  });
+  const toursPerPage = 20;
 
   useEffect(() => {
     const fetchTours = async () => {
+      setLoading(true);
       try {
-        const res = await getListTours();
-        if (res.data) {
-          const tours = res.data.map((tour: Tour) => ({
-            id: tour.id,
-            name: tour.name,
-            description: tour.description,
-            price: Number(tour.price),
-            start_date: tour.start_date,
-            end_date: tour.end_date,
-            location: tour.location,
-          }));
-          setTours(tours);
+        const result = await getListTours({
+          ...searchParams,
+          page: currentPage,
+          limit: toursPerPage,
+        });
+
+        if (result.success) {
+          setTours(result.data);
+          setTotalTours(result.count);
         } else {
           setTours([]);
+          setTotalTours(0);
         }
       } catch (e) {
+        console.log("Error get tours: ", e)
         toast.error("Lỗi khi lấy danh sách tour");
       } finally {
         setLoading(false);
@@ -63,144 +57,40 @@ export default function ToursPage() {
     };
 
     fetchTours();
-  }, []);
+  }, [currentPage, searchParams]);
 
   if (loading) return <LoadingOverlay shown={loading} />;
 
-  return (
-    <div
-      className="overflow-hidden rounded-xl border border-gray-200 bg-white
-                dark:border-white/[0.05] dark:bg-white/[0.03]"
-    >
-      <div className="w-full overflow-x-auto">
-        <div className="min-w-[1102px]">
-          <Table>
-            <TableHeader
-              className="border-b border-gray-100 dark:border-white/[0.05]"
-            >
-              <TableRow>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start
-                            text-theme-xs dark:text-gray-400"
-                >
-                  Tên Tour
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start
-                            text-theme-xs dark:text-gray-400"
-                >
-                  Mô tả
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start
-                            text-theme-xs dark:text-gray-400"
-                >
-                  Địa điểm
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start
-                            text-theme-xs dark:text-gray-400"
-                >
-                  Giá
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start
-                            text-theme-xs dark:text-gray-400"
-                >
-                  Ngày bắt đầu
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start
-                            text-theme-xs dark:text-gray-400"
-                >
-                  Ngày kết thúc
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start
-                            text-theme-xs dark:text-gray-400"
-                >
-                  {``}
-                </TableCell>
-              </TableRow>
-            </TableHeader>
+  const totalPages = Math.ceil(totalTours / toursPerPage);
 
-            <TableBody
-              className="divide-y divide-gray-100 dark:divide-white/[0.05]"
-            >
-              {tours.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="px-5 py-4 text-center">
-                    Không có tour nào.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                tours.map((tour, index) => (
-                  <TableRow key={index}>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      {tour.name}
-                    </TableCell>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      {tour.description}
-                    </TableCell>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      {tour.location}
-                    </TableCell>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      {tour.price.toLocaleString()} VND
-                    </TableCell>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      <span className="flex justify-center items-center">
-                        {format(new Date(tour.start_date), 'dd/MM/yyyy')}
-                      </span>
-                    </TableCell>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      <span className="flex justify-center items-center">
-                        {format(new Date(tour.end_date), 'dd/MM/yyyy')}
-                      </span>
-                    </TableCell>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      <a
-                        href={`/tours/${tour.id}/edit`}
-                        className="flex justify-center items-center"
-                      >
-                        <PencilIcon />
-                      </a>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
+  return (
+    <div>
+      <FormSearchTour
+        formSearch={formSearch}
+        setFormSearch={setFormSearch}
+        onSubmitSearch={(params) => {
+          setCurrentPage(1);
+          setSearchParams(params);
+        }}
+        loading={loading}
+      />
+
+      <TourTable tours={tours} loading={loading} />
+
+      {totalPages > 1 && (
+        <div className="mt-6">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
-      </div>
+      )}
     </div>
   );
 }
