@@ -39,6 +39,11 @@ const navItems: NavItem[] = [
       { name: "Lịch sử xuất", path: "/admin/thong-hanh/history-export", pro: false }],
   },
   {
+    icon: <UserCircleIcon />,
+    name: "Quản lý nhân viên",
+    subItems: [{ name: "Danh sách nhân viên", path: "/admin/employees", pro: false }],
+  },
+  {
     icon: <CalenderIcon />,
     name: "Calendar",
     path: "/admin/calendar",
