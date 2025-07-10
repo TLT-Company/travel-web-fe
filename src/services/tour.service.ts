@@ -16,7 +16,7 @@ interface Booking {
   };
   assignedAdmin: {
     id: number;
-    username: string;
+    email: string;
   };
 }
 

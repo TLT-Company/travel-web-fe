@@ -104,7 +104,7 @@ export default function EditTourPage() {
                     className="px-5 py-3 font-medium text-gray-500 text-start
                               text-theme-xs dark:text-gray-400"
                   >
-                    Tên nhân viên
+                    Email nhân viên
                   </TableCell>
                   <TableCell
                     isHeader
@@ -112,6 +112,13 @@ export default function EditTourPage() {
                               text-theme-xs dark:text-gray-400"
                   >
                     Trạng thái
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start
+                              text-theme-xs dark:text-gray-400"
+                  >
+                    Ghi chú
                   </TableCell>
                   <TableCell
                     isHeader
@@ -144,7 +151,7 @@ export default function EditTourPage() {
                         className="px-4 py-3 text-start text-theme-sm
                                   dark:text-gray-400"
                       >
-                        {booking.assignedAdmin.username}
+                        {booking.assignedAdmin.email}
                       </TableCell>
                       <TableCell
                         className="px-4 py-3 text-start text-theme-sm
@@ -162,6 +169,12 @@ export default function EditTourPage() {
                         >
                           {booking.status}
                         </Badge>
+                      </TableCell>
+                      <TableCell
+                        className="px-4 py-3 text-start text-theme-sm
+                                  dark:text-gray-400"
+                      >
+                        {booking.note}
                       </TableCell>
                       <TableCell
                         className="px-4 py-3 text-start text-theme-sm
