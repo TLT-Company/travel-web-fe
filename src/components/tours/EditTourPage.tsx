@@ -15,7 +15,7 @@ import { PencilIcon } from "@/icons";
 import Link from "next/link";
 import Button from "@/components/ui/button/Button";
 import Badge from "../ui/badge/Badge";
-import { tourService, Tour } from "@/services/tour.service";
+import { getTourDetail, Tour } from "@/services/tour.service";
 
 export default function EditTourPage() {
   const [tour, setTour] = useState<Tour | null>(null);
@@ -25,7 +25,7 @@ export default function EditTourPage() {
   useEffect(() => {
     const fetchTour = async () => {
       try {
-        const res = await tourService.getById(Number(id));
+        const res = await getTourDetail(Number(id));
         setTour(res.data);
       } catch (e) {
         console.log("Error fetching tour:", e);
@@ -144,7 +144,7 @@ export default function EditTourPage() {
                         className="px-4 py-3 text-start text-theme-sm
                                   dark:text-gray-400"
                       >
-                        {booking.assignedEmployer.full_name}
+                        {booking.assignedAdmin.username}
                       </TableCell>
                       <TableCell
                         className="px-4 py-3 text-start text-theme-sm

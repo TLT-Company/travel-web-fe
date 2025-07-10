@@ -14,9 +14,9 @@ interface Booking {
     id: number;
     full_name: string;
   };
-  assignedEmployer: {
+  assignedAdmin: {
     id: number;
-    full_name: string;
+    username: string;
   };
 }
 
@@ -69,4 +69,8 @@ export const getListTours = async (
   );
 
   return await http.get<Tour[]>(`/tours?${query}`);
+};
+
+export const getTourDetail = async (id: number): Promise<ApiResponse<Tour>> => {
+  return await http.get<Tour>(`/tours/${id}`);
 };
