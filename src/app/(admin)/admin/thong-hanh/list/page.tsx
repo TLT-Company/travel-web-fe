@@ -1,4 +1,6 @@
-import ListThongHanh from '@/components/listThongHanh';
+import ComponentCard from '@/components/common/ComponentCard';
+import PageBreadcrumb from '@/components/common/PageBreadCrumb';
+import DocumentCustomerPage from '@/components/listThongHanh/DocumentCustomer';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -8,9 +10,14 @@ export const metadata: Metadata = {
 };
 const ThongHanh = () => {
   return (
-    <>
-      <ListThongHanh />
-    </>
+    <div>
+      <PageBreadcrumb pageTitle="Tour" />
+      <div className="space-y-6">
+        <ComponentCard title="Danh sách tour">
+          <DocumentCustomerPage />
+        </ComponentCard>
+      </div>
+    </div>
   );
 }
 export default ThongHanh;
