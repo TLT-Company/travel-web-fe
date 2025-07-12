@@ -28,10 +28,10 @@ const injectToken = (
 ): HeadersInit => {
   const token = localStorage.getItem("accessTokenTravel");
 
-  if (withAuth) {
-    if (!token) {
-      throw new ApiError("Bạn chưa đăng nhập", 401);
-    }
+  if (withAuth && token) {
+    // if (!token) {
+    //   throw new ApiError("Bạn chưa đăng nhập", 401);
+    // }
 
     return {
       ...headers,

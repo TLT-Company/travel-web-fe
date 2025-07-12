@@ -7,6 +7,12 @@ import Backdrop from "@/layout/Backdrop";
 import { redirect } from "next/navigation";
 import React, { useEffect } from "react";
 import { toast } from 'react-toastify';
+import { jwtDecode } from "jwt-decode";
+
+type JwtPayload = {
+  exp: number;
+  [key: string]: any;
+};
 
 export default function AdminLayout({
   children,
@@ -24,7 +30,29 @@ export default function AdminLayout({
   useEffect(() => {
     const token = localStorage.getItem("accessTokenTravel");
     if (!token) {
-      toast.error("Bạn chưa đăng nhập!");
+      // window.location.href = "/admin/signin";
+      redirect("/admin/signin");
+    }
+
+    try {
+      const decoded: { exp: number } = jwtDecode(token);
+      const timeRemaining = decoded.exp * 1000 - Date.now();
+      if (timeRemaining <= 0) {
+        localStorage.removeItem("accessTokenTravel");
+        localStorage.removeItem("userLoginTravel");
+        redirect("/admin/signin");
+      } else {
+        // Auto logout sau khi hết hạn
+        setTimeout(() => {
+          localStorage.removeItem("accessTokenTravel");
+          localStorage.removeItem("userLoginTravel");
+          redirect("/admin/signin");
+        }, timeRemaining);
+      }
+    } catch (error) {
+      console.error("Invalid token", error);
+      localStorage.removeItem("accessTokenTravel");
+      localStorage.removeItem("userLoginTravel");
       redirect("/admin/signin");
     }
   }, []);

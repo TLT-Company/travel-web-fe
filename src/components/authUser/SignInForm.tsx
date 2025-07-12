@@ -165,7 +165,7 @@ export default function SignInForm() {
                   )}
                    {pathname === "/admin/signin" && (
                   <Link
-                    href="/admin/forgot-password"
+                    href="/admin/reset-password"
                     className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
                   >
                     Quên mật khẩu?
