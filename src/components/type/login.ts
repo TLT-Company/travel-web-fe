@@ -22,3 +22,12 @@ export interface LoginResponse {
   message: string;
   data: LoginResponseData;
 }
+
+export type ForgotPasswordType = {
+  email: string;
+};
+
+export type ResetPasswordType = {
+  email: string;
+  newPassword: string;
+};
