@@ -31,3 +31,7 @@ export type ResetPasswordType = {
   email: string;
   newPassword: string;
 };
+
+export type GetCurrentAdminType = {
+  id: number;
+}

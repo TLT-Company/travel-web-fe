@@ -1,31 +1,36 @@
 "use client";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
-import { ChevronLeftIcon } from "@/icons";
+import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/icons";
 import Link from "next/link";
 import React, { useState } from "react";
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { ForgotPasswordType } from "../type/login";
-import { ForgotPasswordAdmin } from "@/services/login.service";
+import { ResetPasswordType } from "../../type/login";
+import { ResetPasswordAdmin } from "@/services/login.service";
 import { toast } from "react-toastify";
-import {useRouter } from "next/navigation";
+import {useRouter, useSearchParams } from "next/navigation";
 
 
-export default function ForgotPasswordForm() {
+export default function ResetPasswordForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const searchParams = useSearchParams();
+  const email = searchParams.get('email');
   
   const SigninSchema = Yup.object({
     email: Yup.string().email("Email không hợp lệ").required("Bắt buộc"),
+    newPassword: Yup.string().min(6, "Ít nhất 6 ký tự").required("Bắt buộc"),
   });
 
-  const handleForgotPassword = async (values: ForgotPasswordType) => {
+  const handleResetPassword = async (values: ResetPasswordType) => {
     setIsLoading(true);
     try {
-      const data = await ForgotPasswordAdmin(values);
-      if(data?.success){
-        toast.success(data?.message || "Đã gửi email thành công!");
+      const data = await ResetPasswordAdmin(values);
+      if(data?.success == true){
+        toast.success(data?.message || "Đã cập nhật mật khẩu thành công!");
+        router.push("/admin/signin");
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -39,7 +44,7 @@ export default function ForgotPasswordForm() {
     <div className="flex flex-col flex-1 lg:w-1/2 w-full">
       <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
         <Link
-          href="/admin"
+          href="/admin/forgot-password"
           className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
         >
           <ChevronLeftIcon />
@@ -51,34 +56,46 @@ export default function ForgotPasswordForm() {
         <div>
           <div className="mb-5 sm:mb-8">
             <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-              Quên mật khẩu
+              Mật khẩu mới
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Nhập email để nhận mail!
+              Nhập mật khẩu để tạo mật khẩu mới!
             </p>
           </div>
           <div>
             <div className="relative py-3 sm:py-5">
             </div>
             <Formik
-              initialValues={{ email: ""}}
+              initialValues={{ email: String(email), newPassword: "" }}
               validationSchema={SigninSchema}
-              onSubmit={handleForgotPassword}
+              onSubmit={handleResetPassword}
             >
               {() => (
                 <Form className="space-y-6">
                   {/* Email */}
                   <div>
-                    <Label>Email <span className="text-error-500">*</span></Label>
-                    <Field
-                      type="email"
-                      name="email"
-                      placeholder="info@gmail.com"
-                      as={Input}
-                      disabled={isLoading}
-                    />
+                    <Label>Password <span className="text-error-500">*</span></Label>
+                    <div className="relative">
+                      <Field
+                        name="newPassword"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter your password"
+                        as={Input}
+                        disabled={isLoading}
+                      />
+                      <span
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                      >
+                        {showPassword ? (
+                          <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
+                        ) : (
+                          <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
+                        )}
+                      </span>
+                    </div>
                     <ErrorMessage
-                      name="email"
+                      name="newPassword"
                       component="div"
                       className="text-red-500 text-sm"
                     />

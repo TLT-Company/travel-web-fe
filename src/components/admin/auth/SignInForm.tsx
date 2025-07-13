@@ -7,7 +7,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { LoginType } from "../type/login";
+import { LoginType } from "../../type/login";
 import { loginAdmin } from "@/services/login.service";
 import { toast } from "react-toastify";
 import { usePathname, useRouter } from "next/navigation";
@@ -42,10 +42,15 @@ export default function SignInForm() {
       // Hiển thị thông báo thành công
       toast.success("Đăng nhập thành công!");
       
-      // Chuyển hướng đến trang admin sau 1 giây
+      if(data?.admin?.role === "super_admin") {
       setTimeout(() => {
         router.push("/admin");
       }, 1000);
+      } else if(data?.admin?.role === "collaborator") {
+        setTimeout(() => {
+          router.push("/collaborator");
+        }, 1000);
+      } 
       
     } catch (error) {
       console.error("Login error:", error);
