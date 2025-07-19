@@ -14,18 +14,19 @@ import { toast } from 'react-toastify';
 
 
 const DocumentCustomerPage = () => {
-  const [tours, setTours] = useState<DocumentCustommer[]>([]);
+  const [documents, setDocuments] = useState<DocumentCustommer[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalTours, setTotalTours] = useState<number>(0);
+  const [totalDocuments, setTotalDocuments] = useState<number>(0);
   const [
     searchParams, setSearchParams
   ] = useState<FormSearchDocumentCustomerParams | null>(null);
   const [formSearch, setFormSearch] = useState<FormSearchDocumentCustomerParams>({
-    id: "",
-    create_date: ''
+    document_number: "",
+    start_date: '',
+    end_date: ''
   });
-  const toursPerPage = 20;
+  const toursPerPage = 5;
 
   useEffect(() => {
     const fetchTours = async () => {
@@ -38,15 +39,15 @@ const DocumentCustomerPage = () => {
         });
 
         if (result.success) {
-          setTours(result.data);
-          setTotalTours(result.count);
+          setDocuments(result.data);
+          setTotalDocuments(result.count);
         } else {
-          setTours([]);
-          setTotalTours(0);
+          setDocuments([]);
+          setTotalDocuments(0);
         }
       } catch (e) {
-        console.log("Error get tours: ", e)
-        toast.error("Lỗi khi lấy danh sách tour");
+        console.log("Error get documents: ", e)
+        toast.error("Lỗi khi lấy danh sách thông hành");
       } finally {
         setLoading(false);
       }
@@ -57,7 +58,7 @@ const DocumentCustomerPage = () => {
 
   if (loading) return <LoadingOverlay shown={loading} />;
 
-  const totalPages = Math.ceil(totalTours / toursPerPage);
+  const totalPages = Math.ceil(totalDocuments / toursPerPage);
 
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return;
@@ -76,7 +77,7 @@ const DocumentCustomerPage = () => {
         loading={loading}
       />
 
-      <DocumentCustomerTable documentCustomers={tours} loading={loading} />
+      <DocumentCustomerTable documentCustomers={documents} loading={loading} />
 
       {totalPages > 1 && (
         <div className="mt-6">

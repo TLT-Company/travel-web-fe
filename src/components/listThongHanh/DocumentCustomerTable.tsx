@@ -14,12 +14,12 @@ import Button from "@/components/ui/button/Button";
 import { PencilIcon, DownloadIcon } from "@/icons";
 import { DocumentCustommer } from "@/services/documentCustomer.service";
 
-interface TourTableProps {
+interface DocumentCustomerProps {
   documentCustomers: DocumentCustommer[];
   loading: boolean;
 }
 
-const TourTable: FC<TourTableProps> = ({ documentCustomers, loading }) => {
+const DocumentCustomerTable: FC<DocumentCustomerProps> = ({ documentCustomers, loading }) => {
   return (
     <div
       className="overflow-hidden rounded-xl border border-gray-200 bg-white
@@ -56,7 +56,7 @@ const TourTable: FC<TourTableProps> = ({ documentCustomers, loading }) => {
               {documentCustomers.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="px-5 py-4 text-center">
-                    Không có tour nào.
+                    Không có số thông hành nào.
                   </TableCell>
                 </TableRow>
               ) : (
@@ -72,7 +72,7 @@ const TourTable: FC<TourTableProps> = ({ documentCustomers, loading }) => {
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
-                      {documentCustomer.created_at}
+                       {format(new Date(documentCustomer.created_at), 'dd/MM/yyyy')}
                     </TableCell>
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm
@@ -85,7 +85,7 @@ const TourTable: FC<TourTableProps> = ({ documentCustomers, loading }) => {
                                 dark:text-gray-400"
                     >
                       <div className="flex items-center gap-2">
-                        <Link href={`/admin/tours/${documentCustomer.document_number}/edit`} passHref>
+                        <Link href={`/admin/thong-hanh/${documentCustomer.id}`} passHref>
                           <Button
                             size="sm"
                             className="bg-gray-500 hover:bg-gray-600"
@@ -115,4 +115,4 @@ const TourTable: FC<TourTableProps> = ({ documentCustomers, loading }) => {
   );
 };
 
-export default TourTable;
+export default DocumentCustomerTable;

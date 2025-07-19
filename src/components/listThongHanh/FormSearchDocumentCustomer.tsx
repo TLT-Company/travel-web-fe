@@ -8,14 +8,14 @@ import DatePicker from "@/components/form/date-picker";
 import Button from "@/components/ui/button/Button";
 import { FormSearchDocumentCustomerParams } from "@/services/documentCustomer.service";
 
-interface FormSearchTourProps {
+interface FormSearchDocumentProps {
   formSearch: FormSearchDocumentCustomerParams;
   setFormSearch: (params: FormSearchDocumentCustomerParams) => void;
   onSubmitSearch: (params: FormSearchDocumentCustomerParams) => void;
   loading?: boolean;
 }
 
-const FormSearchTour: FC<FormSearchTourProps> = ({
+const FormSearchDocumentCustomer: FC<FormSearchDocumentProps> = ({
   formSearch, setFormSearch, onSubmitSearch, loading
 }) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -35,13 +35,13 @@ const FormSearchTour: FC<FormSearchTourProps> = ({
         <div className="col-span-6">
           <div className="grid grid-cols-4 gap-2">
             <Label htmlFor="id" className="col-span-1 my-auto">
-              Tên tour:
+              Số thông hành:
             </Label>
             <div className="col-span-3">
               <Input
-                id="id"
-                name="id"
-                value={formSearch.id}
+                id="document_number"
+                name="document_number"
+                value={formSearch.document_number}
                 onChange={handleChange}
                 placeholder="Tìm mã thông hành..."
               />
@@ -49,23 +49,39 @@ const FormSearchTour: FC<FormSearchTourProps> = ({
           </div>
         </div>
         <div className="col-span-6">
-            <div className="grid grid-cols-12 gap-2">
-                <div className="col-span-3 my-auto">Ngày:</div>
-                <div className="col-span-4">
+          <div className="grid grid-cols-12 gap-2">
+            <div className="col-span-3 my-auto">Ngày tạo:</div>
+            <div className="col-span-4">
+              <DatePicker
+                id="start_date"
+                placeholder="ngày bắt đầu"
+                defaultDate={formSearch.start_date}
+                onChange={([selected]) =>
+                  setFormSearch({
+                    ...formSearch,
+                    start_date: selected
+                      ? selected.toLocaleDateString("en-CA") :
+                      "",
+                  })
+                }
+              />
+            </div>
+            <div className="col-span-1 my-auto mx-auto">~</div>
+              <div className="col-span-4">
                 <DatePicker
-                    id="start_date"
-                    placeholder="Chọn ngày tạo"
-                    defaultDate={formSearch.create_date}
-                    onChange={([selected]) =>
+                  id="end_date"
+                  placeholder="ngày kết thúc"
+                  defaultDate={formSearch.end_date}
+                  onChange={([selected]) =>
                     setFormSearch({
-                        ...formSearch,
-                        create_date: selected
+                      ...formSearch,
+                      end_date: selected
                         ? selected.toLocaleDateString("en-CA") :
                         "",
                     })
-                    }
+                  }
                 />
-                </div>
+              </div>
             </div>
         </div>
       </div>
@@ -82,4 +98,4 @@ const FormSearchTour: FC<FormSearchTourProps> = ({
   )
 };
 
-export default FormSearchTour;
+export default FormSearchDocumentCustomer;
