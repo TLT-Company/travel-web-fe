@@ -68,9 +68,13 @@ export const getListTours = async (
     }, {} as Record<string, string>)
   );
 
-  return await http.get<Tour[]>(`/tours?${query}`);
+  return await http.get<Tour[]>(`/tours?${query}`,{
+    withAuth: false,
+  });
 };
 
 export const getTourDetail = async (id: number): Promise<ApiResponse<Tour>> => {
-  return await http.get<Tour>(`/tours/${id}`);
+  return await http.get<Tour>(`/tours/${id}`, {
+    withAuth: false,
+  });
 };
