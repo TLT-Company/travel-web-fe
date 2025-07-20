@@ -97,13 +97,13 @@ const CollaboratorList = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Quản lý nhân viên
+          Quản lý cộng tác viên
         </h2>
         <Button 
           className="bg-brand-500 hover:bg-brand-600"
           onClick={() => setIsAddModalOpen(true)}
         >
-          Thêm nhân viên
+          Thêm cộng tác viên
         </Button>
       </div>
 
@@ -136,7 +136,7 @@ const CollaboratorList = () => {
                     isHeader
                     className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                   >
-                    Nhân viên
+                    Cộng tác viên
                   </TableCell>
                   <TableCell
                     isHeader
