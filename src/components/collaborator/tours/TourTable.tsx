@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -13,6 +13,7 @@ import Link from "next/link";
 import Button from "@/components/ui/button/Button";
 import { PencilIcon, DownloadIcon, CopyIcon, EyeIcon } from "@/icons";
 import { Tour } from "@/services/tour.service";
+import { toast } from "react-toastify";
 
 interface TourTableProps {
   tours: Tour[];
@@ -20,6 +21,19 @@ interface TourTableProps {
 }
 
 const TourTable: FC<TourTableProps> = ({ tours, loading }) => {
+  const [copied, setCopied] = useState(false);
+  const user = JSON.parse(localStorage.getItem("userLoginTravel") || '{}');
+  const handleCopy = async (tourId: number, referralCode: string) => {
+    const url = `${window.location.origin}/tours/${tourId}/booking?referral_code=${referralCode}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      toast.success("Đã sao chép liên kết thành công!");
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("❌ Copy failed", err);
+    }
+  };
   return (
     <div
       className="overflow-hidden rounded-xl border border-gray-200 bg-white
@@ -119,15 +133,16 @@ const TourTable: FC<TourTableProps> = ({ tours, loading }) => {
                             <EyeIcon className="w-6 h-6" />
                           </Button>
                         </Link>
-                        <Link href={`/collaborator/tours/${tour.id}/edit`} passHref>
+                        {/* <Link href={`/tours/2/booking?referral_code=${user?.employer?.referral_code}`} passHref> */}
                           <Button
                             size="sm"
                             className="bg-gray-500 hover:bg-gray-600"
                             disabled={loading}
+                            onClick={()=>handleCopy(tour.id, user?.employer?.referral_code)}
                           >
                             <CopyIcon className="w-6 h-6" />
                           </Button>
-                        </Link>
+                        {/* </Link> */}
                         {/* <Button
                           size="sm"
                           className="bg-green-500 hover:bg-green-600"

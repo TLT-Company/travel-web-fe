@@ -188,6 +188,7 @@
     cursor: pointer;
   }
   body {
+    font-family: 'Times New Roman', Times, serif !important;
     @apply relative font-normal font-outfit z-1 bg-gray-50;
   }
 }

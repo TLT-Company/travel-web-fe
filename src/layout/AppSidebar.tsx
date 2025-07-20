@@ -45,6 +45,11 @@ const navItems: NavItem[] = [
     subItems: [{ name: "Danh sách nhân viên", path: "/admin/employees", pro: false }],
   },
   {
+    icon: <UserCircleIcon />,
+    name: "Quản lý cộng tác viên",
+    subItems: [{ name: "Danh sách cộng tác viên", path: "/admin/collaborators", pro: false }],
+  },
+  {
     icon: <TaskIcon />,
     name: "Quản lý công việc",
     subItems: [{ name: "Danh sách công việc", path: "/admin/task", pro: false }],
