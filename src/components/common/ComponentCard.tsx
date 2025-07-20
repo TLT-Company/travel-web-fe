@@ -1,10 +1,14 @@
 import React from "react";
+import Button from "../ui/button/Button";
+import Link from "next/link";
 
 interface ComponentCardProps {
   title: string;
   children: React.ReactNode;
   className?: string; // Additional custom classes for styling
   desc?: string; // Description text
+  buttonText?: string;
+  linkHref?: string;
 }
 
 const ComponentCard: React.FC<ComponentCardProps> = ({
@@ -12,6 +16,8 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
   children,
   className = "",
   desc = "",
+  buttonText = "",
+  linkHref = "",
 }) => {
   return (
     <div
@@ -19,14 +25,25 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
     >
       {/* Card Header */}
       <div className="px-6 py-5">
-        <h3 className="text-base font-medium text-gray-800 dark:text-white/90">
-          {title}
-        </h3>
-        {desc && (
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {desc}
-          </p>
-        )}
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="text-base font-medium text-gray-800 dark:text-white/90">
+              {title}
+            </h3>
+            {desc && (
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {desc}
+              </p>
+            )}
+          </div>
+          {buttonText && (
+            <Link href={linkHref}>
+              <Button size="sm" variant="primary" className="">
+                {buttonText}
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
 
       {/* Card Body */}

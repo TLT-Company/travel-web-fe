@@ -1,6 +1,6 @@
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import ToursPage from "@/components/tours/ToursPage";
+import CreateTourPage from "@/components/tours/CreateTourPage";
 import { Metadata } from "next";
 import React from "react";
 
@@ -9,17 +9,13 @@ export const metadata: Metadata = {
   description: "",
 };
 
-export default function Tours() {
+export default function NewTour() {
   return (
     <div>
       <PageBreadcrumb pageTitle="Tour" />
       <div className="space-y-6">
-        <ComponentCard
-          title="Danh sách tour"
-          buttonText="Tạo mới"
-          linkHref="/admin/tours/new"
-        >
-          <ToursPage />
+        <ComponentCard title="Tạo mới tour">
+          <CreateTourPage />
         </ComponentCard>
       </div>
     </div>

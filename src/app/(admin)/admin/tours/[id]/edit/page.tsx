@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "",
 };
 
-export default function Tours() {
+export default function EditTour() {
   return (
     <div>
       <PageBreadcrumb pageTitle="Tour" />
