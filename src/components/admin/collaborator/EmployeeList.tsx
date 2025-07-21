@@ -13,6 +13,7 @@ import Badge from "../../ui/badge/Badge";
 import Button from "../../ui/button/Button";
 import AddEmployeeModal from './AddEmployeeModal';
 import { format } from 'date-fns';
+import { getAdmin } from '@/services/admmin.service';
 
 const CollaboratorList = () => {
   const [data, setData] = useState<Admin[]>([]);
@@ -27,6 +28,8 @@ const CollaboratorList = () => {
     hasNextPage: false,
     hasPrevPage: false,
   });
+
+  const [dataCollaborator, setDataCollaborator] = useState<Admin>();
 
   useEffect(() => {
     fetchData();
@@ -92,6 +95,28 @@ const CollaboratorList = () => {
     );
   }
 
+  const handleCreateCollaborator = () => {
+    setIsAddModalOpen(true);
+    setDataCollaborator(undefined);
+  }
+
+  const handleEdit = async (id: number) => {
+    // debugger;
+    try {
+      const result = await getAdmin(String(id));
+      // debugger;
+      if (result.success) {
+        setDataCollaborator(result.data);
+        setIsAddModalOpen(true)
+      }
+    }catch (error) {
+      console.error('Error fetching admin data:', error);
+    }
+    // console.log('Edit collaborator with ID:', id); 
+  };
+
+  console.log('dataCollaborator', dataCollaborator);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -101,7 +126,7 @@ const CollaboratorList = () => {
         </h2>
         <Button 
           className="bg-brand-500 hover:bg-brand-600"
-          onClick={() => setIsAddModalOpen(true)}
+          onClick={() => handleCreateCollaborator()}
         >
           Thêm cộng tác viên
         </Button>
@@ -170,18 +195,18 @@ const CollaboratorList = () => {
                       </Badge>
                     </TableCell>
                     <TableCell className="px-4 py-3 text-start">
-                      {admin.employers.length > 0 ? (
+                      {admin.employer ? (
                         <div className="space-y-1">
-                          {admin.employers.map((employer: Employer) => (
-                            <div key={employer.id} className="text-sm">
+                          {/* {admin.employer.map((employer: Employer) => ( */}
+                            {/* <div key={employer.id} className="text-sm"> */}
                               <div className="font-medium text-gray-800 dark:text-white/90">
-                                {employer.full_name}
+                                {admin.employer?.full_name}
                               </div>
                               <div className="text-gray-500 dark:text-gray-400">
-                                {employer.position}
+                                {admin.employer?.position}
                               </div>
-                            </div>
-                          ))}
+                            {/* </div> */}
+                          {/* ))} */}
                         </div>
                       ) : (
                         <span className="text-gray-400">Chưa có nhân viên</span>
@@ -196,6 +221,7 @@ const CollaboratorList = () => {
                           variant="outline"
                           size="sm"
                           className="text-blue-600 hover:text-blue-700"
+                          onClick={() => handleEdit(admin.id)}
                         >
                           Sửa
                         </Button>
@@ -250,6 +276,7 @@ const CollaboratorList = () => {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSuccess={handleAddSuccess}
+        dataCollaborator={dataCollaborator}
       />
     </div>
   );

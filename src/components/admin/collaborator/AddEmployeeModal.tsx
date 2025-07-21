@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { registerAdmin } from '../../../services/employee.service';
+import { Admin, registerAdmin } from '../../../services/employee.service';
 import { Modal } from '../../ui/modal';
 import Button from '../../ui/button/Button';
 import Input from '../../form/input/InputField';
@@ -15,12 +15,14 @@ interface AddEmployeeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  dataCollaborator?: Admin | null;
 }
 
 const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
   isOpen,
   onClose,
   onSuccess,
+  dataCollaborator,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -87,8 +89,8 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
         
         <Formik
           initialValues={{
-            full_name: '',
-            email: '',
+            full_name: dataCollaborator?.employer?.full_name || '',
+            email: dataCollaborator?.email || '',
             password: '',
             confirmPassword: '',
             role: 'collaborator',
