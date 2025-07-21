@@ -9,7 +9,13 @@ export interface Admin {
   email: string;
   created_at: string;
   updated_at: string;
-  employers: unknown[];
+  employer: {
+    id: number;
+    admin_id: number;
+    created_at: string;
+    full_name: string | null;
+    position: string | null;
+  };
 }
 
 export interface LoginResponseData {

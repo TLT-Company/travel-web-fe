@@ -14,7 +14,7 @@ export interface Admin {
   email: string;
   created_at: string;
   updated_at: string;
-  employers: Employer[];
+  employer: Employer;
 }
 
 export interface Pagination {

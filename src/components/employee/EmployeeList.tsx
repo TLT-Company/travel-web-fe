@@ -170,18 +170,18 @@ const EmployeeList = () => {
                       </Badge>
                     </TableCell>
                     <TableCell className="px-4 py-3 text-start">
-                      {admin.employers.length > 0 ? (
+                      {admin?.employer ? (
                         <div className="space-y-1">
-                          {admin.employers.map((employer: Employer) => (
-                            <div key={employer.id} className="text-sm">
+                          {/* {admin.employers.map((employer: Employer) => ( */}
+                            {/* <div key={employer.id} className="text-sm"> */}
                               <div className="font-medium text-gray-800 dark:text-white/90">
-                                {employer.full_name}
+                                {admin?.employer?.full_name}
                               </div>
                               <div className="text-gray-500 dark:text-gray-400">
-                                {employer.position}
+                                {admin?.employer?.position}
                               </div>
-                            </div>
-                          ))}
+                            {/* </div> */}
+                          {/* ))} */}
                         </div>
                       ) : (
                         <span className="text-gray-400">Chưa có nhân viên</span>

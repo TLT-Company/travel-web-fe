@@ -127,13 +127,13 @@ const TaskAssignment = () => {
   const getAllEmployees = () => {
     const allEmployees: { id: number; full_name: string; position: string }[] = [];
     employees.forEach(admin => {
-      admin.employers.forEach(employer => {
+      // admin.employers.forEach(employer => {
         allEmployees.push({
-          id: employer.id,
-          full_name: employer.full_name,
-          position: employer.position,
+          id: admin?.employer.id,
+          full_name: admin?.employer.full_name,
+          position: admin?.employer.position,
         });
-      });
+      // });
     });
     return allEmployees;
   };
