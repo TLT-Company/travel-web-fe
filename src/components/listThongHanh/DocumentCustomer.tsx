@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import LoadingOverlay from "../common/LoadingOverlay";
 import {
   DocumentCustommer,
@@ -26,39 +26,39 @@ const DocumentCustomerPage = () => {
     start_date: '',
     end_date: ''
   });
-  const toursPerPage = 5;
+  const documentsPerPage = 20;
 
-  useEffect(() => {
-    const fetchTours = async () => {
-      setLoading(true);
-      try {
-        const result = await getListDocumentCustommers({
-          ...searchParams,
-          page: currentPage,
-          limit: toursPerPage,
-        });
+  const fetchDocuments = useCallback(async () => {
+    setLoading(true);
+    try {
+      const result = await getListDocumentCustommers({
+        ...searchParams,
+        page: currentPage,
+        limit: documentsPerPage,
+      });
 
-        if (result.success) {
-          setDocuments(result.data);
-          setTotalDocuments(result.count);
-        } else {
-          setDocuments([]);
-          setTotalDocuments(0);
-        }
-      } catch (e) {
-        console.log("Error get documents: ", e)
-        toast.error("Lỗi khi lấy danh sách thông hành");
-      } finally {
-        setLoading(false);
+      if (result.success) {
+        setDocuments(result.data);
+        setTotalDocuments(result.count);
+      } else {
+        setDocuments([]);
+        setTotalDocuments(0);
       }
-    };
-
-    fetchTours();
+    } catch (e) {
+      console.log("Error get documents: ", e)
+      toast.error("Lỗi khi lấy danh sách thông hành");
+    } finally {
+      setLoading(false);
+    } 
   }, [currentPage, searchParams]);
+    
+  useEffect(() => {
+    fetchDocuments();
+  }, [fetchDocuments]);
 
   if (loading) return <LoadingOverlay shown={loading} />;
 
-  const totalPages = Math.ceil(totalDocuments / toursPerPage);
+  const totalPages = Math.ceil(totalDocuments / documentsPerPage);
 
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return;

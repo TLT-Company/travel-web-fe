@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, ChangeEvent, FormEvent, useState, useEffect } from "react";
+import React, { FC, useState, useEffect } from "react";
 import {
   CustomerRequest,
 } from "@/services/documentCustomer.service";
@@ -10,8 +10,8 @@ import Button from "@/components/ui/button/Button";
 import Select from "@/components/form/Select";
 import DatePicker from "@/components/form/date-picker";
 import * as Yup from 'yup';
-import { ErrorMessage, Field, Form, Formik, useFormikContext } from "formik";
-import LoadingOverlay from "../common/LoadingOverlay";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import LoadingOverlay from "@/components/common/LoadingOverlay";
 
 interface Props {
   formData: CustomerRequest;
@@ -194,6 +194,10 @@ const CustomerForm: FC<Props> = ({
           enableReinitialize={true}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
+          // onSubmit={async (values, { resetForm }) => {
+          //     await handleSubmit(values);
+          //     resetForm(); 
+          //   }}
         >
           {({ values, setFieldValue, touched, errors }) => (
             <Form className="space-y-6">
@@ -334,7 +338,7 @@ const CustomerForm: FC<Props> = ({
                 <Label>Tỉnh/Thành Phố <span className="text-error-500">*</span></Label>
                 <Select
                   options={provinceOptions}
-                  placeholder="CHọn tỉnh/thành phố"
+                  placeholder="Chọn tỉnh/thành phố"
                   onChange={ (value) => 
                   {
                     setFieldValue('province', value)
@@ -361,7 +365,7 @@ const CustomerForm: FC<Props> = ({
                     setFieldValue('district', value);
                     const selected = districtOptions.find(p => p.value === value);
                     setSelectedDistrictCode(Number(selected?.code) || null);
-                    setFieldValue('commune', ''); // Reset xã/phường khi đổi huyện
+                    setFieldValue('commune', '');
                   }}
                   defaultValue={values.district}
                 />

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import LoadingOverlay from "../../common/LoadingOverlay";
 import {
   Custommer,
@@ -24,10 +24,10 @@ const DocumentDetailPage = () => {
     searchParams, setSearchParams
   ] = useState<FormSearchCustomerParams | null>(null);
   const [formSearch, setFormSearch] = useState<FormSearchCustomerParams>({});
-  const customersPerPage = 5;
+  const customersPerPage = 20;
   const params = useParams<{ document_id: string }>()
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = useCallback(async () => {
       setLoading(true);
       try {
         const result = await getListCustommersByDocumentId(
@@ -39,7 +39,6 @@ const DocumentDetailPage = () => {
           });
 
         if (result.success) {
-          console.log(result.data)
           setCustomers(result.data);
           setTotalCustomers(result.count);
         } else {
@@ -52,11 +51,11 @@ const DocumentDetailPage = () => {
       } finally {
         setLoading(false);
       }
-    };
+    }, [params.document_id, currentPage, searchParams]);
 
   useEffect(() => {
     fetchCustomers();
-  }, [params.document_id, currentPage, searchParams]);
+  }, [fetchCustomers]);
 
   if (loading) return <LoadingOverlay shown={loading} />;
 
