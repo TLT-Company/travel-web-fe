@@ -14,7 +14,7 @@ export interface Admin {
   email: string;
   created_at: string;
   updated_at: string;
-  employers: Employer[];
+  employer: Employer;
 }
 
 export interface Pagination {
@@ -32,6 +32,7 @@ export interface AdminListResponse {
 }
 
 export interface RegisterAdminRequest {
+  full_name: string;
   email: string;
   password: string;
   role: string;
@@ -56,6 +57,11 @@ export interface RegisterAdminResponse {
 
 export const getAdminList = async (page: number = 1): Promise<AdminListResponse> => {
   const response = await http.get<AdminListResponse>(`/admin/list?page=${page}`);
+  return response.data;
+};
+
+export const getCollaboratorList = async (page: number = 1): Promise<AdminListResponse> => {
+  const response = await http.get<AdminListResponse>(`/admin/list/Collaborators?page=${page}`);
   return response.data;
 };
 

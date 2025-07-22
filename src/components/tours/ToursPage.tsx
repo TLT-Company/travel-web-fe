@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import LoadingOverlay from "../common/LoadingOverlay";
 import {
   Tour,
   FormSearchTourParams,
-  getListTours
+  getListTours,
+  deleteTour
 } from "@/services/tour.service";
 import Pagination from "../tables/Pagination";
 import TourTable from "./TourTable";
@@ -31,33 +32,33 @@ export default function ToursPage() {
   });
   const toursPerPage = 20;
 
-  useEffect(() => {
-    const fetchTours = async () => {
-      setLoading(true);
-      try {
-        const result = await getListTours({
-          ...searchParams,
-          page: currentPage,
-          limit: toursPerPage,
-        });
+  const fetchTours = useCallback(async () => {
+    setLoading(true);
+    try {
+      const result = await getListTours({
+        ...searchParams,
+        page: currentPage,
+        limit: toursPerPage,
+      });
 
-        if (result.success) {
-          setTours(result.data);
-          setTotalTours(result.count);
-        } else {
-          setTours([]);
-          setTotalTours(0);
-        }
-      } catch (e) {
-        console.log("Error get tours: ", e)
-        toast.error("Lỗi khi lấy danh sách tour");
-      } finally {
-        setLoading(false);
+      if (result.success) {
+        setTours(result.data);
+        setTotalTours(result.count);
+      } else {
+        setTours([]);
+        setTotalTours(0);
       }
-    };
+    } catch (e) {
+      console.log("Error get tours: ", e);
+      toast.error("Lỗi khi lấy danh sách tour");
+    } finally {
+      setLoading(false);
+    }
+  }, [searchParams, currentPage]);
 
+  useEffect(() => {
     fetchTours();
-  }, [currentPage, searchParams]);
+  }, [fetchTours]);
 
   if (loading) return <LoadingOverlay shown={loading} />;
 
@@ -67,6 +68,23 @@ export default function ToursPage() {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
   };
+
+  const handleDelete = async (id: number) => {
+    const confirmDelete = confirm("Bạn có chắc chắn muốn xóa tour này?");
+    if (!confirmDelete) return;
+
+    try {
+      setLoading(true);
+      await deleteTour(id);
+      toast.success("Xóa tour thành công!");
+      await fetchTours();
+    } catch (error) {
+      console.log("Xóa tour thất bại:", error);
+      toast.error("Xóa tour thất bại");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div>
@@ -80,7 +98,7 @@ export default function ToursPage() {
         loading={loading}
       />
 
-      <TourTable tours={tours} loading={loading} />
+      <TourTable tours={tours} loading={loading} onDelete={handleDelete} />
 
       {totalPages > 1 && (
         <div className="mt-6">

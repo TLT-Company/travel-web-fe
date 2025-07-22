@@ -1,5 +1,5 @@
 import { http } from "@/lib/http";
-import { LoginType, LoginResponseData } from "@/components/type/login";
+import { LoginType, LoginResponseData, ForgotPasswordType, ResetPasswordType, GetCurrentAdminType } from "@/components/type/login";
 
 export const loginAdmin = async (
   values: LoginType
@@ -8,4 +8,31 @@ export const loginAdmin = async (
     withAuth: false,
   });
   return response.data; // Return the data part which contains admin and token
+};
+
+export const logoutAdmin = async (): Promise<any> => {
+  return await http.post<any>("/auth/logout", {},);
+};
+
+
+export const ForgotPasswordAdmin = async (
+  values: ForgotPasswordType
+): Promise<any> => {
+  return await http.post<any>("/auth/admin/forgot-password", values, {
+    withAuth: false,
+  });
+};
+
+export const ResetPasswordAdmin = async (
+  values: ResetPasswordType
+): Promise<any> => {
+  return await http.post<any>("/auth/admin/reset-password", values, {
+    withAuth: false,
+  });
+};
+
+export const getCurrentAdmin = async (): Promise<any> => {
+  return await http.get<any>("/auth/admin/me", {
+    withAuth: true,
+  });
 };

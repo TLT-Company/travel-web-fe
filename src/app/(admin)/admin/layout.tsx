@@ -4,9 +4,16 @@ import { useSidebar } from "@/context/SidebarContext";
 import AppHeader from "@/layout/AppHeader";
 import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
-import { redirect } from "next/navigation";
-import React, { useEffect } from "react";
+import { redirect, useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { toast } from 'react-toastify';
+import { jwtDecode } from "jwt-decode";
+import { getCurrentAdmin } from "@/services/login.service";
+
+type JwtPayload = {
+  exp: number;
+  [key: string]: any;
+};
 
 export default function AdminLayout({
   children,
@@ -21,10 +28,39 @@ export default function AdminLayout({
     : isExpanded || isHovered
     ? "lg:ml-[290px]"
     : "lg:ml-[90px]";
+  const [role, setRole] = useState('');
+  const router = useRouter();
   useEffect(() => {
+   
     const token = localStorage.getItem("accessTokenTravel");
     if (!token) {
-      toast.error("Bạn chưa đăng nhập!");
+      redirect("/admin/signin");
+    }
+
+    try {
+      const decoded: { exp: number, role: string } = jwtDecode(token);
+      const timeRemaining = decoded.exp * 1000 - Date.now();
+      if (decoded.role == "user") {
+        router.push("/");
+      } else if (decoded.role == "collaborator") {
+        router.push("/collaborator");
+      }
+      if (timeRemaining <= 0) {
+        localStorage.removeItem("accessTokenTravel");
+        localStorage.removeItem("userLoginTravel");
+        redirect("/admin/signin");
+      } else {
+        // Auto logout sau khi hết hạn
+        setTimeout(() => {
+          localStorage.removeItem("accessTokenTravel");
+          localStorage.removeItem("userLoginTravel");
+          redirect("/admin/signin");
+        }, timeRemaining);
+      }
+    } catch (error) {
+      console.error("Invalid token", error);
+      localStorage.removeItem("accessTokenTravel");
+      localStorage.removeItem("userLoginTravel");
       redirect("/admin/signin");
     }
   }, []);

@@ -28,10 +28,10 @@ const injectToken = (
 ): HeadersInit => {
   const token = localStorage.getItem("accessTokenTravel");
 
-  if (withAuth) {
-    if (!token) {
-      throw new ApiError("Bạn chưa đăng nhập", 401);
-    }
+  if (withAuth && token) {
+    // if (!token) {
+    //   throw new ApiError("Bạn chưa đăng nhập", 401);
+    // }
 
     return {
       ...headers,
@@ -47,12 +47,12 @@ const injectToken = (
 class Http {
   async get<T = any>(endpoint: string, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
     const url = buildApiUrl(endpoint);
-    const withAuth = options.withAuth !== false; 
+    const withAuth = options.withAuth !== false;
     const headers = injectToken({
       ...API_CONFIG.HEADERS,
       ...options.headers,
     }, withAuth);
-    
+
     const response = await fetch(url, {
       method: 'GET',
       headers,
@@ -69,17 +69,30 @@ class Http {
     return response.json();
   }
 
-  async post<T = any>(endpoint: string, data: any,  options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
+  async post<T = any>(
+    endpoint: string,
+    data: any,
+    options: RequestInit & { withAuth?: boolean } = {}
+  ): Promise<ApiResponse<T>> {
     const url = buildApiUrl(endpoint);
     const withAuth = options.withAuth !== false;
-    const headers = injectToken({
-      ...API_CONFIG.HEADERS,
-      ...options.headers,
-    }, withAuth);
+    const isFormData = data instanceof FormData;
+
+    const headers = injectToken(
+      isFormData
+        ? { ...options.headers } // ❗ không thêm Content-Type nếu là FormData
+        : {
+            ...API_CONFIG.HEADERS,
+            'Content-Type': 'application/json',
+            ...options.headers,
+          },
+      withAuth
+    );
+
     const response = await fetch(url, {
       method: 'POST',
       headers,
-      body: JSON.stringify(data),
+      body: isFormData ? data : JSON.stringify(data),
       ...options,
     });
 
@@ -96,14 +109,23 @@ class Http {
   async put<T = any>(endpoint: string, data: any, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
     const url = buildApiUrl(endpoint);
     const withAuth = options.withAuth !== false;
-    const headers = injectToken({
-      ...API_CONFIG.HEADERS,
-      ...options.headers,
-    }, withAuth);
+    const isFormData = data instanceof FormData;
+
+    const headers = injectToken(
+      isFormData
+        ? { ...options.headers } // ❗ không thêm Content-Type nếu là FormData
+        : {
+            ...API_CONFIG.HEADERS,
+            'Content-Type': 'application/json',
+            ...options.headers,
+          },
+      withAuth
+    );
+
     const response = await fetch(url, {
-      method: 'PUT',
+      method: 'POST',
       headers,
-      body: JSON.stringify(data),
+      body: isFormData ? data : JSON.stringify(data),
       ...options,
     });
 
@@ -120,14 +142,23 @@ class Http {
   async patch<T = any>(endpoint: string, data: any, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
     const url = buildApiUrl(endpoint);
     const withAuth = options.withAuth !== false;
-    const headers = injectToken({
-      ...API_CONFIG.HEADERS,
-      ...options.headers,
-    }, withAuth);
+    const isFormData = data instanceof FormData;
+
+    const headers = injectToken(
+      isFormData
+        ? { ...options.headers } // ❗ không thêm Content-Type nếu là FormData
+        : {
+            ...API_CONFIG.HEADERS,
+            'Content-Type': 'application/json',
+            ...options.headers,
+          },
+      withAuth
+    );
+
     const response = await fetch(url, {
       method: 'PATCH',
       headers,
-      body: JSON.stringify(data),
+      body: isFormData ? data : JSON.stringify(data),
       ...options,
     });
 

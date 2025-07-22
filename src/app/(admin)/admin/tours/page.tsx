@@ -14,7 +14,11 @@ export default function Tours() {
     <div>
       <PageBreadcrumb pageTitle="Tour" />
       <div className="space-y-6">
-        <ComponentCard title="Danh sách tour">
+        <ComponentCard
+          title="Danh sách tour"
+          buttonText="Tạo mới"
+          linkHref="/admin/tours/new"
+        >
           <ToursPage />
         </ComponentCard>
       </div>

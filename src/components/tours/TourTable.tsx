@@ -11,15 +11,16 @@ import {
 import { format } from "date-fns";
 import Link from "next/link";
 import Button from "@/components/ui/button/Button";
-import { PencilIcon, DownloadIcon } from "@/icons";
+import { EyeIcon, PencilIcon, DownloadIcon, TrashBinIcon } from "@/icons";
 import { Tour } from "@/services/tour.service";
 
 interface TourTableProps {
   tours: Tour[];
   loading: boolean;
+  onDelete: (id: number) => void;
 }
 
-const TourTable: FC<TourTableProps> = ({ tours, loading }) => {
+const TourTable: FC<TourTableProps> = ({ tours, loading, onDelete }) => {
   return (
     <div
       className="overflow-hidden rounded-xl border border-gray-200 bg-white
@@ -110,6 +111,15 @@ const TourTable: FC<TourTableProps> = ({ tours, loading }) => {
                                 dark:text-gray-400"
                     >
                       <div className="flex items-center gap-2">
+                        <Link href={`/admin/tours/${tour.id}`} passHref>
+                          <Button
+                            size="sm"
+                            className="bg-gray-500 hover:bg-gray-600"
+                            disabled={loading}
+                          >
+                            <EyeIcon className="w-6 h-6" />
+                          </Button>
+                        </Link>
                         <Link href={`/admin/tours/${tour.id}/edit`} passHref>
                           <Button
                             size="sm"
@@ -126,6 +136,14 @@ const TourTable: FC<TourTableProps> = ({ tours, loading }) => {
                           disabled={loading}
                         >
                           <DownloadIcon />
+                        </Button>
+                        <Button
+                          size="sm"
+                          className="bg-red-500 hover:bg-red-600"
+                          onClick={() => onDelete(tour.id)}
+                          disabled={loading}
+                        >
+                          <TrashBinIcon />
                         </Button>
                       </div>
                     </TableCell>

@@ -9,7 +9,13 @@ export interface Admin {
   email: string;
   created_at: string;
   updated_at: string;
-  employers: unknown[];
+  employer: {
+    id: number;
+    admin_id: number;
+    created_at: string;
+    full_name: string | null;
+    position: string | null;
+  };
 }
 
 export interface LoginResponseData {
@@ -21,4 +27,17 @@ export interface LoginResponse {
   success: boolean;
   message: string;
   data: LoginResponseData;
+}
+
+export type ForgotPasswordType = {
+  email: string;
+};
+
+export type ResetPasswordType = {
+  email: string;
+  newPassword: string;
+};
+
+export type GetCurrentAdminType = {
+  id: number;
 }

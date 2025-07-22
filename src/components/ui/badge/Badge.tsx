@@ -18,6 +18,7 @@ interface BadgeProps {
   startIcon?: React.ReactNode; // Icon at the start
   endIcon?: React.ReactNode; // Icon at the end
   children: React.ReactNode; // Badge content
+  className?: string;
 }
 
 const Badge: React.FC<BadgeProps> = ({
@@ -65,7 +66,7 @@ const Badge: React.FC<BadgeProps> = ({
 
   // Get styles based on size and color variant
   const sizeClass = sizeStyles[size];
-  const colorStyles = variants[variant][color];
+  const colorStyles = variants[variant]?.[color] || "";
 
   return (
     <span className={`${baseStyles} ${sizeClass} ${colorStyles}`}>

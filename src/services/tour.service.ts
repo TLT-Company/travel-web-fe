@@ -34,8 +34,37 @@ export interface Tour {
   start_date: string;
   end_date: string;
   location: string;
+  image_url_1?: string;
+  image_url_2?: string;
+  image_url_3?: string;
+  image_url_4?: string;
+  image_url_5?: string;
+  image_url_6?: string;
+  image_url_7?: string;
+  image_url_8?: string;
+  image_url_9?: string;
+  image_url_10?: string;
   bookings?: Booking[];
   creator?: Creator
+}
+
+export interface TourFormData {
+  name: string;
+  description: string;
+  price: string;
+  start_date: string;
+  end_date: string;
+  location: string;
+  image_url_1?: string;
+  image_url_2?: string;
+  image_url_3?: string;
+  image_url_4?: string;
+  image_url_5?: string;
+  image_url_6?: string;
+  image_url_7?: string;
+  image_url_8?: string;
+  image_url_9?: string;
+  image_url_10?: string;
 }
 
 export interface ApiResponse<T = unknown> {
@@ -68,9 +97,30 @@ export const getListTours = async (
     }, {} as Record<string, string>)
   );
 
-  return await http.get<Tour[]>(`/tours?${query}`);
+  return await http.get<Tour[]>(`/tours?${query}`,{
+    withAuth: false,
+  });
 };
 
 export const getTourDetail = async (id: number): Promise<ApiResponse<Tour>> => {
-  return await http.get<Tour>(`/tours/${id}`);
+  return await http.get<Tour>(`/tours/${id}`, {
+    withAuth: false,
+  });
 };
+
+export const createTour = async (
+  data: TourFormData
+): Promise<ApiResponse<Tour>> => {
+  return await http.post<Tour>(`/tours`, data);
+};
+
+export const updateTour = async (
+  id: number,
+  data: Partial<TourFormData>
+): Promise<ApiResponse<Tour>> => {
+  return await http.patch<Tour>(`/tours/${id}`, data);
+}
+
+export const deleteTour = async (id: number): Promise<ApiResponse> => {
+  return await http.delete(`/tours/${id}`);
+}

@@ -10,7 +10,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { LoginType } from "../type/login";
 import { loginAdmin } from "@/services/login.service";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 
 export default function SignInForm() {
@@ -18,6 +18,7 @@ export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const pathname = usePathname(); 
   
   const SigninSchema = Yup.object({
     email: Yup.string().email("Email không hợp lệ").required("Bắt buộc"),
@@ -28,9 +29,6 @@ export default function SignInForm() {
     setIsLoading(true);
     try {
       const data = await loginAdmin(values);
-      
-      // Debug: Log the response to see the actual structure
-      console.log("Login response:", data);
       
       // Check if data exists and has the expected structure
       if (!data || !data.token || !data.admin) {
@@ -59,23 +57,38 @@ export default function SignInForm() {
 
   return (
     <div className="flex flex-col flex-1 lg:w-1/2 w-full">
-      <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
-        <Link
-          href="/"
-          className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-        >
-          <ChevronLeftIcon />
-          Back to dashboard
-        </Link>
-      </div>
+      {pathname === "/admin/signin" && (
+        <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
+          <Link
+            href="/admin"
+            className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+          >
+            <ChevronLeftIcon />
+           Quay lại
+          </Link>
+        </div>
+      )}
+
+      {pathname === "/user/signin" && (
+        <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
+          <Link
+            href="/"
+            className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+          >
+            <ChevronLeftIcon />
+            Quay lại
+          </Link>
+        </div>
+      )}
+      
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <div className="mb-5 sm:mb-8">
             <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-              Sign In
+              Đăng nhập
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Enter your email and password to sign in!
+              Nhập email và mật khẩu để đăng nhập!
             </p>
           </div>
           <div>
@@ -139,15 +152,25 @@ export default function SignInForm() {
                   <div className="flex items-center gap-3">
                     <Checkbox checked={isChecked} onChange={setIsChecked} disabled={isLoading} />
                     <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
-                      Keep me logged in
+                      Lưu mật khẩu
                     </span>
                   </div>
+                  {pathname === "/user/signin" && (
                   <Link
                     href="/reset-password"
                     className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
                   >
-                    Forgot password?
+                    Quên mật khẩu?
                   </Link>
+                  )}
+                   {pathname === "/admin/signin" && (
+                  <Link
+                    href="/admin/reset-password"
+                    className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                  >
+                    Quên mật khẩu?
+                  </Link>
+                  )}
                 </div>
                 <div>
                   <button 
@@ -155,9 +178,20 @@ export default function SignInForm() {
                     type="submit"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Đang đăng nhập..." : "Sign in"}
+                    {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
                   </button>
                 </div>
+                {pathname === "/user/signin" && (
+                  <div>
+                    <a 
+                      href="/user/signup"
+                      className="w-full inline-flex items-center justify-center font-medium gap-2 rounded-lg transition px-4 py-3 text-sm bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 disabled:cursor-not-allowed disabled:opacity-50" 
+                      type="button"
+                    >
+                      {isLoading ? "Đang đăng nhập..." : "Đăng ký tài khoản"}
+                    </a>
+                  </div>
+                )}
                 </Form>
               )}
             </Formik>
