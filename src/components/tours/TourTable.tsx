@@ -17,7 +17,7 @@ import { Tour } from "@/services/tour.service";
 interface TourTableProps {
   tours: Tour[];
   loading: boolean;
-  onDelete: (id: number) => void;
+  onDelete?: (id: number) => void;
 }
 
 const TourTable: FC<TourTableProps> = ({ tours, loading, onDelete }) => {
@@ -140,7 +140,7 @@ const TourTable: FC<TourTableProps> = ({ tours, loading, onDelete }) => {
                         <Button
                           size="sm"
                           className="bg-red-500 hover:bg-red-600"
-                          onClick={() => onDelete(tour.id)}
+                          onClick={() => onDelete?.(tour.id)}
                           disabled={loading}
                         >
                           <TrashBinIcon />
