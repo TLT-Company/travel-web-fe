@@ -55,6 +55,17 @@ const navItems: NavItem[] = [
     subItems: [{ name: "Danh sách công việc", path: "/admin/task", pro: false }],
   },
   {
+    icon: <ListIcon />,
+    name: "Tours",
+    subItems: [
+      { name: "Danh sách tours", path: "/admin/tours", pro: false },
+      {
+        name: "Danh sách tours đã hoàn thành",
+        path: "/admin/tours/completed-tours", pro: false
+      },
+    ],
+  },
+  {
     icon: <CalenderIcon />,
     name: "Calendar",
     path: "/admin/calendar",
@@ -81,17 +92,6 @@ const navItems: NavItem[] = [
     subItems: [
       { name: "Blank Page", path: "/admin/blank", pro: false },
       { name: "404 Error", path: "/error-404", pro: false },
-    ],
-  },
-  {
-    icon: <ListIcon />,
-    name: "Tours",
-    subItems: [
-      { name: "Danh sách tours", path: "/admin/tours", pro: false },
-      {
-        name: "Chi tiết booking đã hoàn thành",
-        path: "/admin/tours/completed_bookings", pro: false
-      },
     ],
   },
 ];

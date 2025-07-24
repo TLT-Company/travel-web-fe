@@ -83,6 +83,7 @@ export interface FormSearchTourParams {
   price_max?: string,
   page?: number,
   limit?: number,
+  month_year?: string,
 }
 
 export const getListTours = async (
@@ -119,8 +120,25 @@ export const updateTour = async (
   data: Partial<TourFormData>
 ): Promise<ApiResponse<Tour>> => {
   return await http.patch<Tour>(`/tours/${id}`, data);
-}
+};
 
 export const deleteTour = async (id: number): Promise<ApiResponse> => {
   return await http.delete(`/tours/${id}`);
-}
+};
+
+export const getListToursByMonth = async (
+  queryParams?: FormSearchTourParams
+): Promise<ApiResponse<Tour[]>> => {
+  const query = new URLSearchParams(
+    Object.entries(queryParams || {}).reduce((acc, [key, value]) => {
+      if (value !== undefined && value !== '' && value !== null) {
+        acc[key] = String(value);
+      }
+      return acc;
+    }, {} as Record<string, string>)
+  );
+
+  return await http.get<Tour[]>(`/tours/by-month?${query}`, {
+    withAuth: false,
+  });
+};
