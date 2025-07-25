@@ -10,6 +10,7 @@ import Input from '../../form/input/InputField';
 import Select from '../../form/Select';
 import Label from '../../form/Label';
 import { toast } from 'react-toastify';
+import { updateCollaborator } from '@/services/collaborator.service';
 
 interface AddEmployeeModalProps {
   isOpen: boolean;
@@ -30,23 +31,23 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
     { value: 'collaborator', label: 'Cộng tác viên' },
   ];
 
-  const validationSchema = Yup.object({
-    full_name: Yup.string()
-      .required('Họ và tên là bắt buộc'),
-    email: Yup.string()
-      .email('Email không hợp lệ')
-      .required('Email là bắt buộc'),
-    password: Yup.string()
-      .min(6, 'Mật khẩu phải có ít nhất 6 ký tự')
-      .required('Mật khẩu là bắt buộc'),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password')], 'Mật khẩu xác nhận không khớp')
-      .required('Xác nhận mật khẩu là bắt buộc'),
-    role: Yup.string()
-      .required('Vai trò là bắt buộc'),
+  const getValidationSchema = (isEdit: boolean) =>
+  Yup.object({
+    full_name: Yup.string().required('Họ và tên là bắt buộc'),
+    email: Yup.string().email('Email không hợp lệ').required('Email là bắt buộc'),
+    password: isEdit
+      ? Yup.string()
+      : Yup.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự').required('Mật khẩu là bắt buộc'),
+    confirmPassword: isEdit
+      ? Yup.string().oneOf([Yup.ref('password')], 'Mật khẩu xác nhận không khớp')
+      : Yup.string()
+          .oneOf([Yup.ref('password')], 'Mật khẩu xác nhận không khớp')
+          .required('Xác nhận mật khẩu là bắt buộc'),
+    role: Yup.string().required('Vai trò là bắt buộc'),
   });
 
   const handleSubmit = async (values: {
+    id: number | null;
     full_name: string;
     email: string;
     password: string;
@@ -55,20 +56,30 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
   }) => {
     setIsLoading(true);
     try {
-      await registerAdmin({
-        full_name: values.full_name,
-        email: values.email,
-        password: values.password,
-        role: values.role,
-      });
-      
-      toast.success('Thêm nhân viên thành công!');
+      if(dataCollaborator) {
+        await updateCollaborator(dataCollaborator.id.toString(), {
+          id: dataCollaborator.id,
+          full_name: values.full_name,
+          email: values.email,
+          password: values.password,
+          confirmPassword: values.confirmPassword,
+          role: values.role,
+        });
+        toast.success('Cập nhật công tác viên thành công!');
+      } else {
+        await registerAdmin({
+          full_name: values.full_name,
+          email: values.email,
+          password: values.password,
+          role: values.role,
+        });
+        
+        toast.success('Thêm nhân viên thành công!');
+      }
       onSuccess();
       onClose();
-    } catch (error: unknown) {
-      console.error('Error registering admin:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Có lỗi xảy ra khi thêm nhân viên';
-      toast.error(errorMessage);
+    } catch (error: any) {
+      toast.error(error.message || "Có lỗi xảy ra");
     } finally {
       setIsLoading(false);
     }
@@ -83,19 +94,27 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
       <div className="p-6 max-w-sm mx-auto">
-        <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white text-center">
-          Thêm nhân viên mới
-        </h2>
+        {dataCollaborator ? (
+          <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white text-center">
+            Cập nhật cộng tác viên
+          </h2>
+        ): (
+          <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white text-center">
+            Thêm cộng tác viên mới
+          </h2>
+        )}
+        
         
         <Formik
           initialValues={{
+            id: dataCollaborator?.id || null,
             full_name: dataCollaborator?.employer?.full_name || '',
             email: dataCollaborator?.email || '',
             password: '',
             confirmPassword: '',
             role: 'collaborator',
           }}
-          validationSchema={validationSchema}
+          validationSchema={getValidationSchema(!!dataCollaborator?.id)} // Có id => edit
           onSubmit={handleSubmit}
         >
           {({ values, setFieldValue, touched, errors }) => (
@@ -184,13 +203,27 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
                 >
                   Hủy
                 </Button>
-                <button
-                  type="submit"
-                  className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition px-5 py-3.5 text-sm bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 disabled:cursor-not-allowed disabled:opacity-50"
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Đang thêm...' : 'Thêm nhân viên'}
-                </button>
+                {dataCollaborator ? (
+                  <>
+                  <button
+                    type="submit"
+                    className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition px-5 py-3.5 text-sm bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Đang cập nhật...' : 'Cập nhật'}
+                  </button>
+                  </>
+                ):(
+                  <>
+                  <button
+                    type="submit"
+                    className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition px-5 py-3.5 text-sm bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Đang thêm...' : 'Thêm cộng tác viên'}
+                  </button>
+                  </>
+                )}
               </div>
             </Form>
           )}

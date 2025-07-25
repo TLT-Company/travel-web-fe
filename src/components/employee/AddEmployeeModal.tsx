@@ -59,10 +59,11 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
       toast.success('Thêm nhân viên thành công!');
       onSuccess();
       onClose();
-    } catch (error: unknown) {
-      console.error('Error registering admin:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Có lỗi xảy ra khi thêm nhân viên';
-      toast.error(errorMessage);
+    } catch (error: any) {
+      // console.error('Error registering admin:', error);
+      // const errorMessage = error instanceof Error ? error.message : 'Có lỗi xảy ra khi thêm nhân viên';
+      // toast.error(errorMessage);
+      toast.error(error.message || "Có lỗi xảy ra");
     } finally {
       setIsLoading(false);
     }

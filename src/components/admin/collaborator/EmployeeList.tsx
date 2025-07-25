@@ -14,6 +14,8 @@ import Button from "../../ui/button/Button";
 import AddEmployeeModal from './AddEmployeeModal';
 import { format } from 'date-fns';
 import { getAdmin } from '@/services/admmin.service';
+import { deleteCollaborator } from '@/services/collaborator.service';
+import { toast } from 'react-toastify';
 
 const CollaboratorList = () => {
   const [data, setData] = useState<Admin[]>([]);
@@ -229,6 +231,19 @@ const CollaboratorList = () => {
                           variant="outline"
                           size="sm"
                           className="text-red-600 hover:text-red-700"
+                          onClick={async () => {
+                            try {
+                              const confirm = window.confirm("Bạn có chắc chắn muốn xoá admin này?");
+                              if (!confirm) return;
+                        
+                              await deleteCollaborator(String(admin.id));
+                              toast.success("Xóa thành công");
+                              fetchData(pagination.currentPage);
+                              // Gọi refetch hoặc cập nhật lại danh sách
+                            } catch (err: any) {
+                              toast.error("Xóa thất bại");
+                            }
+                          }}
                         >
                           Xóa
                         </Button>
