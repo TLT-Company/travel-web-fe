@@ -6,6 +6,7 @@ import { Modal } from '../ui/modal';
 import Button from '../ui/button/Button';
 import InputField from '../form/input/InputField';
 import Label from '../form/Label';
+import { toast } from 'react-toastify';
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -61,11 +62,12 @@ const TaskModal = ({ isOpen, onClose, onSuccess, task, mode }: TaskModalProps) =
 
       onSuccess();
       onClose();
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi lưu công việc';
-      setError(errorMessage);
-      console.error('Error saving task:', err);
-    } finally {
+    } catch (err: any) {
+      // const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi lưu công việc';
+      // setError(errorMessage);
+      // console.error('Error saving task:', err);
+      toast.error(err.message || "Có lỗi xảy ra");
+      } finally {
       setLoading(false);
     }
   };
