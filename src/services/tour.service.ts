@@ -46,6 +46,7 @@ export interface Tour {
   image_url_10?: string;
   bookings?: Booking[];
   creator?: Creator
+  total_customers?: number;
 }
 
 export interface TourFormData {

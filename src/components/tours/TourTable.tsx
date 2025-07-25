@@ -23,136 +23,143 @@ interface TourTableProps {
 const TourTable: FC<TourTableProps> = ({ tours, loading, onDelete }) => {
   return (
     <div
-      className="overflow-hidden rounded-xl border border-gray-200 bg-white
-                dark:border-white/[0.05] dark:bg-white/[0.03]"
+      className="rounded-xl border border-gray-200 bg-white
+                dark:border-white/[0.05] dark:bg-white/[0.03] w-full"
     >
-      <div className="w-full overflow-x-auto">
-        <div className="min-w-[1102px]">
-          <Table>
-            <TableHeader
-              className="border-b border-gray-100 dark:border-white/[0.05]"
-            >
-              <TableRow>
-                {[
-                  "Tên Tour",
-                  "Mô tả",
-                  "Địa điểm",
-                  "Giá",
-                  "Ngày bắt đầu",
-                  "Ngày kết thúc",
-                  "",
-                ].map((title, index) => (
-                  <TableCell
-                    key={index}
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start
-                              text-theme-xs dark:text-gray-400"
-                  >
-                    {title}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHeader>
+      <div className="w-full max-w-full overflow-x-auto">
+        <Table className="table-auto border-collapse">
+          <TableHeader
+            className="border-b border-gray-100 dark:border-white/[0.05]"
+          >
+            <TableRow>
+              {[
+                "Tên Tour",
+                "Mô tả",
+                "Địa điểm",
+                "Giá",
+                "Ngày bắt đầu",
+                "Ngày kết thúc",
+                "Tổng số khách hàng",
+                "",
+              ].map((title, index) => (
+                <TableCell
+                  key={index}
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start
+                            text-theme-xs dark:text-gray-400 whitespace-nowrap"
+                >
+                  {title}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHeader>
 
-            <TableBody
-              className="divide-y divide-gray-100 dark:divide-white/[0.05]"
-            >
-              {tours.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="px-5 py-4 text-center">
-                    Không có tour nào.
+          <TableBody
+            className="divide-y divide-gray-100 dark:divide-white/[0.05]"
+          >
+            {tours.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="px-5 py-4 text-center">
+                  Không có tour nào.
+                </TableCell>
+              </TableRow>
+            ) : (
+              tours.map((tour, index) => (
+                <TableRow key={index}>
+                  <TableCell
+                    className="px-4 py-3 text-start text-theme-sm
+                              dark:text-gray-400 min-w-[200px]"
+                  >
+                    {tour.name}
+                  </TableCell>
+                  <TableCell
+                    className="px-4 py-3 text-start text-theme-sm
+                              dark:text-gray-400 min-w-[400px]"
+                  >
+                    {tour.description}
+                  </TableCell>
+                  <TableCell
+                    className="px-4 py-3 text-start text-theme-sm
+                              dark:text-gray-400 whitespace-nowrap"
+                  >
+                    {tour.location}
+                  </TableCell>
+                  <TableCell
+                    className="px-4 py-3 text-start text-theme-sm
+                              dark:text-gray-400 whitespace-nowrap"
+                  >
+                    {Number(tour.price).toLocaleString()} VND
+                  </TableCell>
+                  <TableCell
+                    className="px-4 py-3 text-start text-theme-sm
+                              dark:text-gray-400 whitespace-nowrap"
+                  >
+                    <span className="flex justify-center items-center">
+                      {format(new Date(tour.start_date), 'dd/MM/yyyy')}
+                    </span>
+                  </TableCell>
+                  <TableCell
+                    className="px-4 py-3 text-start text-theme-sm
+                              dark:text-gray-400 whitespace-nowrap"
+                  >
+                    <span className="flex justify-center items-center">
+                      {format(new Date(tour.end_date), 'dd/MM/yyyy')}
+                    </span>
+                  </TableCell>
+                  <TableCell
+                    className="px-4 py-3 text-start text-theme-sm
+                              dark:text-gray-400 whitespace-nowrap"
+                  >
+                    <span className="flex justify-center items-center">
+                      {tour.total_customers}
+                    </span>
+                  </TableCell>
+                  <TableCell
+                    className="px-4 py-3 text-start text-theme-sm
+                              dark:text-gray-400 whitespace-nowrap"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Link href={`/admin/tours/${tour.id}`} passHref>
+                        <Button
+                          size="sm"
+                          className="bg-gray-500 hover:bg-gray-600"
+                          disabled={loading}
+                        >
+                          <EyeIcon className="w-6 h-6" />
+                        </Button>
+                      </Link>
+                      <Link href={`/admin/tours/${tour.id}/edit`} passHref>
+                        <Button
+                          size="sm"
+                          className="bg-gray-500 hover:bg-gray-600"
+                          disabled={loading}
+                        >
+                          <PencilIcon className="w-6 h-6" />
+                        </Button>
+                      </Link>
+                      <Button
+                        size="sm"
+                        className="bg-green-500 hover:bg-green-600"
+                        onClick={() => {}}
+                        disabled={loading}
+                      >
+                        <DownloadIcon />
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="bg-red-500 hover:bg-red-600"
+                        onClick={() => onDelete?.(tour.id)}
+                        disabled={loading}
+                      >
+                        <TrashBinIcon />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
-              ) : (
-                tours.map((tour, index) => (
-                  <TableRow key={index}>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      {tour.name}
-                    </TableCell>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      {tour.description}
-                    </TableCell>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      {tour.location}
-                    </TableCell>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      {Number(tour.price).toLocaleString()} VND
-                    </TableCell>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      <span className="flex justify-center items-center">
-                        {format(new Date(tour.start_date), 'dd/MM/yyyy')}
-                      </span>
-                    </TableCell>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      <span className="flex justify-center items-center">
-                        {format(new Date(tour.end_date), 'dd/MM/yyyy')}
-                      </span>
-                    </TableCell>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Link href={`/admin/tours/${tour.id}`} passHref>
-                          <Button
-                            size="sm"
-                            className="bg-gray-500 hover:bg-gray-600"
-                            disabled={loading}
-                          >
-                            <EyeIcon className="w-6 h-6" />
-                          </Button>
-                        </Link>
-                        <Link href={`/admin/tours/${tour.id}/edit`} passHref>
-                          <Button
-                            size="sm"
-                            className="bg-gray-500 hover:bg-gray-600"
-                            disabled={loading}
-                          >
-                            <PencilIcon className="w-6 h-6" />
-                          </Button>
-                        </Link>
-                        <Button
-                          size="sm"
-                          className="bg-green-500 hover:bg-green-600"
-                          onClick={() => {}}
-                          disabled={loading}
-                        >
-                          <DownloadIcon />
-                        </Button>
-                        <Button
-                          size="sm"
-                          className="bg-red-500 hover:bg-red-600"
-                          onClick={() => onDelete?.(tour.id)}
-                          disabled={loading}
-                        >
-                          <TrashBinIcon />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
