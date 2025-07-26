@@ -111,6 +111,6 @@ export const updateCustomer = async (
   return response.data;
 };
 
-export const deleteCustomerById = async (document_number: String, customer_id:Number): Promise<ApiResponse<CustomerRequest>> => {
+export const deleteCustomerById = async (document_number: string, customer_id:number): Promise<ApiResponse<CustomerRequest>> => {
   return await http.delete(`/documents/${document_number}/customers/${customer_id}`);
 }

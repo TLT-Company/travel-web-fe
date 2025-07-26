@@ -29,6 +29,9 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
   ];
 
   const validationSchema = Yup.object({
+    full_name: Yup.string()
+      .required('Họ tên là bắt buộc')
+      .min(2, 'Họ tên phải có ít nhất 2 ký tự'),
     email: Yup.string()
       .email('Email không hợp lệ')
       .required('Email là bắt buộc'),
@@ -43,6 +46,7 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
   });
 
   const handleSubmit = async (values: {
+    full_name: string;
     email: string;
     password: string;
     confirmPassword: string;
@@ -51,6 +55,7 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
     setIsLoading(true);
     try {
       await registerAdmin({
+        full_name: values.full_name,
         email: values.email,
         password: values.password,
         role: values.role,
@@ -59,11 +64,9 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
       toast.success('Thêm nhân viên thành công!');
       onSuccess();
       onClose();
-    } catch (error: any) {
-      // console.error('Error registering admin:', error);
-      // const errorMessage = error instanceof Error ? error.message : 'Có lỗi xảy ra khi thêm nhân viên';
-      // toast.error(errorMessage);
-      toast.error(error.message || "Có lỗi xảy ra");
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Có lỗi xảy ra khi thêm nhân viên';
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -84,6 +87,7 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
         
         <Formik
           initialValues={{
+            full_name: '',
             email: '',
             password: '',
             confirmPassword: '',
@@ -94,6 +98,22 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
         >
           {({ values, setFieldValue, touched, errors }) => (
             <Form className="space-y-6">
+              <div>
+                <Label>Họ tên <span className="text-error-500">*</span></Label>
+                <Field
+                  type="text"
+                  name="full_name"
+                  placeholder="Nhập họ tên"
+                  as={Input}
+                  disabled={isLoading}
+                />
+                <ErrorMessage
+                  name="full_name"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
+
               <div>
                 <Label>Email <span className="text-error-500">*</span></Label>
                 <Field

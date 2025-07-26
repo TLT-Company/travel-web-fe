@@ -16,7 +16,7 @@ import { Custommer } from "@/services/documentCustomer.service";
 
 interface CustomerProps {
   customers: Custommer[];
-  document_id: String;
+  document_id: string;
   loading: boolean;
   onSubmitDelete: (customerId: string) => void;
 }
