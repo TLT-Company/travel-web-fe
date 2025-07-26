@@ -39,7 +39,7 @@ const CustomerForm: FC<Props> = ({
 
   const [provinceOptions, setProvinceOptions] = useState<{ value: string; label: string; code: string }[]>([]);
   const [districtOptions, setDistrictOptions] = useState<{ value: string; label: string; code: string }[]>([]);
-  const [selectedProvinceCode, setSelectedProvinceCode] = useState<Number | null>(null);
+  const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null);
   const [communeOptions, setCommuneOptions] = useState<{ value: string; label: string }[]>([]);
   const [selectedDistrictCode, setSelectedDistrictCode] = useState<number | null>(null);
 
