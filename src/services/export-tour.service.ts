@@ -13,16 +13,16 @@ export interface DocumentExport {
   updated_at: string;
 }
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   message: string;
   data: T;
 }
 
 export const exportTour = async (
-  values: any,
-): Promise<any> => {
-  return await http.post<any>("/appointments", values);
+  values: Record<string, unknown>,
+): Promise<unknown> => {
+  return await http.post<unknown>("/appointments", values);
 };
 
 // Document Export Service
@@ -32,6 +32,7 @@ export const documentExportService = {
   create: (data: Partial<DocumentExport>) => http.post<DocumentExport>('/document-export/', data),
   update: (id: number, data: Partial<DocumentExport>) => http.put<DocumentExport>(`/document-export/${id}/`, data),
   delete: (id: number) => http.delete(`/document-export/${id}/`),
+  performAnalysis: (file_name: string) => http.post<ApiResponse>('/document-export/perform-analysis', { file_name }),
   download: (id: number) => {
     const url = `${ENV_CONFIG.API_BASE_URL}/document-export/download/${id}/`;
     return fetch(url, {
