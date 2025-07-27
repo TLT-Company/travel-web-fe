@@ -5,20 +5,15 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
-  BoxCubeIcon,
-  CalenderIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
   ListIcon,
-  PageIcon,
-  PieChartIcon,
-  PlugInIcon,
-  TableIcon,
+  // PageIcon,
   TaskIcon,
   UserCircleIcon,
 } from "../icons/index";
-import SidebarWidget from "./SidebarWidget";
+// import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;
@@ -27,116 +22,118 @@ type NavItem = {
   subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
 };
 
-const navItems: NavItem[] = [
-  {
-    icon: <GridIcon />,
-    name: "Dashboard",
-    subItems: [{ name: "Ecommerce", path: "/admin", pro: false }],
-  },
-  {
-    icon: <GridIcon />,
-    name: "Quản lý số thông hành",
-    subItems: [{ name: "Danh sách", path: "/admin/thong-hanh/list", pro: false }, 
-      { name: "Lịch sử xuất", path: "/admin/thong-hanh/history-export", pro: false }],
-  },
-  {
-    icon: <UserCircleIcon />,
-    name: "Quản lý nhân viên",
-    subItems: [{ name: "Danh sách nhân viên", path: "/admin/employees", pro: false }],
-  },
-  {
-    icon: <UserCircleIcon />,
-    name: "Quản lý cộng tác viên",
-    subItems: [{ name: "Danh sách cộng tác viên", path: "/admin/collaborators", pro: false }],
-  },
-  {
-    icon: <TaskIcon />,
-    name: "Quản lý công việc",
-    subItems: [{ name: "Danh sách công việc", path: "/admin/task", pro: false }],
-  },
-  {
-    icon: <ListIcon />,
-    name: "Tours",
-    subItems: [
-      { name: "Danh sách tours", path: "/admin/tours", pro: false },
-      {
-        name: "Danh sách tours đã hoàn thành",
-        path: "/admin/tours/completed-tours", pro: false
-      },
-    ],
-  },
-  {
-    icon: <CalenderIcon />,
-    name: "Calendar",
-    path: "/admin/calendar",
-  },
-  {
-    icon: <UserCircleIcon />,
-    name: "User Profile",
-    path: "/admin/profile",
-  },
-
-  {
-    name: "Forms",
-    icon: <ListIcon />,
-    subItems: [{ name: "Form Elements", path: "/admin/form-elements", pro: false }],
-  },
-  {
-    name: "Tables",
-    icon: <TableIcon />,
-    subItems: [{ name: "Basic Tables", path: "/admin/basic-tables", pro: false }],
-  },
-  {
-    name: "Pages",
-    icon: <PageIcon />,
-    subItems: [
-      { name: "Blank Page", path: "/admin/blank", pro: false },
-      { name: "404 Error", path: "/error-404", pro: false },
-    ],
-  },
-];
-
-const othersItems: NavItem[] = [
-  {
-    icon: <PieChartIcon />,
-    name: "Charts",
-    subItems: [
-      { name: "Line Chart", path: "/admin/line-chart", pro: false },
-      { name: "Bar Chart", path: "/admin/bar-chart", pro: false },
-    ],
-  },
-  {
-    icon: <BoxCubeIcon />,
-    name: "UI Elements",
-    subItems: [
-      { name: "Alerts", path: "/admin/alerts", pro: false },
-      { name: "Avatar", path: "/admin/avatars", pro: false },
-      { name: "Badge", path: "/admin/badge", pro: false },
-      { name: "Buttons", path: "/admin/buttons", pro: false },
-      { name: "Images", path: "/admin/images", pro: false },
-      { name: "Videos", path: "/admin/videos", pro: false },
-    ],
-  },
-  {
-    icon: <PlugInIcon />,
-    name: "Authentication",
-    subItems: [
-      { name: "Sign In", path: "/admin/signin", pro: false },
-      { name: "Sign Up", path: "/admin/signup", pro: false },
-    ],
-  },
-];
-
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
+  const [userRole, setUserRole] = useState<string>('');
+  const [navItems, setNavItems] = useState<NavItem[]>([]);
+
+  // Lấy thông tin user từ localStorage
+  useEffect(() => {
+    try {
+      const userData = localStorage.getItem("userLoginTravel");
+      if (userData) {
+        const user = JSON.parse(userData);
+        setUserRole(user.role || '');
+      }
+    } catch (error) {
+      console.error("Error parsing user data:", error);
+    }
+  }, []);
+
+  // Định nghĩa menu items dựa trên role
+  const getNavItems = useCallback((): NavItem[] => {
+    if (userRole === 'admin') {
+      // Chỉ hiển thị các mục cần thiết cho admin
+      return [
+        {
+          icon: <UserCircleIcon />,
+          name: "Quản lý cộng tác viên",
+          subItems: [{ name: "Danh sách cộng tác viên", path: "/admin/collaborators", pro: false }],
+        },
+        {
+          icon: <TaskIcon />,
+          name: "Quản lý công việc",
+          subItems: [{ name: "Danh sách công việc", path: "/admin/task", pro: false }],
+        },
+        {
+          icon: <ListIcon />,
+          name: "Tours",
+          subItems: [
+            { name: "Danh sách tours", path: "/admin/tours", pro: false },
+            {
+              name: "Danh sách tours đã hoàn thành",
+              path: "/admin/tours/completed-tours", pro: false
+            },
+          ],
+        },
+        {
+          icon: <UserCircleIcon />,
+          name: "User Profile",
+          path: "/admin/profile",
+        },
+      ];
+    } else {
+      // Hiển thị tất cả menu cho super_admin
+      return [
+        {
+          icon: <GridIcon />,
+          name: "Dashboard",
+          subItems: [{ name: "Ecommerce", path: "/admin", pro: false }],
+        },
+        {
+          icon: <GridIcon />,
+          name: "Quản lý số thông hành",
+          subItems: [{ name: "Danh sách", path: "/admin/thong-hanh/list", pro: false }, 
+            { name: "Lịch sử xuất", path: "/admin/thong-hanh/history-export", pro: false }],
+        },
+        {
+          icon: <UserCircleIcon />,
+          name: "Quản lý nhân viên",
+          subItems: [{ name: "Danh sách nhân viên", path: "/admin/employees", pro: false }],
+        },
+        {
+          icon: <UserCircleIcon />,
+          name: "Quản lý cộng tác viên",
+          subItems: [{ name: "Danh sách cộng tác viên", path: "/admin/collaborators", pro: false }],
+        },
+        {
+          icon: <TaskIcon />,
+          name: "Quản lý công việc",
+          subItems: [{ name: "Danh sách công việc", path: "/admin/task", pro: false }],
+        },
+        {
+          icon: <ListIcon />,
+          name: "Tours",
+          subItems: [
+            { name: "Danh sách tours", path: "/admin/tours", pro: false },
+            {
+              name: "Danh sách tours đã hoàn thành",
+              path: "/admin/tours/completed-tours", pro: false
+            },
+          ],
+        },
+        {
+          icon: <UserCircleIcon />,
+          name: "User Profile",
+          path: "/admin/profile",
+        },
+      ];
+    }
+  }, [userRole]);
+
+  // Cập nhật navItems khi userRole thay đổi
+  useEffect(() => {
+    const items = getNavItems();
+    setNavItems(items);
+  }, [getNavItems]);
 
   const renderMenuItems = (
-    navItems: NavItem[],
+    items: NavItem[],
     menuType: "main" | "others"
   ) => (
     <ul className="flex flex-col gap-4">
-      {navItems.map((nav, index) => (
+      {items.map((nav, index) => (
         <li key={nav.name}>
           {nav.subItems ? (
             <button
@@ -272,8 +269,8 @@ const AppSidebar: React.FC = () => {
   useEffect(() => {
     // Check if the current path matches any submenu item
     let submenuMatched = false;
-    ["main", "others"].forEach((menuType) => {
-      const items = menuType === "main" ? navItems : othersItems;
+    ["main"].forEach((menuType) => {
+      const items = menuType === "main" ? navItems : [];
       items.forEach((nav, index) => {
         if (nav.subItems) {
           nav.subItems.forEach((subItem) => {
@@ -293,7 +290,7 @@ const AppSidebar: React.FC = () => {
     if (!submenuMatched) {
       setOpenSubmenu(null);
     }
-  }, [pathname,isActive]);
+  }, [pathname, isActive, navItems]);
 
   useEffect(() => {
     // Set the height of the submenu items when the submenu is opened
@@ -403,11 +400,11 @@ const AppSidebar: React.FC = () => {
                   <HorizontaLDots />
                 )}
               </h2>
-              {renderMenuItems(othersItems, "others")}
+              {/* {renderMenuItems(othersItems, "others")} */}
             </div>
           </div>
         </nav>
-        {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}
+        {/* {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}   */}
       </div>
     </aside>
   );
