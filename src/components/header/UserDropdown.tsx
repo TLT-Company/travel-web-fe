@@ -1,7 +1,7 @@
 'use client';
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { redirect, useRouter } from "next/navigation";
@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const [profilePath, setProfilePath] = useState("/profile");
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.stopPropagation();
@@ -37,6 +38,29 @@ export default function UserDropdown() {
       toast.error("Đăng xuất thất bại. Vui lòng thử lại.");
     }
   };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const userData = localStorage.getItem("userLoginTravel");
+
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          if (user.role === "collaborator") {
+            setProfilePath("/collaborator/profile");
+          } else {
+            setProfilePath("/profile");
+          }
+        } catch (err) {
+          console.error("Lỗi phân tích userLoginTravel:", err);
+          setProfilePath("/profile");
+        }
+      } else {
+        setProfilePath("/profile");
+      }
+    }
+  }, []);
+
   return (
     <div className="relative">
       <button
@@ -93,7 +117,7 @@ export default function UserDropdown() {
             <DropdownItem
               onItemClick={closeDropdown}
               tag="a"
-              href="/profile"
+              href={profilePath}
               className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
             >
               <svg
