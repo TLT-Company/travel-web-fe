@@ -31,7 +31,7 @@ export default function AuthLayout({
                   />
                 </Link>
                 <p className="text-center text-gray-400 dark:text-white/60">
-                  Admin quản trị
+                  Login User
                 </p>
               </div>
             </div>
