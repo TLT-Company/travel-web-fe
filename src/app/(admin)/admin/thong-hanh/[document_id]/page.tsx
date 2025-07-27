@@ -1,6 +1,6 @@
 import ComponentCard from '@/components/common/ComponentCard';
 import PageBreadcrumb from '@/components/common/PageBreadCrumb';
-import DocumentCustomerPage from '@/components/listThongHanh/DocumentCustomer';
+import DocumentDetailPage from '@/components/listThongHanh/detail/DocumentDetail';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -11,10 +11,10 @@ export const metadata: Metadata = {
 const ThongHanh = () => {
   return (
     <div>
-      <PageBreadcrumb pageTitle="Thông Hành" />
+      <PageBreadcrumb pageTitle="Thông hành" />
       <div className="space-y-6">
-        <ComponentCard title="Danh sách Thông hành">
-          <DocumentCustomerPage />
+        <ComponentCard title="Danh sách khách hàng">
+          <DocumentDetailPage />
         </ComponentCard>
       </div>
     </div>

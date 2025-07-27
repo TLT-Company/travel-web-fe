@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.css';
+import 'flatpickr/dist/plugins/monthSelect/style.css';
+import monthSelectPlugin from 'flatpickr/dist/plugins/monthSelect';
 import Label from './Label';
 import { CalenderIcon } from '../../icons';
 import Hook = flatpickr.Options.Hook;
@@ -13,6 +15,7 @@ type PropsType = {
   defaultDate?: DateOption;
   label?: string;
   placeholder?: string;
+  monthSelectMode?: boolean;
 };
 
 export default function DatePicker({
@@ -22,23 +25,40 @@ export default function DatePicker({
   label,
   defaultDate,
   placeholder,
+  monthSelectMode = false,
 }: PropsType) {
   useEffect(() => {
-    const flatPickr = flatpickr(`#${id}`, {
+    const options: flatpickr.Options.Options = {
       mode: mode || "single",
       static: true,
       monthSelectorType: "static",
-      dateFormat: "Y-m-d",
       defaultDate,
       onChange,
-    });
+    };
+
+    // Nếu bật chế độ chọn tháng
+    if (monthSelectMode) {
+      options.dateFormat = "Y-m"; // YYYY-MM
+      options.plugins = [
+        monthSelectPlugin({
+          shorthand: true,
+          dateFormat: "Y-m",
+          altFormat: "F Y",
+          theme: "light",
+        }),
+      ];
+    } else {
+      options.dateFormat = "Y-m-d";
+    }
+
+    const flatPickr = flatpickr(`#${id}`, options);
 
     return () => {
       if (!Array.isArray(flatPickr)) {
         flatPickr.destroy();
       }
     };
-  }, [mode, onChange, id, defaultDate]);
+  }, [mode, onChange, id, defaultDate, monthSelectMode]);
 
   return (
     <div>

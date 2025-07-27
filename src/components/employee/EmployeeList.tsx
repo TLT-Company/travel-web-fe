@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getAdminList, Admin, Employer } from '../../services/employee.service';
+import { getAdminList, Admin } from '../../services/employee.service';
 import {
   Table,
   TableBody,
@@ -12,6 +12,8 @@ import {
 import Badge from "../ui/badge/Badge";
 import Button from "../ui/button/Button";
 import AddEmployeeModal from './AddEmployeeModal';
+import EditEmployeeModal from './EditEmployeeModal';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { format } from 'date-fns';
 
 const EmployeeList = () => {
@@ -19,6 +21,9 @@ const EmployeeList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<Admin | null>(null);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -59,6 +64,24 @@ const EmployeeList = () => {
 
   const handleAddSuccess = () => {
     fetchData(pagination.currentPage);
+  };
+
+  const handleEditSuccess = () => {
+    fetchData(pagination.currentPage);
+  };
+
+  const handleDeleteSuccess = () => {
+    fetchData(pagination.currentPage);
+  };
+
+  const handleEdit = (employee: Admin) => {
+    setSelectedEmployee(employee);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDelete = (employee: Admin) => {
+    setSelectedEmployee(employee);
+    setIsDeleteModalOpen(true);
   };
 
   const formatDate = (dateString: string) => {
@@ -196,6 +219,7 @@ const EmployeeList = () => {
                           variant="outline"
                           size="sm"
                           className="text-blue-600 hover:text-blue-700"
+                          onClick={() => handleEdit(admin)}
                         >
                           Sửa
                         </Button>
@@ -203,6 +227,7 @@ const EmployeeList = () => {
                           variant="outline"
                           size="sm"
                           className="text-red-600 hover:text-red-700"
+                          onClick={() => handleDelete(admin)}
                         >
                           Xóa
                         </Button>
@@ -250,6 +275,26 @@ const EmployeeList = () => {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSuccess={handleAddSuccess}
+      />
+
+      <EditEmployeeModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedEmployee(null);
+        }}
+        onSuccess={handleEditSuccess}
+        employee={selectedEmployee}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setSelectedEmployee(null);
+        }}
+        onSuccess={handleDeleteSuccess}
+        employee={selectedEmployee}
       />
     </div>
   );

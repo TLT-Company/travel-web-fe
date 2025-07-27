@@ -1,0 +1,91 @@
+"use client";
+
+import React, { FC } from "react";
+import { format } from "date-fns";
+import Link from "next/link";
+import Button from "@/components/ui/button/Button";
+
+import { DocumentCustommer } from "@/services/documentCustomer.service";
+import { documentExportService } from "@/services/export-tour.service";
+import { toast } from "react-toastify";
+
+interface DocumentCustomerProps {
+  documentCustomers: DocumentCustommer[];
+  loading: boolean;
+}
+
+const DocumentCustomerTable: FC<DocumentCustomerProps> = ({ documentCustomers, loading }) => {
+  const handleExport = async (documentNumber: string) => {
+    try {
+      const response = await documentExportService.performAnalysis(documentNumber);
+      
+      if (response.success) {
+        toast.success(response.message || "Trích xuất thông tin thành công!");
+      } else {
+        toast.error(response.message || "Trích xuất thông tin thất bại!");
+      }
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Có lỗi xảy ra khi trích xuất thông tin!");
+    }
+  };
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="min-w-full border border-gray-200 bg-white rounded-lg shadow-sm">
+        <thead>
+          <tr className="bg-gray-100 text-left text-sm font-medium text-gray-700">
+            <th className="px-4 py-3">Số thông hành</th>
+            <th className="px-4 py-3">Ngày tạo</th>
+            <th className="px-4 py-3">Số lượng khách hàng</th>
+            <th className="px-4 py-3">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          {documentCustomers.length === 0 ? (
+            <tr>
+              <td colSpan={4} className="px-4 py-3 text-center text-gray-500">
+                Không có số thông hành nào.
+              </td>
+            </tr>
+          ) : (
+            documentCustomers.map((documentCustomer, index) => (
+              <tr key={index} className="text-sm border-t hover:bg-gray-50">
+                <td className="px-4 py-3 font-medium">
+                  {documentCustomer.document_number}
+                </td>
+                <td className="px-4 py-3">
+                  {format(new Date(documentCustomer.created_at), 'dd/MM/yyyy')}
+                </td>
+                <td className="px-4 py-3">
+                  {documentCustomer.customer_count}
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <Link href={`/admin/thong-hanh/${documentCustomer.document_number}`} passHref>
+                      <Button
+                        className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1"
+                        disabled={loading}
+                      >
+                        Chỉnh sửa
+                      </Button>
+                    </Link>
+                    <Button
+                      className="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1"
+                      onClick={() => handleExport(documentCustomer.document_number)}
+                      disabled={loading}
+                    >
+                      Trích xuất
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default DocumentCustomerTable;

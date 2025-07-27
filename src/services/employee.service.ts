@@ -55,6 +55,29 @@ export interface RegisterAdminResponse {
   };
 }
 
+export interface UpdateAdminRequest {
+  full_name: string;
+  position: string;
+}
+
+export interface UpdateAdminResponse {
+  success: boolean;
+  message: string;
+  data: {
+    id: number;
+    admin_id: number;
+    full_name: string;
+    position: string;
+    referral_code: string | null;
+    created_at: string;
+  };
+}
+
+export interface DeleteAdminResponse {
+  success: boolean;
+  message: string;
+}
+
 export const getAdminList = async (page: number = 1): Promise<AdminListResponse> => {
   const response = await http.get<AdminListResponse>(`/admin/list?page=${page}`);
   return response.data;
@@ -67,5 +90,15 @@ export const getCollaboratorList = async (page: number = 1): Promise<AdminListRe
 
 export const registerAdmin = async (data: RegisterAdminRequest): Promise<RegisterAdminResponse> => {
   const response = await http.post<RegisterAdminResponse>("/auth/admin/register", data);
+  return response.data;
+};
+
+export const updateAdmin = async (id: number, data: UpdateAdminRequest): Promise<UpdateAdminResponse> => {
+  const response = await http.put<UpdateAdminResponse>(`/admin/${id}`, data);
+  return response.data;
+};
+
+export const deleteAdmin = async (id: number): Promise<DeleteAdminResponse> => {
+  const response = await http.delete<DeleteAdminResponse>(`/admin/${id}`);
   return response.data;
 }; 

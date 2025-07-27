@@ -6,14 +6,7 @@ import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
 import { redirect, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { toast } from 'react-toastify';
 import { jwtDecode } from "jwt-decode";
-import { getCurrentAdmin } from "@/services/login.service";
-
-type JwtPayload = {
-  exp: number;
-  [key: string]: any;
-};
 
 export default function AdminLayout({
   children,

@@ -96,14 +96,22 @@ class Http {
       ...options,
     });
 
+    // if (!response.ok) {
+    //   throw new ApiError(
+    //     `HTTP error! status: ${response.status}`,
+    //     response.status
+    //   );
+    // }
+
+    // return response.json();
+    const responseBody = await response.json();
+
     if (!response.ok) {
-      throw new ApiError(
-        `HTTP error! status: ${response.status}`,
-        response.status
-      );
+      const message = responseBody?.message || `HTTP error! status: ${response.status}`;
+      throw new ApiError(message, response.status);
     }
 
-    return response.json();
+    return responseBody;
   }
 
   async put<T = any>(endpoint: string, data: any, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
@@ -123,20 +131,20 @@ class Http {
     );
 
     const response = await fetch(url, {
-      method: 'POST',
+      method: 'PUT',
       headers,
       body: isFormData ? data : JSON.stringify(data),
       ...options,
     });
 
+    const responseBody = await response.json();
+
     if (!response.ok) {
-      throw new ApiError(
-        `HTTP error! status: ${response.status}`,
-        response.status
-      );
+      const message = responseBody?.message || `HTTP error! status: ${response.status}`;
+      throw new ApiError(message, response.status);
     }
 
-    return response.json();
+    return responseBody;
   }
 
   async patch<T = any>(endpoint: string, data: any, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
@@ -162,14 +170,14 @@ class Http {
       ...options,
     });
 
+    const responseBody = await response.json();
+
     if (!response.ok) {
-      throw new ApiError(
-        `HTTP error! status: ${response.status}`,
-        response.status
-      );
+      const message = responseBody?.message || `HTTP error! status: ${response.status}`;
+      throw new ApiError(message, response.status);
     }
 
-    return response.json();
+    return responseBody;
   }
 
   async delete<T = any>(endpoint: string, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
@@ -185,14 +193,14 @@ class Http {
       ...options,
     });
 
+    const responseBody = await response.json();
+
     if (!response.ok) {
-      throw new ApiError(
-        `HTTP error! status: ${response.status}`,
-        response.status
-      );
+      const message = responseBody?.message || `HTTP error! status: ${response.status}`;
+      throw new ApiError(message, response.status);
     }
 
-    return response.json();
+    return responseBody;
   }
 }
 

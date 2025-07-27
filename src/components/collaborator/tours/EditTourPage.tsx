@@ -133,13 +133,13 @@ export default function EditTourPage() {
                 className="divide-y divide-gray-100 dark:divide-white/[0.05]"
               >
                 {tour.bookings && tour.bookings.length > 0 ? (
-                  tour.bookings.map((booking, index) => (
+                  tour.bookings.filter((booking) => booking.assignedAdmin?.role == 'collaborator').map((booking, index) => (
                     <TableRow key={index}>
                       <TableCell
                         className="px-4 py-3 text-start text-theme-sm
                                   dark:text-gray-400"
                       >
-                        {booking?.customer?.full_name}
+                        {booking?.user?.customer?.full_name}
                       </TableCell>
                       <TableCell
                         className="px-4 py-3 text-start text-theme-sm

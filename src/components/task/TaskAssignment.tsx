@@ -14,6 +14,7 @@ import Badge from "../ui/badge/Badge";
 import Button from "../ui/button/Button";
 import Select from "../form/Select";
 import { format } from 'date-fns';
+import { toast } from 'react-toastify';
 
 const TaskAssignment = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -96,10 +97,11 @@ const TaskAssignment = () => {
       fetchData(pagination.currentPage);
       
       alert('Giao việc thành công!');
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi giao việc';
-      alert(errorMessage);
-      console.error('Error assigning task:', err);
+    } catch (err: any) {
+      // const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi giao việc';
+      // alert(errorMessage);
+      // console.error('Error assigning task:', err);
+      toast.error(err.message || "Có lỗi xảy ra");
     } finally {
       setAssigning(false);
     }

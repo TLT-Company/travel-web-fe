@@ -1,44 +1,34 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import LoadingOverlay from "../common/LoadingOverlay";
+import LoadingOverlay from "@/components/common/LoadingOverlay";
 import {
   Tour,
-  FormSearchTourParams,
-  getListTours,
-  deleteTour
+  getListToursByMonth
 } from "@/services/tour.service";
-import Pagination from "../tables/Pagination";
+import Pagination from "@/components/tables/Pagination";
 import TourTable from "./TourTable";
-import FormSearchTour from "./FormSearchTour";
 import { toast } from 'react-toastify';
-
+import DatePicker from "@/components/form/date-picker";
+import { format } from "date-fns";
 
 export default function ToursPage() {
   const [tours, setTours] = useState<Tour[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalTours, setTotalTours] = useState<number>(0);
-  const [
-    searchParams, setSearchParams
-  ] = useState<FormSearchTourParams | null>(null);
-  const [formSearch, setFormSearch] = useState<FormSearchTourParams>({
-    name: "",
-    location: "",
-    price_min: "",
-    price_max: "",
-    start_date: "",
-    end_date: "",
-  });
+  const [monthYear, setMonthYear] = useState<string>(() =>
+    format(new Date(), "yyyy-MM")
+  );
   const toursPerPage = 20;
 
   const fetchTours = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await getListTours({
-        ...searchParams,
+      const result = await getListToursByMonth({
         page: currentPage,
         limit: toursPerPage,
+        month_year: monthYear,
       });
 
       if (result.success) {
@@ -54,7 +44,7 @@ export default function ToursPage() {
     } finally {
       setLoading(false);
     }
-  }, [searchParams, currentPage]);
+  }, [currentPage, monthYear]);
 
   useEffect(() => {
     fetchTours();
@@ -69,42 +59,27 @@ export default function ToursPage() {
     setCurrentPage(page);
   };
 
-  const handleDelete = async (id: number) => {
-    const confirmDelete = confirm("Bạn có chắc chắn muốn xóa tour này?");
-    if (!confirmDelete) return;
-
-    try {
-      setLoading(true);
-      await deleteTour(id);
-      toast.success("Xóa tour thành công!");
-      await fetchTours();
-    } catch (error) {
-      console.log("Xóa tour thất bại:", error);
-      toast.error("Xóa tour thất bại");
-    } finally {
-      setLoading(false);
+  const handleChangeMonth = (selectedDates: Date[]) => {
+    if (selectedDates?.[0]) {
+      const monthYear = format(selectedDates[0], "yyyy-MM");
+      setMonthYear(monthYear);
+      setCurrentPage(1);
     }
-  }
+  };
 
   return (
     <div>
-      <FormSearchTour
-        formSearch={formSearch}
-        setFormSearch={setFormSearch}
-        onSubmitSearch={(params) => {
-          setCurrentPage(1);
-          setSearchParams(params);
-        }}
-        loading={loading}
-      />
-
-      <div className="mb-4 text-right">
-        <p className="text-sm text-gray-600 mr-1">
-          Tổng số tour: <span className="text-black">{totalTours}</span>
-        </p>
+      <div className="w-[30%] mb-8">
+        <DatePicker
+          id="month-picker"
+          label="Chọn tháng"
+          monthSelectMode={true}
+          defaultDate={new Date(`${monthYear}-01`)}
+          onChange={handleChangeMonth}
+        />
       </div>
 
-      <TourTable tours={tours} loading={loading} onDelete={handleDelete} />
+      <TourTable tours={tours} loading={loading} />
 
       {totalPages > 1 && (
         <div className="mt-6">

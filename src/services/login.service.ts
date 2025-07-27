@@ -36,3 +36,12 @@ export const getCurrentAdmin = async (): Promise<any> => {
     withAuth: true,
   });
 };
+
+export const loginCustomer = async (
+  values: LoginType
+): Promise<LoginResponseData> => {
+  const response = await http.post<LoginResponseData>("/auth/user/login", values, {
+    withAuth: false,
+  });
+  return response.data; // Return the data part which contains admin and token
+};

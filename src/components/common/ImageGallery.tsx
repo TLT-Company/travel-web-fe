@@ -37,7 +37,7 @@ export default function ImageGallery({ images }: Props) {
   };
 
   const handleNext = () => {
-    if (activeIndex < images.length - 1) {
+    if (activeIndex < images?.length - 1) {
       setActiveIndex((prev) => prev + 1);
     }
   };
