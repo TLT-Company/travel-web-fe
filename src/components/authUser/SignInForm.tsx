@@ -8,7 +8,7 @@ import React, { useState } from "react";
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { LoginType } from "../type/login";
-import { loginAdmin } from "@/services/login.service";
+import { loginAdmin, loginCustomer } from "@/services/login.service";
 import { toast } from "react-toastify";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -28,24 +28,25 @@ export default function SignInForm() {
   const handleLogin = async (values: LoginType) => {
     setIsLoading(true);
     try {
-      const data = await loginAdmin(values);
-      
+      const data = await loginCustomer(values);
       // Check if data exists and has the expected structure
-      if (!data || !data.token || !data.admin) {
+      if (!data || !data.token || !data.user) {
         throw new Error("Invalid response structure from server");
       }
       
       // Lưu token và thông tin user vào localStorage
       localStorage.setItem("accessTokenTravel", data.token);
-      localStorage.setItem("userLoginTravel", JSON.stringify(data.admin));
+      localStorage.setItem("userLoginTravel", JSON.stringify(data.user));
       
       // Hiển thị thông báo thành công
       toast.success("Đăng nhập thành công!");
       
       // Chuyển hướng đến trang admin sau 1 giây
-      setTimeout(() => {
-        router.push("/admin");
-      }, 1000);
+      if(data?.user?.role === "user") {
+        setTimeout(() => {
+          router.push("/");
+        }, 1000);
+      }
       
     } catch (error) {
       console.error("Login error:", error);

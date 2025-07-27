@@ -103,10 +103,8 @@ const CollaboratorList = () => {
   }
 
   const handleEdit = async (id: number) => {
-    // debugger;
     try {
       const result = await getAdmin(String(id));
-      // debugger;
       if (result.success) {
         setDataCollaborator(result.data);
         setIsAddModalOpen(true)
@@ -114,10 +112,7 @@ const CollaboratorList = () => {
     }catch (error) {
       console.error('Error fetching admin data:', error);
     }
-    // console.log('Edit collaborator with ID:', id); 
   };
-
-  console.log('dataCollaborator', dataCollaborator);
 
   return (
     <div className="space-y-6">

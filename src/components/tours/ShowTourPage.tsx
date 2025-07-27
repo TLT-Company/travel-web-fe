@@ -159,7 +159,7 @@ export default function ShowTourPage() {
                         className="px-4 py-3 text-start text-theme-sm
                                   dark:text-gray-400"
                       >
-                        {booking.customer.full_name}
+                        {booking?.user?.customer?.full_name}
                       </TableCell>
                       <TableCell
                         className="px-4 py-3 text-start text-theme-sm
@@ -171,7 +171,7 @@ export default function ShowTourPage() {
                         className="px-4 py-3 text-start text-theme-sm
                                   dark:text-gray-400"
                       >
-                        {booking.assignedAdmin.email}
+                        {booking?.assignedAdmin?.email}
                       </TableCell>
                       <TableCell
                         className="px-4 py-3 text-start text-theme-sm

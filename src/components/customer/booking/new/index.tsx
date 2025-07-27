@@ -1,7 +1,8 @@
 'use client';
 import { createBooking } from "@/services/booking.service";
+import { logoutAdmin } from "@/services/login.service";
 import { useFormik } from "formik";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -14,6 +15,7 @@ const CustomerBookingNew = (props: params) => {
   const [backImage, setBackImage] = useState<File | null>(null);
   const searchParams = useSearchParams();
   const referralCode = searchParams.get("referral_code");
+  const router = useRouter();
 
   const formik = useFormik({
     initialValues: {
@@ -51,6 +53,23 @@ const CustomerBookingNew = (props: params) => {
       }
     },
   });
+  const handleLogout = async () => {
+    try {
+      const response = await logoutAdmin();
+      if(response.success) {
+        localStorage.removeItem("accessTokenTravel");
+        localStorage.removeItem("userLoginTravel");
+        toast.success(response.message);
+        setTimeout(() => {
+          router.push("/user/signin");
+        }, 1500);
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Có thể hiển thị toast hoặc thông báo lỗi
+      toast.error("Đăng xuất thất bại. Vui lòng thử lại.");
+    }
+  }
 
   return (
     <form
@@ -102,6 +121,13 @@ const CustomerBookingNew = (props: params) => {
         className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
       >
         Gửi thông tin
+      </button>
+      <button
+        type="button"
+        onClick={() => {handleLogout()}}
+        className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+      >
+        Đăng xuất
       </button>
     </form>
   );
