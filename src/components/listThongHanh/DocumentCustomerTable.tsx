@@ -1,18 +1,13 @@
 "use client";
 
 import React, { FC } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { format } from "date-fns";
 import Link from "next/link";
 import Button from "@/components/ui/button/Button";
-import { PencilIcon, DownloadIcon } from "@/icons";
+
 import { DocumentCustommer } from "@/services/documentCustomer.service";
+import { documentExportService } from "@/services/export-tour.service";
+import { toast } from "react-toastify";
 
 interface DocumentCustomerProps {
   documentCustomers: DocumentCustommer[];
@@ -20,97 +15,75 @@ interface DocumentCustomerProps {
 }
 
 const DocumentCustomerTable: FC<DocumentCustomerProps> = ({ documentCustomers, loading }) => {
-  return (
-    <div
-      className="overflow-hidden rounded-xl border border-gray-200 bg-white
-                dark:border-white/[0.05] dark:bg-white/[0.03]"
-    >
-      <div className="w-full overflow-x-auto">
-        <div className="min-w-[1102px]">
-          <Table>
-            <TableHeader
-              className="border-b border-gray-100 dark:border-white/[0.05]"
-            >
-              <TableRow>
-                {[
-                  "Số thông hành",
-                  "Ngày tạo",
-                  "Số lượng khách hàng",
-                  "",
-                ].map((title, index) => (
-                  <TableCell
-                    key={index}
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start
-                              text-theme-xs dark:text-gray-400"
-                  >
-                    {title}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHeader>
+  const handleExport = async (documentNumber: string) => {
+    try {
+      const response = await documentExportService.performAnalysis(documentNumber);
+      
+      if (response.success) {
+        toast.success(response.message || "Trích xuất thông tin thành công!");
+      } else {
+        toast.error(response.message || "Trích xuất thông tin thất bại!");
+      }
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Có lỗi xảy ra khi trích xuất thông tin!");
+    }
+  };
 
-            <TableBody
-              className="divide-y divide-gray-100 dark:divide-white/[0.05]"
-            >
-              {documentCustomers.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="px-5 py-4 text-center">
-                    Không có số thông hành nào.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                documentCustomers.map((documentCustomer, index) => (
-                  <TableRow key={index}>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
+  return (
+    <div className="overflow-x-auto">
+      <table className="min-w-full border border-gray-200 bg-white rounded-lg shadow-sm">
+        <thead>
+          <tr className="bg-gray-100 text-left text-sm font-medium text-gray-700">
+            <th className="px-4 py-3">Số thông hành</th>
+            <th className="px-4 py-3">Ngày tạo</th>
+            <th className="px-4 py-3">Số lượng khách hàng</th>
+            <th className="px-4 py-3">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          {documentCustomers.length === 0 ? (
+            <tr>
+              <td colSpan={4} className="px-4 py-3 text-center text-gray-500">
+                Không có số thông hành nào.
+              </td>
+            </tr>
+          ) : (
+            documentCustomers.map((documentCustomer, index) => (
+              <tr key={index} className="text-sm border-t hover:bg-gray-50">
+                <td className="px-4 py-3 font-medium">
+                  {documentCustomer.document_number}
+                </td>
+                <td className="px-4 py-3">
+                  {format(new Date(documentCustomer.created_at), 'dd/MM/yyyy')}
+                </td>
+                <td className="px-4 py-3">
+                  {documentCustomer.customer_count}
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <Link href={`/admin/thong-hanh/${documentCustomer.document_number}`} passHref>
+                      <Button
+                        className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1"
+                        disabled={loading}
+                      >
+                        Chỉnh sửa
+                      </Button>
+                    </Link>
+                    <Button
+                      className="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1"
+                      onClick={() => handleExport(documentCustomer.document_number)}
+                      disabled={loading}
                     >
-                      {documentCustomer.document_number}
-                    </TableCell>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                       {format(new Date(documentCustomer.created_at), 'dd/MM/yyyy')}
-                    </TableCell>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      {documentCustomer.customer_count}
-                    </TableCell>
-                    <TableCell
-                      className="px-4 py-3 text-start text-theme-sm
-                                dark:text-gray-400"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Link href={`/admin/thong-hanh/${documentCustomer.id}`} passHref>
-                          <Button
-                            size="sm"
-                            className="bg-gray-500 hover:bg-gray-600"
-                            disabled={loading}
-                          >
-                            <PencilIcon className="w-6 h-6" />
-                          </Button>
-                        </Link>
-                        <Button
-                          size="sm"
-                          className="bg-green-500 hover:bg-green-600"
-                          onClick={() => {}}
-                          disabled={loading}
-                        >
-                          <DownloadIcon />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
+                      Trích xuất
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };
