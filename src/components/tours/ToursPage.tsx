@@ -98,7 +98,7 @@ export default function ToursPage() {
         loading={loading}
       />
 
-      <div className="mb-4 text-right">
+      <div className="my-4 text-right">
         <p className="text-sm text-gray-600 mr-1">
           Tổng số tour: <span className="text-black">{totalTours}</span>
         </p>
