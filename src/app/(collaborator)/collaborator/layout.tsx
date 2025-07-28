@@ -11,6 +11,7 @@ import { jwtDecode } from "jwt-decode";
 import AppSidebar from "@/layout-collaborator/AppSidebar";
 import Backdrop from "@/layout-collaborator/Backdrop";
 import AppHeader from "@/layout-collaborator/AppHeader";
+import { getCurrentAdmin } from "@/services/login.service";
 
 type JwtPayload = {
   exp: number;
@@ -41,6 +42,7 @@ export default function AdminLayout({
     try {
       const decoded: { exp: number, role: string } = jwtDecode(token);
       const timeRemaining = decoded.exp * 1000 - Date.now();
+      fetchAdminCurrent();
       if (decoded.role == "super_admin") {
         router.push("/admin");
       } else if (decoded.role == "user") {
@@ -65,6 +67,23 @@ export default function AdminLayout({
       redirect("/admin/signin");
     }
   }, []);
+
+  const fetchAdminCurrent = async () => {
+    try {
+      const data = await getCurrentAdmin();
+      if (!data.success) {
+        console.error("Failed to fetch current admin data");
+        localStorage.removeItem("accessTokenTravel");
+        localStorage.removeItem("userLoginTravel");
+        redirect("/admin/signin");
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+      localStorage.removeItem("accessTokenTravel");
+      localStorage.removeItem("userLoginTravel");
+      redirect("/admin/signin");
+    }
+  }
 
   return (
     <div className="min-h-screen xl:flex">
