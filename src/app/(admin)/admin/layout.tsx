@@ -7,6 +7,8 @@ import Backdrop from "@/layout/Backdrop";
 import { redirect, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import { getCurrentAdmin } from "@/services/login.service";
+import { toast } from "react-toastify";
 
 export default function AdminLayout({
   children,
@@ -21,7 +23,6 @@ export default function AdminLayout({
     : isExpanded || isHovered
     ? "lg:ml-[290px]"
     : "lg:ml-[90px]";
-  const [role, setRole] = useState('');
   const router = useRouter();
   useEffect(() => {
    
@@ -33,6 +34,7 @@ export default function AdminLayout({
     try {
       const decoded: { exp: number, role: string } = jwtDecode(token);
       const timeRemaining = decoded.exp * 1000 - Date.now();
+      fetchAdminCurrent();
       if (decoded.role == "user") {
         router.push("/");
       } else if (decoded.role == "collaborator") {
@@ -57,6 +59,23 @@ export default function AdminLayout({
       redirect("/admin/signin");
     }
   }, []);
+
+  const fetchAdminCurrent = async () => {
+    try {
+      const data = await getCurrentAdmin();
+      if (!data.success) {
+        console.error("Failed to fetch current admin data");
+        localStorage.removeItem("accessTokenTravel");
+        localStorage.removeItem("userLoginTravel");
+        redirect("/admin/signin");
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+      localStorage.removeItem("accessTokenTravel");
+      localStorage.removeItem("userLoginTravel");
+      redirect("/admin/signin");
+    }
+  }
 
   return (
     <div className="min-h-screen xl:flex">
