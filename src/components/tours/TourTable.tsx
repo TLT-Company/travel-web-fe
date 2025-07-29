@@ -11,7 +11,6 @@ import {
 import { format } from "date-fns";
 import Link from "next/link";
 import Button from "@/components/ui/button/Button";
-import { EyeIcon, PencilIcon, DownloadIcon, TrashBinIcon } from "@/icons";
 import { Tour } from "@/services/tour.service";
 
 interface TourTableProps {
@@ -122,10 +121,10 @@ const TourTable: FC<TourTableProps> = ({ tours, loading, onDelete }) => {
                       <Link href={`/admin/tours/${tour.id}`} passHref>
                         <Button
                           size="sm"
-                          className="bg-gray-500 hover:bg-gray-600"
+                          className="bg-blue-500 hover:bg-blue-600"
                           disabled={loading}
                         >
-                          <EyeIcon className="w-6 h-6" />
+                          Xem
                         </Button>
                       </Link>
                       <Link href={`/admin/tours/${tour.id}/edit`} passHref>
@@ -134,7 +133,7 @@ const TourTable: FC<TourTableProps> = ({ tours, loading, onDelete }) => {
                           className="bg-gray-500 hover:bg-gray-600"
                           disabled={loading}
                         >
-                          <PencilIcon className="w-6 h-6" />
+                          Chỉnh sửa
                         </Button>
                       </Link>
                       <Button
@@ -143,7 +142,7 @@ const TourTable: FC<TourTableProps> = ({ tours, loading, onDelete }) => {
                         onClick={() => {}}
                         disabled={loading}
                       >
-                        <DownloadIcon />
+                        Tải xuống
                       </Button>
                       <Button
                         size="sm"
@@ -151,7 +150,7 @@ const TourTable: FC<TourTableProps> = ({ tours, loading, onDelete }) => {
                         onClick={() => onDelete?.(tour.id)}
                         disabled={loading}
                       >
-                        <TrashBinIcon />
+                        Xóa
                       </Button>
                     </div>
                   </TableCell>
