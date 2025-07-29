@@ -159,7 +159,7 @@ export default function ShowTourPage() {
                         className="px-4 py-3 text-start text-theme-sm
                                   dark:text-gray-400"
                       >
-                        {booking?.user?.customer?.full_name}
+                        {booking?.customer?.full_name}
                       </TableCell>
                       <TableCell
                         className="px-4 py-3 text-start text-theme-sm

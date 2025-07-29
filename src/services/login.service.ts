@@ -45,3 +45,10 @@ export const loginCustomer = async (
   });
   return response.data; // Return the data part which contains admin and token
 };
+
+export const getCurrentUser = async (): Promise<any> => {
+  return await http.get<any>("/auth/user/me", {
+    withAuth: true,
+  });
+};
+

@@ -48,17 +48,17 @@ export default function UserDropdown() {
         const respone = await getCurrentAdmin();
         const user = respone.data;
 
-        if (user?.role === "collaborator") {
+        if (user?.role == "collaborator") {
           setProfilePath("/collaborator/profile");
-        } if (user?.role === "admin" || user?.role === "super_admin") {
+        } else if (user?.role == "admin" || user?.role == "super_admin") {
           setProfilePath("/admin/profile");
         } else {
           setProfilePath("");
         }
+        
         setAdmin(user)
       } catch (err) {
         console.error("Lỗi khi gọi getCurrentAdmin:", err);
-        setProfilePath("");
       }
     }
 

@@ -10,17 +10,19 @@ interface Booking {
   status: string;
   assigned_to: number;
   note: string;
-  user: {
+  customer: {
     id: number;
-    email: string;
-    customer: {
+    full_name: string;
+    user: {
       id: number;
-      full_name: string;
-    }
-  };
+      email: string;
+      
+    };
+  }
   assignedAdmin: {
     id: number;
     email: string;
+    role: string;
   };
 }
 

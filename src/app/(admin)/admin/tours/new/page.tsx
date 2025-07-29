@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function NewTour() {
   return (
-    <div>
+    <div className="p-4 max-w-7xl mx-auto">
       <PageBreadcrumb pageTitle="Tour" />
       <div className="space-y-6">
         <ComponentCard title="Tạo mới tour">
