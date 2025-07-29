@@ -7,7 +7,7 @@ import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Image from "next/image";
 import { toast } from "react-toastify";
-import { Admin, getCollaborator, updateProfile } from "@/services/collaborator.service";
+import { Admin, getProfile, updateProfile } from "@/services/admmin.service";
 import { format } from "date-fns";
 import LoadingOverlay from "@/components/common/LoadingOverlay";
 import { ErrorMessage, Field, Form, Formik } from "formik";
@@ -15,6 +15,7 @@ import * as Yup from 'yup';
 import DatePicker from "@/components/form/date-picker";
 import FileInput from "@/components/form/input/FileInput";
 import Select from "@/components/form/Select";
+import { useAdmin } from "../../../context/AdminContext";
 
 
 export default function UserMetaCard() {
@@ -23,11 +24,15 @@ export default function UserMetaCard() {
   const [collaborator, setCollaborator] = useState<Admin>();
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const imageUrl = collaborator?.employer?.picture
+  ? `${process.env.NEXT_PUBLIC_UPLOAD_IMAGE_URL}/${collaborator.employer.picture}`
+  : "/images/user/owner.jpg";
+  const { admin, setAdmin } = useAdmin();
 
   const fetchCollaborator = async () => {
     setIsLoading(true)
     try {
-      const response = await getCollaborator();
+      const response = await getProfile();
       setCollaborator(response.data)
     } catch (error) {
       console.error("Error fetching customer:", error);
@@ -65,6 +70,7 @@ export default function UserMetaCard() {
       }
 
       const res = await updateProfile(formData);
+      setAdmin(res);
       toast.success('Cập nhật thông tin thành công');
       await fetchCollaborator();
     } catch (err: any) {
@@ -121,13 +127,13 @@ export default function UserMetaCard() {
               <Image
                 width={80}
                 height={80}
-                src={"http://localhost:8000/"+collaborator?.employer.picture || "/images/user/owner.jpg"}
+                src={imageUrl}
                 alt="user"
               />
             </div>
             <div className="order-3 xl:order-2">
               <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">
-                {collaborator?.employer.full_name}
+                {collaborator?.employer?.full_name}
               </h4>
               <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -173,7 +179,7 @@ export default function UserMetaCard() {
                 Họ và tên
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {collaborator?.employer.full_name}
+                {collaborator?.employer?.full_name}
               </p>
             </div>
 
@@ -204,7 +210,7 @@ export default function UserMetaCard() {
                 Số điện thoại
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {collaborator?.employer.phone_number}
+                {collaborator?.employer?.phone_number}
               </p>
             </div>
 
@@ -213,7 +219,7 @@ export default function UserMetaCard() {
                 Giới tính
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {collaborator?.employer.gender}
+                {collaborator?.employer?.gender}
               </p>
             </div>
 
@@ -222,7 +228,7 @@ export default function UserMetaCard() {
                 Địa chỉ
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {collaborator?.employer.address}
+                {collaborator?.employer?.address}
               </p>
             </div>
 
@@ -231,7 +237,7 @@ export default function UserMetaCard() {
                 Mã giới thiệu
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {collaborator?.employer.referral_code}
+                {collaborator?.employer?.referral_code}
               </p>
             </div>
           </div>
@@ -249,12 +255,12 @@ export default function UserMetaCard() {
           </div>
           <Formik
             initialValues={{
-                full_name: collaborator?.employer.full_name || "",
-                day_of_birth: collaborator?.employer.day_of_birth || "",
-                phone_number: collaborator?.employer.phone_number || "",
+                full_name: collaborator?.employer?.full_name || "",
+                day_of_birth: collaborator?.employer?.day_of_birth || "",
+                phone_number: collaborator?.employer?.phone_number || "",
                 email: collaborator?.email || "",
-                gender: collaborator?.employer.gender || "",
-                address: collaborator?.employer.address || ""
+                gender: collaborator?.employer?.gender || "",
+                address: collaborator?.employer?.address || ""
             }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
@@ -273,9 +279,7 @@ export default function UserMetaCard() {
                       width={50}
                       height={50}
                       src={
-                        previewUrl ||
-                        "http://localhost:8000/"+collaborator?.employer.picture ||
-                        "/images/user/owner.jpg"
+                        previewUrl || imageUrl
                       }
                       alt="user"
                       className="rounded-full object-cover"

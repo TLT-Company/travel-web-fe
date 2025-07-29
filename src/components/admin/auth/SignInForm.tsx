@@ -42,7 +42,7 @@ export default function SignInForm() {
       // Hiển thị thông báo thành công
       toast.success("Đăng nhập thành công!");
       
-      if(data?.admin?.role === "super_admin") {
+      if(data?.admin?.role === "super_admin" || data?.admin?.role === "admin") {
       setTimeout(() => {
         router.push("/admin");
       }, 1000);

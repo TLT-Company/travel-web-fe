@@ -5,13 +5,16 @@ import React, { useEffect, useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { redirect, useRouter } from "next/navigation";
-import { logoutAdmin } from "@/services/login.service";
+import { getCurrentAdmin, logoutAdmin } from "@/services/login.service";
 import { toast } from 'react-toastify';
+import { useAdmin } from "../../context/AdminContext";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  const [profilePath, setProfilePath] = useState("/profile");
+  const [profilePath, setProfilePath] = useState("");
+  const { admin, setAdmin } = useAdmin();
+
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.stopPropagation();
@@ -40,25 +43,26 @@ export default function UserDropdown() {
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const userData = localStorage.getItem("userLoginTravel");
+    async function fetchCurrentUser() {
+      try {
+        const respone = await getCurrentAdmin();
+        const user = respone.data;
 
-      if (userData) {
-        try {
-          const user = JSON.parse(userData);
-          if (user.role === "collaborator") {
-            setProfilePath("/collaborator/profile");
-          } else {
-            setProfilePath("/profile");
-          }
-        } catch (err) {
-          console.error("Lỗi phân tích userLoginTravel:", err);
-          setProfilePath("/profile");
+        if (user?.role === "collaborator") {
+          setProfilePath("/collaborator/profile");
+        } if (user?.role === "admin" || user?.role === "super_admin") {
+          setProfilePath("/admin/profile");
+        } else {
+          setProfilePath("");
         }
-      } else {
-        setProfilePath("/profile");
+        setAdmin(user)
+      } catch (err) {
+        console.error("Lỗi khi gọi getCurrentAdmin:", err);
+        setProfilePath("");
       }
     }
+
+    fetchCurrentUser();
   }, []);
 
   return (
@@ -71,12 +75,17 @@ export default function UserDropdown() {
           <Image
             width={44}
             height={44}
-            src="/images/user/owner.jpg"
+            // src="/images/user/owner.jpg"
+           src={
+              admin?.employer?.picture
+                ? `${process.env.NEXT_PUBLIC_UPLOAD_IMAGE_URL}/${admin.employer.picture}`
+                : "/images/user/owner.jpg"
+            }
             alt="User"
           />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">Musharof</span>
+        <span className="block mr-1 font-medium text-theme-sm">{admin?.employer?.full_name}</span>
 
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
@@ -105,10 +114,10 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            Musharof Chowdhury
+            {admin?.employer?.full_name}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            randomuser@pimjo.com
+            {admin?.email}
           </span>
         </div>
 

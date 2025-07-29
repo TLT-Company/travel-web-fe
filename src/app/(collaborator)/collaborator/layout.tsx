@@ -11,6 +11,7 @@ import { jwtDecode } from "jwt-decode";
 import AppSidebar from "@/layout-collaborator/AppSidebar";
 import Backdrop from "@/layout-collaborator/Backdrop";
 import AppHeader from "@/layout-collaborator/AppHeader";
+import { AdminProvider } from "@/context/AdminContext";
 
 type JwtPayload = {
   exp: number;
@@ -65,9 +66,11 @@ export default function AdminLayout({
       redirect("/admin/signin");
     }
   }, []);
-
+  
   return (
+    
     <div className="min-h-screen xl:flex">
+      <AdminProvider>
       {/* Sidebar and Backdrop */}
       <AppSidebar />
       <Backdrop />
@@ -80,6 +83,7 @@ export default function AdminLayout({
         {/* Page Content */}
         <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">{children}</div>
       </div>
+      </AdminProvider>
     </div>
   );
 }
