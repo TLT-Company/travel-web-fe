@@ -31,7 +31,7 @@ const DocumentDetailPage = () => {
     card_id : '',
     full_name : ''
   });
-  const customersPerPage = 4;
+  const customersPerPage = 20;
   const params = useParams<{ document_id: string }>()
 
   const fetchCustomers = useCallback(async () => {
