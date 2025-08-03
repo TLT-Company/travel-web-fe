@@ -13,9 +13,9 @@ const ThongHanh = () => {
     <div>
       <PageBreadcrumb pageTitle="Thông hành" />
       <div className="space-y-6">
-        <ComponentCard title="Danh sách khách hàng">
+        {/* <ComponentCard title="Danh sách khách hàng"> */}
           <DocumentDetailPage />
-        </ComponentCard>
+        {/* </ComponentCard> */}
       </div>
     </div>
   );

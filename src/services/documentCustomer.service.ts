@@ -6,6 +6,7 @@ export interface DocumentCustommer {
   document_number: string;
   created_at: string;
   customer_count: string;
+  customers : Custommer[]
 }
 
 export interface ApiResponse<T = unknown> {
@@ -78,7 +79,7 @@ export const getListDocumentCustommers = async (
 export const getListCustommersByDocumentId = async (
   document_id: string,
   queryParams?: FormSearchCustomerParams
-): Promise<ApiResponse<Custommer[]>> => {
+): Promise<ApiResponse<DocumentCustommer>> => {
   const query = new URLSearchParams(
     Object.entries(queryParams || {}).reduce((acc, [key, value]) => {
       if (value !== undefined && value !== '' && value !== null) {
@@ -88,7 +89,7 @@ export const getListCustommersByDocumentId = async (
     }, {} as Record<string, string>)
   );
 
-  return await http.get<Custommer[]>(`/documents/${document_id}/?${query}`);
+  return await http.get<DocumentCustommer>(`/documents/${document_id}/?${query}`);
 };
 
 export const addCustomer = async (
