@@ -62,12 +62,12 @@ const DocumentCustomerTable: FC<DocumentCustomerProps> = ({ documentCustomers, l
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <Link href={`/admin/thong-hanh/${documentCustomer.document_number}`} passHref>
+                    <Link href={`/admin/thong-hanh/${documentCustomer.id}`} passHref>
                       <Button
                         className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1"
                         disabled={loading}
                       >
-                        Chỉnh sửa
+                        Chi tiết
                       </Button>
                     </Link>
                     <Button
