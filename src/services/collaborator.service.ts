@@ -1,5 +1,6 @@
-import { Collaborator } from "@/components/type/collaborator";
+
 import { http } from "@/lib/http";
+import { Collaborator } from "@/components/type/collaborator";
 
 export const updateCollaborator = async (
   id: string,

@@ -7,6 +7,7 @@ import Backdrop from "@/layout/Backdrop";
 import { redirect, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import { AdminProvider } from "@/context/AdminContext";
 import { getCurrentAdmin } from "@/services/login.service";
 import { toast } from "react-toastify";
 
@@ -79,6 +80,7 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen xl:flex">
+      <AdminProvider>
       {/* Sidebar and Backdrop */}
       <AppSidebar />
       <Backdrop />
@@ -91,6 +93,7 @@ export default function AdminLayout({
         {/* Page Content */}
         <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">{children}</div>
       </div>
+      </AdminProvider>
     </div>
   );
 }
