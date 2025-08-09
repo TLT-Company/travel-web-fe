@@ -43,7 +43,7 @@ const CustomerTable: FC<CustomerProps> = ({ customers, loading, document_id, onS
                   "Ngày tạo thẻ",
                   "Thôn",
                   "Xã",
-                  "Huyện",
+                  // "Huyện",
                   "Tỉnh",
                   "..."
                 ].map((title, index) => (
@@ -117,19 +117,19 @@ const CustomerTable: FC<CustomerProps> = ({ customers, loading, document_id, onS
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
-                      {customer.province}
+                      {customer.commune}
                     </TableCell>
-                    <TableCell
+                    {/* <TableCell
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
                       {customer.district}
-                    </TableCell>
+                    </TableCell> */}
                      <TableCell
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
-                      {customer.commune}
+                      {customer.province}
                     </TableCell>
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm

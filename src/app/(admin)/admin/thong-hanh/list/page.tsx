@@ -11,11 +11,11 @@ export const metadata: Metadata = {
 const ThongHanh = () => {
   return (
     <div>
-      <PageBreadcrumb pageTitle="Thông Hành" />
+      <PageBreadcrumb pageTitle="Quản lý Thông Hành" />
       <div className="space-y-6">
-        <ComponentCard title="Danh sách Thông hành">
+        {/* <ComponentCard title="Danh sách Thông hành"> */}
           <DocumentCustomerPage />
-        </ComponentCard>
+        {/* </ComponentCard> */}
       </div>
     </div>
   );

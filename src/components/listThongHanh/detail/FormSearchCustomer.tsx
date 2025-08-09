@@ -74,13 +74,13 @@ const FormSearchCustomer: FC<FormSearchCustomerProps> = ({
           </Button>
         </div>
 
-        <div className="absolute right-0 top-0">
+        {/* <div className="absolute right-0 top-0">
           <Link href={`/admin/thong-hanh/${id}/customer/new`} passHref>
             <Button className="px-4 py-2" disabled={loading}>
               Thêm mới
             </Button>
           </Link>
-        </div>
+        </div> */}
       </div>
     </Form>
   )

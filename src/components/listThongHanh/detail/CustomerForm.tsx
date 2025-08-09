@@ -12,6 +12,7 @@ import DatePicker from "@/components/form/date-picker";
 import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import LoadingOverlay from "@/components/common/LoadingOverlay";
+import { getProvinces } from "@/services/province.service";
 
 interface Props {
   formData: CustomerRequest;
@@ -38,20 +39,24 @@ const CustomerForm: FC<Props> = ({
   ];
 
   const [provinceOptions, setProvinceOptions] = useState<{ value: string; label: string; code: string }[]>([]);
-  const [districtOptions, setDistrictOptions] = useState<{ value: string; label: string; code: string }[]>([]);
-  const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null);
-  const [communeOptions, setCommuneOptions] = useState<{ value: string; label: string }[]>([]);
-  const [selectedDistrictCode, setSelectedDistrictCode] = useState<number | null>(null);
+  // const [districtOptions, setDistrictOptions] = useState<{ value: string; label: string; code: string }[]>([]);
+  // const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null);
+  // const [communeOptions, setCommuneOptions] = useState<{ value: string; label: string }[]>([]);
+  // const [selectedDistrictCode, setSelectedDistrictCode] = useState<number | null>(null);
 
   useEffect(() => {
   const fetchProvinces = async () => {
       try {
-        const res = await fetch("https://provinces.open-api.vn/api/p/");
-        const data = await res.json();
+        // const res = await fetch("https://provinces.open-api.vn/api/p/");
+        // const data = await res.json();
+        const data = await getProvinces();
         const options = data.map((item: any) => ({
-          value: item.name,
-          label: item.name,
-          code: item.code,
+          // value: item.name,
+          // label: item.name,
+          // code: item.code,
+          value: cleanLocationName(item.tentinh),
+          label: cleanLocationName(item.tentinh),
+          code: item.id,
         }));
         setProvinceOptions(options);
       } catch (error) {
@@ -61,68 +66,73 @@ const CustomerForm: FC<Props> = ({
     fetchProvinces();
   }, []);
 
-  useEffect(() => {
-  const fetchDistricts = async () => {
-      if (!selectedProvinceCode) return;
-      try {
-        const res = await fetch(`https://provinces.open-api.vn/api/p/${selectedProvinceCode}?depth=2`);
-        const data = await res.json();
 
-        const options = [
-          { value: "", label: "Chọn Quận/Huyện" },
-          ...data.districts.map((item: any) => ({
-            value: item.name,
-            label: item.name,
-            code: item.code,
-          }))
-        ];
-        setDistrictOptions(options);
-      } catch (error) {
-        console.error("Error fetching districts:", error);
-      }
-    };
-    fetchDistricts();
-  }, [selectedProvinceCode]);
+  function cleanLocationName (name: string) {
+    return name.replace(/^(Thủ đô |tỉnh |Tỉnh |thành phố |Thành phố |Quận |Huyện |Thị xã |Phường |Xã |Thị trấn )/, '').trim();
+  }
 
-  useEffect(() => {
-  const fetchCommunes = async () => {
-    if (!selectedDistrictCode) return;
-      try {
-        const res = await fetch(`https://provinces.open-api.vn/api/d/${selectedDistrictCode}?depth=2`);
-        const data = await res.json();
+  // useEffect(() => {
+  // const fetchDistricts = async () => {
+  //     if (!selectedProvinceCode) return;
+  //     try {
+  //       const res = await fetch(`https://provinces.open-api.vn/api/p/${selectedProvinceCode}?depth=2`);
+  //       const data = await res.json();
 
-        const options = [
-          { value: "", label: "Chọn Xã/Phường" },
-          ...data.wards.map((item: any) => ({
-            value: item.name,
-            label: item.name,
-          }))
-        ];
-        setCommuneOptions(options);
-      } catch (error) {
-        console.error("Error fetching communes:", error);
-      }
-    };
-    fetchCommunes();
-  }, [selectedDistrictCode]);
+  //       const options = [
+  //         { value: "", label: "Chọn Quận/Huyện" },
+  //         ...data.districts.map((item: any) => ({
+  //           value: item.name,
+  //           label: item.name,
+  //           code: item.code,
+  //         }))
+  //       ];
+  //       setDistrictOptions(options);
+  //     } catch (error) {
+  //       console.error("Error fetching districts:", error);
+  //     }
+  //   };
+  //   fetchDistricts();
+  // }, [selectedProvinceCode]);
 
-  useEffect(() => {
-    if (formData.province) {
-      const province = provinceOptions.find(p => p.value === formData.province);
-      if (province) {
-        setSelectedProvinceCode(Number(province.code));
-      }
-    }
-  }, [formData.province, provinceOptions]);
+  // useEffect(() => {
+  // const fetchCommunes = async () => {
+  //   if (!selectedDistrictCode) return;
+  //     try {
+  //       const res = await fetch(`https://provinces.open-api.vn/api/d/${selectedDistrictCode}?depth=2`);
+  //       const data = await res.json();
 
-  useEffect(() => {
-    if (formData.district) {
-      const district = districtOptions.find(d => d.value === formData.district);
-      if (district) {
-        setSelectedDistrictCode(Number(district.code));
-      }
-    }
-  }, [formData.district, districtOptions]);
+  //       const options = [
+  //         { value: "", label: "Chọn Xã/Phường" },
+  //         ...data.wards.map((item: any) => ({
+  //           value: item.name,
+  //           label: item.name,
+  //         }))
+  //       ];
+  //       setCommuneOptions(options);
+  //     } catch (error) {
+  //       console.error("Error fetching communes:", error);
+  //     }
+  //   };
+  //   fetchCommunes();
+  // }, [selectedDistrictCode]);
+
+  // useEffect(() => {
+  //   if (formData.province) {
+  //     const province = provinceOptions.find(p => p.value === formData.province);
+  //     if (province) {
+  //       setSelectedProvinceCode(Number(province.code));
+  //     }
+  //   }
+  // }, [formData.province, provinceOptions]);
+
+  // useEffect(() => {
+  //   if (formData.district) {
+  //     const district = districtOptions.find(d => d.value === formData.district);
+  //     if (district) {
+  //       setSelectedDistrictCode(Number(district.code));
+  //     }
+  //   }
+  // }, [formData.district, districtOptions]);
 
   const handleSubmit = async (values: {
         card_id: string;
@@ -134,7 +144,7 @@ const CustomerForm: FC<Props> = ({
         village: string;
         card_created_at: string;
         province: string;
-        district: string;
+        // district: string;
         commune: string
       }) => {
         formData.card_id = values.card_id;
@@ -146,7 +156,7 @@ const CustomerForm: FC<Props> = ({
         formData.village = values.village;
         formData.card_created_at = values.card_created_at;
         formData.province = values.province;
-        formData.district = values.district;
+        // formData.district = values.district;
         formData.commune = values.commune;
         
         onSubmit(formData);
@@ -167,8 +177,8 @@ const CustomerForm: FC<Props> = ({
       .required('Ngày làm thẻ là bắt buộc'),
     province: Yup.string()
       .required('Tỉnh/Thành phố là bắt buộc'),
-    district: Yup.string()
-      .required('Huyện là bắt buộc'),
+    // district: Yup.string()
+    //   .required('Huyện là bắt buộc'),
     commune: Yup.string()
       .required('Xã/Phường là bắt buộc'),
   });
@@ -334,7 +344,7 @@ const CustomerForm: FC<Props> = ({
                 />
               </div>
 
-            <div>
+              <div>
                 <Label>Tỉnh/Thành Phố <span className="text-error-500">*</span></Label>
                 <Select
                   options={provinceOptions}
@@ -343,9 +353,9 @@ const CustomerForm: FC<Props> = ({
                   {
                     setFieldValue('province', value)
                     const selected = provinceOptions.find(p => p.value === value);
-                    setSelectedProvinceCode(Number(selected?.code) || null);
-                    setCommuneOptions([])
-                    setFieldValue('district', ''); 
+                    // setSelectedProvinceCode(Number(selected?.code) || null);
+                    // setCommuneOptions([])
+                    // setFieldValue('district', '');
                     setFieldValue('commune', '');
                   }}
                   defaultValue={values.province}
@@ -358,6 +368,22 @@ const CustomerForm: FC<Props> = ({
               </div>
 
               <div>
+                <Label>Xã/Phường <span className="text-error-500"></span></Label>
+                <Field
+                  type="commune"
+                  name="commune"
+                  placeholder="Nhập xã/phường"
+                  as={Input}
+                  disabled={isLoading}
+                />
+                <ErrorMessage
+                  name="commune"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
+
+              {/* <div>
                 <Label>Quận/Huyện <span className="text-error-500">*</span></Label>
                 <Select
                   options={districtOptions}
@@ -388,7 +414,7 @@ const CustomerForm: FC<Props> = ({
                   component="div"
                   className="text-red-500 text-sm mt-1"
                 />
-              </div>
+              </div> */}
 
               <div className="flex justify-center gap-3 pt-4">
                 <Button
