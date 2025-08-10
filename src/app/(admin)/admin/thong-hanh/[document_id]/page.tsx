@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const ThongHanh = () => {
   return (
     <div>
-      <PageBreadcrumb pageTitle="Thông hành" />
+      <PageBreadcrumb pageTitle="Quản lý Thông Hành" />
       <div className="space-y-6">
         {/* <ComponentCard title="Danh sách khách hàng"> */}
           <DocumentDetailPage />

@@ -16,6 +16,9 @@ import { toast } from 'react-toastify';
 import { useParams } from "next/navigation";
 import ComponentCard from "@/components/common/ComponentCard";
 import { format } from "date-fns";
+import Button from "@/components/ui/button/Button";
+import Link from "next/link";
+import SanIDModal from "./IdCardScanPage";
 
 
 const DocumentDetailPage = () => {
@@ -33,6 +36,7 @@ const DocumentDetailPage = () => {
   });
   const customersPerPage = 20;
   const params = useParams<{ document_id: string }>()
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const fetchCustomers = useCallback(async () => {
       setLoading(true);
@@ -94,6 +98,10 @@ const DocumentDetailPage = () => {
   };
 
 
+   const handleAddSuccess = () => {
+    fetchCustomers();
+  };
+
   return (
     <div>
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
@@ -115,7 +123,7 @@ const DocumentDetailPage = () => {
         </div>
       </div>
 
-      
+      <div className="relative">
       <ComponentCard title="Danh sách khách hàng">
         <FormSearchCustomer
           formSearch={formSearch}
@@ -153,7 +161,28 @@ const DocumentDetailPage = () => {
           </div>
         )}
 
+        <Link href={`/admin/thong-hanh/${params.document_id}/customer/new`} passHref>
+          <Button  className="absolute top-4 right-6 z-10 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" disabled={loading}>
+            Thêm mới
+          </Button>
+        </Link>
+
+        <Button  className="absolute top-4 right-40 z-10 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" 
+            disabled={loading}
+             onClick={() => setIsAddModalOpen(true)}
+             >
+            Quét căn cước công dân
+        </Button>
+
+         <SanIDModal
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          onSuccess={handleAddSuccess}
+          document_id = {params.document_id}
+        />
+
       </ComponentCard>
+      </div>
       
     </div>
   );

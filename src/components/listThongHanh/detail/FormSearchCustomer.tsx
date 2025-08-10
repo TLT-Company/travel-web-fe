@@ -6,7 +6,6 @@ import Label from "@/components/form/Label";
 import Input from "@/components/form/input/InputField";
 import Button from "@/components/ui/button/Button";
 import { FormSearchCustomerParams } from "@/services/documentCustomer.service";
-import Link from "next/link";
 
 interface FormSearchCustomerProps {
   formSearch: FormSearchCustomerParams;
@@ -74,13 +73,13 @@ const FormSearchCustomer: FC<FormSearchCustomerProps> = ({
           </Button>
         </div>
 
-        <div className="absolute right-0 top-0">
+        {/* <div className="absolute right-0 top-0">
           <Link href={`/admin/thong-hanh/${id}/customer/new`} passHref>
             <Button className="px-4 py-2" disabled={loading}>
               Thêm mới
             </Button>
           </Link>
-        </div>
+        </div> */}
       </div>
     </Form>
   )
