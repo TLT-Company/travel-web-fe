@@ -59,7 +59,7 @@ const AddDocumentModal: React.FC<AddDocumwntModalProps> = ({
     <Modal isOpen={isOpen} onClose={handleClose}>
       <div className="p-6 max-w-sm mx-auto">
         <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white text-center">
-          Thêm mói số thông hành
+          Thêm mới số thông hành
         </h2>
         
         <Formik

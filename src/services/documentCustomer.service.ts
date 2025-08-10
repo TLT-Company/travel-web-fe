@@ -130,8 +130,8 @@ export const scanIDCard = async (
 
   const formData = new FormData();
   images.forEach((file) => {
-    formData.append("picture", file);
+    formData.append("images", file);
   });
-  const response = await http.post<any>(`/documents/cccd/${document_id}`, formData);
+  const response = await http.post<any>(`/documents/scancccd/${document_id}`, formData);
   return response;
 };

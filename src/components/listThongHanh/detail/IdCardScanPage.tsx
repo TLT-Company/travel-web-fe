@@ -39,38 +39,37 @@ const SanIDModal: React.FC<ScanIDModalProps> = ({
     };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setIsLoading(true);
-        try {
-            if (images.length > 0) {
-                const uploaded = await scanIDCard(document_id, images);
-                const [num1, num2] = uploaded.message.split("/").map(Number);
-                onSuccess();
-                onClose();
-                if (num1 == 0) {
-                    toast.error("không có ảnh nào được xử lý thành công");
-                    await new Promise(resolve => setTimeout(resolve, 3000));
-                    await handleDownload(uploaded)
-                } else if ( num1 < num2) {
-                    toast.error("Đã xử lý thành công " + num1 + " trong tổng số " + num2 + " ảnh");
-                    await new Promise(resolve => setTimeout(resolve, 3000));
-                    await handleDownload(uploaded)
-                } else {
-                    toast.success("Đã xử lý thành công " + num1 + " ảnh");
-                }
-            }
-        } catch (error: unknown) {
-            const errorMessage = error instanceof Error ? error.message : 'Có lỗi xảy ra khi thêm số thông hành';
-            toast.error(errorMessage);
-            console.log(error)
-            onClose();
-        } finally {
-            setIsLoading(false);
-        }
+      e.preventDefault();
+      setIsLoading(true);
+      try {
+          if (images.length > 0) {
+              const uploaded = await scanIDCard(document_id, images);
+              const [num1, num2] = uploaded.message.split("/").map(Number);
+              onSuccess();
+              onClose();
+              if (num1 == 0) {
+                toast.error("không có ảnh nào được xử lý thành công");
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                await handleDownload(uploaded)
+              } else if ( num1 < num2) {
+                toast.error("Đã xử lý thành công " + num1 + " trong tổng số " + num2 + " ảnh");
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                await handleDownload(uploaded)
+              } else {
+                toast.success("Đã xử lý thành công " + num1 + " ảnh");
+              }
+          }
+      } catch (error: unknown) {
+          const errorMessage = error instanceof Error ? error.message : 'Có lỗi xảy ra khi quét CCCD';
+          toast.error(errorMessage);
+          console.log(error)
+          onClose();
+      } finally {
+          setIsLoading(false);
+      }
     }
 
     const handleDownload = async (apiData : any) => {
-        // Chuyển đổi mảng object thành CSV string
         let csvContent = "\uFEFFTên file,Kết quả\n";
         console.log(apiData)
 
@@ -118,7 +117,17 @@ const SanIDModal: React.FC<ScanIDModalProps> = ({
         >
 
             <div>
-                <Label htmlFor="images">Ảnh căn cước (tối đa 50 ảnh)</Label>
+                <Label htmlFor="images">
+                  Ảnh căn cước (tối đa 50 ảnh)
+                  <span className="relative group ml-2 cursor-pointer align-middle">
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white text-sm font-bold shadow-md">
+                      ?
+                    </span>
+                    <span className="absolute left-1/2 -translate-x-1/2 mt-2 w-60 p-2 text-sm text-white bg-gray-900 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                      Vui lòng chọn những ảnh rõ nét và thấy rõ vùng QRCode
+                    </span>
+                  </span>
+                </Label>
                 <Input
                     id="images"
                     name="images"

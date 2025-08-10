@@ -6,7 +6,6 @@ import Label from "@/components/form/Label";
 import Input from "@/components/form/input/InputField";
 import Button from "@/components/ui/button/Button";
 import { FormSearchCustomerParams } from "@/services/documentCustomer.service";
-import Link from "next/link";
 
 interface FormSearchCustomerProps {
   formSearch: FormSearchCustomerParams;

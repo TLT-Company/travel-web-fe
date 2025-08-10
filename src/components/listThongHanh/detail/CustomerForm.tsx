@@ -13,6 +13,7 @@ import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import LoadingOverlay from "@/components/common/LoadingOverlay";
 import { getProvinces } from "@/services/province.service";
+import { useRouter } from "next/navigation";
 
 interface Props {
   formData: CustomerRequest;
@@ -28,6 +29,7 @@ const CustomerForm: FC<Props> = ({
   isLoading
 }) => {
 
+  const router = useRouter();
   const genderOptions = [
     { value: 'Nam', label: 'Nam' },
     { value: 'Nữ', label: 'Nữ' },
@@ -417,6 +419,14 @@ const CustomerForm: FC<Props> = ({
               </div> */}
 
               <div className="flex justify-center gap-3 pt-4">
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition px-5 py-3.5 text-sm bg-gray-400 text-white hover:bg-gray-500"
+                  onClick={() => router.back()}
+                >
+                  Quay về
+                </button>
+
                 <Button
                   className="inline-flex items-center justify-center font-medium gap-2 rounded-lg transition px-5 py-3.5 text-sm bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300 disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={isLoading}
