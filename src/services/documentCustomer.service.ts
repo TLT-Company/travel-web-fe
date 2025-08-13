@@ -44,6 +44,16 @@ export interface Custommer {
     province: string;
     district: string;
     commune: string;
+    address_mapping: AddressMapping;
+}
+
+export interface AddressMapping {
+  id: string;
+  province_old: string;
+  district_old: string;
+  commune_old: string;
+  province_new: string;
+  commune_new: string;
 }
 
 export interface CustomerRequest {
