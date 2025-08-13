@@ -117,7 +117,8 @@ const CustomerTable: FC<CustomerProps> = ({ customers, loading, document_id, onS
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
-                      {customer.commune}
+                      {/* {customer.commune} */}
+                       {customer.address_mapping?.commune_new}
                     </TableCell>
                     {/* <TableCell
                       className="px-4 py-3 text-start text-theme-sm
@@ -129,7 +130,8 @@ const CustomerTable: FC<CustomerProps> = ({ customers, loading, document_id, onS
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
-                      {customer.province}
+                      {/* {customer.province} */}
+                      {customer.address_mapping?.province_new}
                     </TableCell>
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm

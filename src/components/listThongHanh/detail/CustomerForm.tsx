@@ -12,7 +12,7 @@ import DatePicker from "@/components/form/date-picker";
 import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import LoadingOverlay from "@/components/common/LoadingOverlay";
-import { getProvinces } from "@/services/province.service";
+import { getAllCommunesByProvinceID, getProvinces } from "@/services/province.service";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -42,8 +42,8 @@ const CustomerForm: FC<Props> = ({
 
   const [provinceOptions, setProvinceOptions] = useState<{ value: string; label: string; code: string }[]>([]);
   // const [districtOptions, setDistrictOptions] = useState<{ value: string; label: string; code: string }[]>([]);
-  // const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null);
-  // const [communeOptions, setCommuneOptions] = useState<{ value: string; label: string }[]>([]);
+  const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null);
+  const [communeOptions, setCommuneOptions] = useState<{ value: string; label: string }[]>([]);
   // const [selectedDistrictCode, setSelectedDistrictCode] = useState<number | null>(null);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const CustomerForm: FC<Props> = ({
           // code: item.code,
           value: cleanLocationName(item.tentinh),
           label: cleanLocationName(item.tentinh),
-          code: item.id,
+          code: item.mahc,
         }));
         setProvinceOptions(options);
       } catch (error) {
@@ -72,6 +72,28 @@ const CustomerForm: FC<Props> = ({
   function cleanLocationName (name: string) {
     return name.replace(/^(Thủ đô |tỉnh |Tỉnh |thành phố |Thành phố |Quận |Huyện |Thị xã |Phường |Xã |Thị trấn )/, '').trim();
   }
+
+  useEffect(() => {
+  const fetchCommunes = async () => {
+      if (!selectedProvinceCode) return;
+      try {
+        const data = await getAllCommunesByProvinceID(selectedProvinceCode);
+
+        const options = [
+          { value: "", label: "Chọn Xã/ Phường" },
+          ...data.map((item: any) => ({
+            value: item.tenhc,
+            label: item.tenhc,
+          }))
+        ];
+        setCommuneOptions(options);
+      } catch (error) {
+        console.error("Error fetching districts:", error);
+      }
+    };
+
+    fetchCommunes();
+  }, [selectedProvinceCode]);
 
   // useEffect(() => {
   // const fetchDistricts = async () => {
@@ -118,14 +140,14 @@ const CustomerForm: FC<Props> = ({
   //   fetchCommunes();
   // }, [selectedDistrictCode]);
 
-  // useEffect(() => {
-  //   if (formData.province) {
-  //     const province = provinceOptions.find(p => p.value === formData.province);
-  //     if (province) {
-  //       setSelectedProvinceCode(Number(province.code));
-  //     }
-  //   }
-  // }, [formData.province, provinceOptions]);
+  useEffect(() => {
+    if (formData.province) {
+      const province = provinceOptions.find(p => p.value === formData.province);
+      if (province) {
+        setSelectedProvinceCode(Number(province.code));
+      }
+    }
+  }, [formData.province, provinceOptions]);
 
   // useEffect(() => {
   //   if (formData.district) {
@@ -191,25 +213,21 @@ const CustomerForm: FC<Props> = ({
       <div className="max-w-2xl mx-auto">
         <Formik<CustomerRequest>
           initialValues={{
-            card_id: formData.card_id,
-            full_name: formData.full_name,
-            day_of_birth: formData.day_of_birth,
-            gender: formData.gender,
-            national: formData.national,
-            place_of_birth: formData.place_of_birth,
-            village: formData.village,
-            card_created_at: formData.card_created_at,
-            province: formData.province,
-            district: formData.district,
-            commune: formData.commune
+            card_id: formData.card_id || "",
+            full_name: formData.full_name || "",
+            day_of_birth: formData.day_of_birth || "",
+            gender: formData.gender || "",
+            national: formData.national || "",
+            place_of_birth: formData.place_of_birth || "",
+            village: formData.village || "",
+            card_created_at: formData.card_created_at || "",
+            province: formData.province || "",
+            district: formData.district || "",
+            commune: formData.commune || "",
           }}
           enableReinitialize={true}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
-          // onSubmit={async (values, { resetForm }) => {
-          //     await handleSubmit(values);
-          //     resetForm(); 
-          //   }}
         >
           {({ values, setFieldValue, touched, errors }) => (
             <Form className="space-y-6">
@@ -355,8 +373,8 @@ const CustomerForm: FC<Props> = ({
                   {
                     setFieldValue('province', value)
                     const selected = provinceOptions.find(p => p.value === value);
-                    // setSelectedProvinceCode(Number(selected?.code) || null);
-                    // setCommuneOptions([])
+                    setSelectedProvinceCode(Number(selected?.code) || null);
+                    setCommuneOptions([])
                     // setFieldValue('district', '');
                     setFieldValue('commune', '');
                   }}
@@ -370,13 +388,11 @@ const CustomerForm: FC<Props> = ({
               </div>
 
               <div>
-                <Label>Xã/Phường <span className="text-error-500"></span></Label>
-                <Field
-                  type="commune"
-                  name="commune"
-                  placeholder="Nhập xã/phường"
-                  as={Input}
-                  disabled={isLoading}
+                <Label>Xã/Phường <span className="text-error-500">*</span></Label>
+                <Select
+                  options={communeOptions}
+                  onChange={(value) => setFieldValue('commune', value)}
+                  defaultValue={values.commune}
                 />
                 <ErrorMessage
                   name="commune"
