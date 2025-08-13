@@ -36,7 +36,6 @@ const CustomerForm: FC<Props> = ({
   ];
 
   const nationalOptions = [
-    { value: "", label: "Chọn quốc tịch" },
     { value: 'Việt Nam', label: 'Việt Nam' },
     { value: 'Trung Quốc', label: 'Trung Quốc' },
   ];
@@ -53,16 +52,14 @@ const CustomerForm: FC<Props> = ({
         // const res = await fetch("https://provinces.open-api.vn/api/p/");
         // const data = await res.json();
         const data = await getProvinces();
-        const options = [ 
-          { value: "", label: "Chọn Tỉnh/Thành Phố" },
-          ...data.map((item: any) => ({
+        const options = data.map((item: any) => ({
           // value: item.name,
           // label: item.name,
           // code: item.code,
           value: cleanLocationName(item.tentinh),
           label: cleanLocationName(item.tentinh),
           code: item.mahc,
-        })) ];
+        }));
         setProvinceOptions(options);
       } catch (error) {
         console.error("Error fetching provinces:", error);
@@ -216,17 +213,17 @@ const CustomerForm: FC<Props> = ({
       <div className="max-w-2xl mx-auto">
         <Formik<CustomerRequest>
           initialValues={{
-            card_id: formData.card_id,
-            full_name: formData.full_name,
-            day_of_birth: formData.day_of_birth,
-            gender: formData.gender,
-            national: formData.national,
-            place_of_birth: formData.place_of_birth,
-            village: formData.village,
-            card_created_at: formData.card_created_at,
-            province: formData.province,
-            district: formData.district,
-            commune: formData.commune,
+            card_id: formData.card_id || "",
+            full_name: formData.full_name || "",
+            day_of_birth: formData.day_of_birth || "",
+            gender: formData.gender || "",
+            national: formData.national || "",
+            place_of_birth: formData.place_of_birth || "",
+            village: formData.village || "",
+            card_created_at: formData.card_created_at || "",
+            province: formData.province || "",
+            district: formData.district || "",
+            commune: formData.commune || "",
           }}
           enableReinitialize={true}
           validationSchema={validationSchema}
@@ -305,6 +302,7 @@ const CustomerForm: FC<Props> = ({
                 <Label>Quốc tịch<span className="text-error-500">*</span></Label>
                 <Select
                   options={nationalOptions}
+                  placeholder="Chọn quốc tịch"
                   onChange={(value) => setFieldValue('national', value)}
                   defaultValue={values.national}
                 />
@@ -370,6 +368,7 @@ const CustomerForm: FC<Props> = ({
                 <Label>Tỉnh/Thành Phố <span className="text-error-500">*</span></Label>
                 <Select
                   options={provinceOptions}
+                  placeholder="Chọn tỉnh/thành phố"
                   onChange={ (value) => 
                   {
                     setFieldValue('province', value)
@@ -380,7 +379,6 @@ const CustomerForm: FC<Props> = ({
                     setFieldValue('commune', '');
                   }}
                   defaultValue={values.province}
-                  // defaultValue={values.address_mapping?.province_new}
                 />
                 <ErrorMessage
                   name="province"
@@ -395,7 +393,6 @@ const CustomerForm: FC<Props> = ({
                   options={communeOptions}
                   onChange={(value) => setFieldValue('commune', value)}
                   defaultValue={values.commune}
-                  // defaultValue={values.address_mapping?.commune_new}
                 />
                 <ErrorMessage
                   name="commune"
