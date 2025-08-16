@@ -24,6 +24,7 @@ const SanIDModal: React.FC<ScanIDModalProps> = ({
 }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [images, setImages] = useState<File[]>([]);
+    const [fileWarning, setFileWarning] = useState<string>("");
 
     const handleClose = () => {
         if (!isLoading) {
@@ -33,8 +34,13 @@ const SanIDModal: React.FC<ScanIDModalProps> = ({
 
     const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-        const selectedFiles = Array.from(e.target.files).slice(0, 50);
-        setImages(selectedFiles);
+          const selectedFiles = Array.from(e.target.files);
+          if (selectedFiles.length > 50) {
+            setFileWarning(`Bạn đã chọn ${selectedFiles.length} ảnh, chỉ 50 ảnh đầu tiên sẽ được sử dụng.`);
+          } else {
+            setFileWarning("");
+          }
+          setImages(selectedFiles.slice(0, 50));
         }
     };
 
@@ -137,9 +143,15 @@ const SanIDModal: React.FC<ScanIDModalProps> = ({
                     onChange={handleImageChange}
                 />
                 {images.length > 0 && (
-                    <p className="mt-1 text-sm text-gray-500">
-                    {images.length} ảnh đã chọn
-                    </p>
+                  <p className="mt-1 text-sm text-gray-500">
+                  {images.length} ảnh đã chọn
+                  </p>
+                )}
+
+                {fileWarning && (
+                  <p className="mt-1 text-sm text-red-500 font-medium">
+                    {fileWarning}
+                  </p>
                 )}
             </div>
 
