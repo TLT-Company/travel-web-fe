@@ -1,18 +1,18 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Image from "next/image"
-import { Star, MapPin, Clock, Users, Search, Filter } from "lucide-react"
+// import Image from "next/image"
+import { MapPin, Clock, Search, Filter } from "lucide-react"
 // import { Button } from "@/components/ui/button"
 // import { Input } from "@/components/ui/button/Input"
 // import Badge from "@/components/ui/button/Badge"
 // import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/badge/card"
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Button from "@/components/ui/button/Button"
-import Badge from "@/components/ui/badge/Badge"
+// import Badge from "@/components/ui/badge/Badge"
 // import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card/Card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select/Select"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card/Card"
+import { Card, CardContent, CardFooter } from "@/components/ui/card/Card"
 import { Input } from "@/components/ui/input/Input"
 import { getListTours } from "@/services/tour.service"
 import Link from "next/link"
@@ -326,7 +326,7 @@ const ToursPage = () => {
         {/* Load More Button */}
         {tours.length > 0 && (
           <div className="text-center mt-12">
-            <Button variant="outline" size="lg">
+            <Button variant="outline" size="md">
               Xem thêm tour
             </Button>
           </div>

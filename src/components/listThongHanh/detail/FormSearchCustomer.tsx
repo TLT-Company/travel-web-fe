@@ -16,7 +16,7 @@ interface FormSearchCustomerProps {
 }
 
 const FormSearchCustomer: FC<FormSearchCustomerProps> = ({
-  formSearch, setFormSearch, onSubmitSearch, loading, id
+  formSearch, setFormSearch, onSubmitSearch, loading
 }) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

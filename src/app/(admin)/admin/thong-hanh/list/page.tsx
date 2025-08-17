@@ -1,4 +1,3 @@
-import ComponentCard from '@/components/common/ComponentCard';
 import PageBreadcrumb from '@/components/common/PageBreadCrumb';
 import DocumentCustomerPage from '@/components/listThongHanh/DocumentCustomer';
 import { Metadata } from 'next';

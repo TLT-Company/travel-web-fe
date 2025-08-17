@@ -8,7 +8,7 @@ import React, { useState } from "react";
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { LoginType } from "../type/login";
-import { loginAdmin, loginCustomer } from "@/services/login.service";
+import { loginCustomer } from "@/services/login.service";
 import { toast } from "react-toastify";
 import { usePathname, useRouter } from "next/navigation";
 

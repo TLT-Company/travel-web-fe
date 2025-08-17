@@ -1,8 +1,8 @@
 import { http } from "@/lib/http";
 import { SetStateAction } from "react";
 
-export const getAdmin = async (id: string): Promise<any> => {
-  return await http.get<any>(`/admin/${id}`, {
+export const getAdmin = async (id: string): Promise<ApiResponse<Admin>> => {
+  return await http.get<Admin>(`/admin/${id}`, {
     withAuth: true,
   });
 };
@@ -44,7 +44,7 @@ export const getProfile = async (): Promise<ApiResponse<Admin>> => {
 
 export const updateProfile = async (
   data: FormData,
-): Promise<any> => {
-  const response = await http.put<any>(`/admin/profile`, data);
-  return response.data;
+): Promise<ApiResponse<Admin>> => {
+  const response = await http.put<Admin>(`/admin/profile`, data);
+  return response;
 };

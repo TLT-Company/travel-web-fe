@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Admin, Employer, getCollaboratorList } from '../../../services/employee.service';
+import { Admin, getCollaboratorList } from '../../../services/employee.service';
 import {
   Table,
   TableBody,
@@ -106,7 +106,22 @@ const CollaboratorList = () => {
     try {
       const result = await getAdmin(String(id));
       if (result.success) {
-        setDataCollaborator(result.data);
+        // Convert the admin type to match the expected type
+        const convertedAdmin: Admin = {
+          id: Number(result.data.id),
+          role: result.data.role,
+          email: result.data.email,
+          created_at: result.data.created_at,
+          updated_at: result.data.updated_at,
+          employer: {
+            id: Number(result.data.employer.id),
+            admin_id: Number(result.data.employer.admin_id),
+            full_name: result.data.employer.full_name,
+            position: result.data.employer.referral_code || '', // Map referral_code to position
+            created_at: result.data.employer.created_at
+          }
+        };
+        setDataCollaborator(convertedAdmin);
         setIsAddModalOpen(true)
       }
     }catch (error) {
@@ -234,9 +249,8 @@ const CollaboratorList = () => {
                               await deleteCollaborator(String(admin.id));
                               toast.success("Xóa thành công");
                               fetchData(pagination.currentPage);
-                              // Gọi refetch hoặc cập nhật lại danh sách
-                            } catch (err: any) {
-                              toast.error("Xóa thất bại");
+                            } catch (error) {
+                              toast.error(error instanceof Error ? error.message : "Có lỗi xảy ra");
                             }
                           }}
                         >

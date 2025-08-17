@@ -78,8 +78,8 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
       }
       onSuccess();
       onClose();
-    } catch (error: any) {
-      toast.error(error.message || "Có lỗi xảy ra");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Có lỗi xảy ra");
     } finally {
       setIsLoading(false);
     }

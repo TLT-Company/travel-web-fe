@@ -1,9 +1,8 @@
 import { SetStateAction } from 'react';
-import { redirect } from 'next/navigation';
 import { API_CONFIG, buildApiUrl } from '../config/api';
 
 // Common API response interface
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T> {
   count: SetStateAction<number>;
   success: boolean;
   message: string;
@@ -15,7 +14,7 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public status?: number,
-    public data?: any
+    public data?: unknown
   ) {
     super(message);
     this.name = 'ApiError';
@@ -45,7 +44,7 @@ const injectToken = (
 
 // HTTP methods
 class Http {
-  async get<T = any>(endpoint: string, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
+  async get<T>(endpoint: string, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
     const url = buildApiUrl(endpoint);
     const withAuth = options.withAuth !== false;
     const headers = injectToken({
@@ -69,9 +68,9 @@ class Http {
     return response.json();
   }
 
-  async post<T = any>(
+  async post<T>(
     endpoint: string,
-    data: any,
+    data: unknown,
     options: RequestInit & { withAuth?: boolean } = {}
   ): Promise<ApiResponse<T>> {
     const url = buildApiUrl(endpoint);
@@ -114,7 +113,7 @@ class Http {
     return responseBody;
   }
 
-  async put<T = any>(endpoint: string, data: any, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
+  async put<T>(endpoint: string, data: unknown, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
     const url = buildApiUrl(endpoint);
     const withAuth = options.withAuth !== false;
     const isFormData = data instanceof FormData;
@@ -147,7 +146,7 @@ class Http {
     return responseBody;
   }
 
-  async patch<T = any>(endpoint: string, data: any, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
+  async patch<T>(endpoint: string, data: unknown, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
     const url = buildApiUrl(endpoint);
     const withAuth = options.withAuth !== false;
     const isFormData = data instanceof FormData;
@@ -180,7 +179,7 @@ class Http {
     return responseBody;
   }
 
-  async delete<T = any>(endpoint: string, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
+  async delete<T>(endpoint: string, options: RequestInit & { withAuth?: boolean } = {}): Promise<ApiResponse<T>> {
     const url = buildApiUrl(endpoint);
     const withAuth = options.withAuth !== false;
     const headers = injectToken({

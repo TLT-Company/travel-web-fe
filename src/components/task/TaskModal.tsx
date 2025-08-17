@@ -62,11 +62,8 @@ const TaskModal = ({ isOpen, onClose, onSuccess, task, mode }: TaskModalProps) =
 
       onSuccess();
       onClose();
-    } catch (err: any) {
-      // const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi lưu công việc';
-      // setError(errorMessage);
-      // console.error('Error saving task:', err);
-      toast.error(err.message || "Có lỗi xảy ra");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Có lỗi xảy ra");
       } finally {
       setLoading(false);
     }

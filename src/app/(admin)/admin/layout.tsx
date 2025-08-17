@@ -5,11 +5,13 @@ import AppHeader from "@/layout/AppHeader";
 import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
 import { redirect, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { AdminProvider } from "@/context/AdminContext";
 import { getCurrentAdmin } from "@/services/login.service";
 import { toast } from "react-toastify";
+import { ApiResponse } from "@/lib/http";
+import { Admin } from "@/components/type/login";
 
 export default function AdminLayout({
   children,
@@ -59,19 +61,19 @@ export default function AdminLayout({
       localStorage.removeItem("userLoginTravel");
       redirect("/admin/signin");
     }
-  }, []);
+  }, [router]);
 
   const fetchAdminCurrent = async () => {
     try {
-      const data = await getCurrentAdmin();
+      const data = await getCurrentAdmin() as ApiResponse<Admin>;
       if (!data.success) {
         console.error("Failed to fetch current admin data");
         localStorage.removeItem("accessTokenTravel");
         localStorage.removeItem("userLoginTravel");
         redirect("/admin/signin");
       }
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Có lỗi xảy ra");
       localStorage.removeItem("accessTokenTravel");
       localStorage.removeItem("userLoginTravel");
       redirect("/admin/signin");

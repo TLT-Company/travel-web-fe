@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 
 // === CONTEXT ===

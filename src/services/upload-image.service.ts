@@ -14,6 +14,6 @@ export const uploadImages = async (
     formData.append("images", file);
   });
 
-  const response = await http.post(`/uploads`, formData);
+  const response = await http.post<string[]>(`/uploads`, formData);
   return response;
 };

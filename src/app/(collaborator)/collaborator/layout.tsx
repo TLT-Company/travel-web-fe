@@ -1,9 +1,6 @@
 "use client";
 
 import { useSidebar } from "@/context/SidebarContext";
-// import AppHeader from "@/layout/AppHeader";
-// import AppSidebar from "@/layout/AppSidebar";
-// import Backdrop from "@/layout/Backdrop";
 import { redirect, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { toast } from 'react-toastify';
@@ -13,11 +10,9 @@ import Backdrop from "@/layout-collaborator/Backdrop";
 import AppHeader from "@/layout-collaborator/AppHeader";
 import { AdminProvider } from "@/context/AdminContext";
 import { getCurrentAdmin } from "@/services/login.service";
+import { ApiResponse } from "@/lib/http";
+import { Admin } from "@/components/type/login";
 
-type JwtPayload = {
-  exp: number;
-  [key: string]: any;
-};
 
 export default function AdminLayout({
   children,
@@ -36,7 +31,6 @@ export default function AdminLayout({
   useEffect(() => {
     const token = localStorage.getItem("accessTokenTravel");
     if (!token) {
-      // window.location.href = "/admin/signin";
       redirect("/admin/signin");
     }
 
@@ -54,7 +48,6 @@ export default function AdminLayout({
         localStorage.removeItem("userLoginTravel");
         redirect("/admin/signin");
       } else {
-        // Auto logout sau khi hết hạn
         setTimeout(() => {
           localStorage.removeItem("accessTokenTravel");
           localStorage.removeItem("userLoginTravel");
@@ -67,20 +60,20 @@ export default function AdminLayout({
       localStorage.removeItem("userLoginTravel");
       redirect("/admin/signin");
     }
-  }, []);
+  }, [router]);
   
 
   const fetchAdminCurrent = async () => {
     try {
-      const data = await getCurrentAdmin();
+      const data = await getCurrentAdmin() as ApiResponse<Admin>;
       if (!data.success) {
         console.error("Failed to fetch current admin data");
         localStorage.removeItem("accessTokenTravel");
         localStorage.removeItem("userLoginTravel");
         redirect("/admin/signin");
       }
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(error as string);
       localStorage.removeItem("accessTokenTravel");
       localStorage.removeItem("userLoginTravel");
       redirect("/admin/signin");

@@ -69,7 +69,7 @@ const AddDocumentModal: React.FC<AddDocumwntModalProps> = ({
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ values, setFieldValue, touched, errors }) => (
+          {() => (
             <Form className="space-y-6">
               <div>
                 <Label>Họ tên <span className="text-error-500">*</span></Label>

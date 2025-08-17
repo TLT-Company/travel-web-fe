@@ -27,7 +27,7 @@ export default function UserMetaCard() {
   const imageUrl = collaborator?.employer?.picture
   ? `${process.env.NEXT_PUBLIC_UPLOAD_IMAGE_URL}/${collaborator.employer.picture}`
   : "/images/user/owner.jpg";
-  const { admin, setAdmin } = useAdmin();
+  const { setAdmin } = useAdmin();
 
   const fetchCollaborator = async () => {
     setIsLoading(true)
@@ -70,12 +70,12 @@ export default function UserMetaCard() {
       }
 
       const res = await updateProfile(formData);
-      setAdmin(res);
+      setAdmin(res.data);
       toast.success('Cập nhật thông tin thành công');
       await fetchCollaborator();
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err.message || "Có lỗi xảy ra");
+    } catch (error) {
+      console.error(error);
+      toast.error(error instanceof Error ? error.message : "Có lỗi xảy ra");
     } finally {
       closeModal();
       setIsLoading(false)

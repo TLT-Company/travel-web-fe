@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import {
   Table,
   TableBody,
@@ -11,7 +11,7 @@ import {
 import { format } from "date-fns";
 import Link from "next/link";
 import Button from "@/components/ui/button/Button";
-import { PencilIcon, DownloadIcon, CopyIcon, EyeIcon } from "@/icons";
+import { CopyIcon, EyeIcon } from "@/icons";
 import { Tour } from "@/services/tour.service";
 import { toast } from "react-toastify";
 
@@ -21,7 +21,7 @@ interface TourTableProps {
 }
 
 const TourTable: FC<TourTableProps> = ({ tours, loading }) => {
-  const [copied, setCopied] = useState(false);
+  const [, setCopied] = useState(false);
   const user = JSON.parse(localStorage.getItem("userLoginTravel") || '{}');
   const handleCopy = async (tourId: number, referralCode: string) => {
     const url = `${window.location.origin}/tours/${tourId}/booking?referral_code=${referralCode}`;
