@@ -97,11 +97,8 @@ const TaskAssignment = () => {
       fetchData(pagination.currentPage);
       
       alert('Giao việc thành công!');
-    } catch (err: any) {
-      // const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi giao việc';
-      // alert(errorMessage);
-      // console.error('Error assigning task:', err);
-      toast.error(err.message || "Có lỗi xảy ra");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Có lỗi xảy ra");
     } finally {
       setAssigning(false);
     }

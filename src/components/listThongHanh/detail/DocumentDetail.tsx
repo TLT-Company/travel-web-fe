@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import LoadingOverlay from "../../common/LoadingOverlay";
 import {
-  Custommer,
   getListCustommersByDocumentId,
   FormSearchCustomerParams,
   deleteCustomerById,
@@ -86,11 +85,11 @@ const DocumentDetailPage = () => {
         await deleteCustomerById(params.document_id, Number(customnerId));
         fetchCustomers();
         toast.success('Xóa khách hàng thành công!');
-      } catch (error: any) {
+      } catch (error) {
           // console.error('Error delete customer:', error);
           // const errorMessage = error instanceof Error ? error.message : 'Có lỗi xảy ra khi xóa khách hàng';
           // toast.error(errorMessage);
-          toast.error(error.message || "Có lỗi xảy ra");
+          toast.error(error instanceof Error ? error.message : "Có lỗi xảy ra");
       } finally {
         setLoading(false);
       }

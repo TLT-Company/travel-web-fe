@@ -9,11 +9,9 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { ForgotPasswordType } from "../../type/login";
 import { ForgotPasswordAdmin } from "@/services/login.service";
 import { toast } from "react-toastify";
-import {useRouter } from "next/navigation";
 
 
 export default function ForgotPasswordForm() {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   
   const SigninSchema = Yup.object({

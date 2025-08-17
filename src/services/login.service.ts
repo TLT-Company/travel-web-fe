@@ -1,5 +1,5 @@
-import { http } from "@/lib/http";
-import { LoginType, LoginResponseData, ForgotPasswordType, ResetPasswordType, GetCurrentAdminType } from "@/components/type/login";
+import { http, ApiResponse } from "@/lib/http";
+import { LoginType, LoginResponseData, ForgotPasswordType, ResetPasswordType, Customer, Admin } from "@/components/type/login";
 
 export const loginAdmin = async (
   values: LoginType
@@ -10,31 +10,35 @@ export const loginAdmin = async (
   return response.data; // Return the data part which contains admin and token
 };
 
-export const logoutAdmin = async (): Promise<any> => {
-  return await http.post<any>("/auth/logout", {},);
+export const logoutAdmin = async (): Promise<ApiResponse<unknown>> => {
+  const response = await http.post<unknown>("/auth/logout", {},);
+  return response;
 };
 
 
 export const ForgotPasswordAdmin = async (
   values: ForgotPasswordType
-): Promise<any> => {
-  return await http.post<any>("/auth/admin/forgot-password", values, {
+): Promise<ApiResponse<unknown>> => {
+  const response = await http.post<unknown>("/auth/admin/forgot-password", values, {
     withAuth: false,
   });
+  return response;
 };
 
 export const ResetPasswordAdmin = async (
   values: ResetPasswordType
-): Promise<any> => {
-  return await http.post<any>("/auth/admin/reset-password", values, {
+): Promise<ApiResponse<unknown>> => {
+  const response = await http.post<unknown>("/auth/admin/reset-password", values, {
     withAuth: false,
   });
+  return response;
 };
 
-export const getCurrentAdmin = async (): Promise<any> => {
-  return await http.get<any>("/auth/admin/me", {
+export const getCurrentAdmin = async (): Promise<ApiResponse<Admin>> => {
+  const response = await http.get<Admin>("/auth/admin/me", {
     withAuth: true,
   });
+  return response;
 };
 
 export const loginCustomer = async (
@@ -46,9 +50,10 @@ export const loginCustomer = async (
   return response.data; // Return the data part which contains admin and token
 };
 
-export const getCurrentUser = async (): Promise<any> => {
-  return await http.get<any>("/auth/user/me", {
+export const getCurrentUser = async (): Promise<ApiResponse<Customer>> => {
+  const response = await http.get<Customer>("/auth/user/me", {
     withAuth: true,
   });
+  return response;
 };
 

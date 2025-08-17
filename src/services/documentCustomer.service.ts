@@ -127,21 +127,21 @@ export const deleteCustomerById = async (document_number: string, customer_id:nu
 }
 
 export const addDocument = async (
-  data: any,
-): Promise<any> => {
-  const response = await http.post<any>(`/documents`, data);
+  data: unknown,
+): Promise<unknown> => {
+  const response = await http.post<unknown>(`/documents`, data);
   return response.data;
 };
 
 export const scanIDCard = async (
   document_id: string,
   images: File[]
-): Promise<any> => {
+): Promise<unknown> => {
 
   const formData = new FormData();
   images.forEach((file) => {
     formData.append("images", file);
   });
-  const response = await http.post<any>(`/documents/scancccd/${document_id}`, formData);
+  const response = await http.post<unknown>(`/documents/scancccd/${document_id}`, formData);
   return response;
 };

@@ -1,5 +1,6 @@
 import ResetPasswordForm from "@/components/admin/auth/ResetPasswordForm";
 import { Metadata } from "next";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Next.js Forgot Password Page | TailAdmin - Next.js Dashboard Template",
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function ResetPassword() {
-  return <ResetPasswordForm />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
+  );
 }

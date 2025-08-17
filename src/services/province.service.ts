@@ -1,15 +1,22 @@
-import { http } from "../lib/http";
+import { http, ApiResponse } from "../lib/http";
 
-export const getProvinces = async (): Promise<any> => {
-  return await http.get<any>(`/provinces`, {
+export interface Province {
+  tentinh: string;
+  mahc: string;
+}
+
+export const getProvinces = async (): Promise<ApiResponse<Province[]>> => {
+  const response = await http.get<Province[]>(`/provinces`, {
         withAuth: true,
   });
+  return response;
 };
 
 export const getAllCommunesByProvinceID = async (
-  id: Number
-): Promise<any> => {
-  return await http.get<any>(`/provinces/${id}`, {
+  id: number
+): Promise<ApiResponse<Province[]>> => {
+  const response = await http.get<Province[]>(`/provinces/${id}`, {
         withAuth: true,
   });
+  return response;
 };

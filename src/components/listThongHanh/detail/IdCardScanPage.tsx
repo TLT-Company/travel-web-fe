@@ -50,7 +50,7 @@ const SanIDModal: React.FC<ScanIDModalProps> = ({
       try {
           if (images.length > 0) {
               const uploaded = await scanIDCard(document_id, images);
-              const [num1, num2] = uploaded.message.split("/").map(Number);
+              const [num1, num2] = (uploaded as { message: string }).message.split("/").map(Number);
               onSuccess();
               onClose();
               if (num1 == 0) {
@@ -74,7 +74,7 @@ const SanIDModal: React.FC<ScanIDModalProps> = ({
           setIsLoading(false);
       }
     }
-
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleDownload = async (apiData : any) => {
         let csvContent = "\uFEFFTên file,Kết quả\n";
         console.log(apiData)

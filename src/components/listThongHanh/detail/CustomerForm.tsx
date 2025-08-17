@@ -49,13 +49,9 @@ const CustomerForm: FC<Props> = ({
   useEffect(() => {
   const fetchProvinces = async () => {
       try {
-        // const res = await fetch("https://provinces.open-api.vn/api/p/");
-        // const data = await res.json();
         const data = await getProvinces();
-        const options = data.map((item: any) => ({
-          // value: item.name,
-          // label: item.name,
-          // code: item.code,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const options = data.data.map((item: any) => ({
           value: cleanLocationName(item.tentinh),
           label: cleanLocationName(item.tentinh),
           code: item.mahc,
@@ -81,7 +77,8 @@ const CustomerForm: FC<Props> = ({
 
         const options = [
           { value: "", label: "Chọn Xã/ Phường" },
-          ...data.map((item: any) => ({
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ...data.data.map((item: any) => ({
             value: item.tenhc,
             label: item.tenhc,
           }))

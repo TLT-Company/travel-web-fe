@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { ApiResponse } from "@/lib/http";
 
 type params = {
   id: string;
@@ -38,8 +39,8 @@ const fetchAdminCurrent = async () => {
           redirect("/user/signin");
         }
       }
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Có lỗi xảy ra");
       localStorage.removeItem("accessTokenTravel");
       localStorage.removeItem("userLoginTravel");
       redirect("/user/signin");
@@ -93,7 +94,7 @@ const fetchAdminCurrent = async () => {
   });
   const handleLogout = async () => {
     try {
-      const response = await logoutAdmin();
+      const response = await logoutAdmin() as ApiResponse<unknown>;
       if(response.success) {
         localStorage.removeItem("accessTokenTravel");
         localStorage.removeItem("userLoginTravel");

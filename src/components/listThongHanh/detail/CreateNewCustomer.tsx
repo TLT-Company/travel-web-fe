@@ -41,10 +41,8 @@ const CreateCustomerPage = () => {
       
       router.push(`/admin/thong-hanh/${params.document_id}`);
       
-    } catch (error: any) {
-      // console.error('Error registering customer:', error);
-      // const errorMessage = error instanceof Error ? error.message : 'Có lỗi xảy ra khi thêm nhân viên';
-      toast.error(error.message || "Có lỗi xảy ra");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Có lỗi xảy ra");
     } finally {
       setIsLoading(false);
     }

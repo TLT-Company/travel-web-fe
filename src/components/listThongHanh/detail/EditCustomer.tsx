@@ -40,7 +40,7 @@ const EditCustomerPage = () => {
     };
 
     fetchCustomer();
-  }, [params.customer_id]);
+  }, [params.customer_id, params.document_id, router]);
 
   const handleSubmit = async (values: CustomerRequest) => {
     setIsLoading(true);
