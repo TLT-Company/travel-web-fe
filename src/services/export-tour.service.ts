@@ -33,6 +33,16 @@ export const documentExportService = {
   update: (id: number, data: Partial<DocumentExport>) => http.put<DocumentExport>(`/document-export/${id}/`, data),
   delete: (id: number) => http.delete(`/document-export/${id}/`),
   performAnalysis: (file_name: string) => http.post<ApiResponse>('/document-export/perform-analysis', { file_name }),
+  exportCustomerCSV: (document_id: string) => {
+    const url = `${ENV_CONFIG.API_BASE_URL}/document-export/customer-csv?document_id=${document_id}`;
+    return fetch(url, {
+      method: 'GET',
+      headers: {
+        ...API_CONFIG.HEADERS,
+        Authorization: `Bearer ${localStorage.getItem("accessTokenTravel")}`,
+      },
+    });
+  },
   download: (id: number) => {
     const url = `${ENV_CONFIG.API_BASE_URL}/document-export/download/${id}/`;
     return fetch(url, {

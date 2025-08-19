@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { format } from "date-fns";
 import Link from "next/link";
 import Button from "@/components/ui/button/Button";
@@ -15,6 +15,8 @@ interface DocumentCustomerProps {
 }
 
 const DocumentCustomerTable: FC<DocumentCustomerProps> = ({ documentCustomers, loading }) => {
+  const [exportingCSV, setExportingCSV] = useState<string | null>(null);
+
   const handleExport = async (documentNumber: string) => {
     try {
       const response = await documentExportService.performAnalysis(documentNumber);
@@ -27,6 +29,46 @@ const DocumentCustomerTable: FC<DocumentCustomerProps> = ({ documentCustomers, l
     } catch (error) {
       console.error("Export error:", error);
       toast.error("Có lỗi xảy ra khi trích xuất thông tin!");
+    }
+  };
+
+  const handleExportCSV = async (documentId: string) => {
+    if (exportingCSV === documentId) return; // Prevent multiple clicks
+    
+    setExportingCSV(documentId);
+    try {
+      const response = await documentExportService.exportCustomerCSV(documentId);
+      
+      if (response.ok) {
+        // Get the CSV content directly from the response
+        const csvContent = await response.text();
+        
+        // Add BOM for proper UTF-8 encoding (especially for Vietnamese characters)
+        const BOM = '\uFEFF';
+        const csvWithBOM = BOM + csvContent;
+        
+        // Create and download CSV file
+        const blob = new Blob([csvWithBOM], { type: 'text/csv;charset=utf-8;' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `customers-${documentId}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+        toast.success("Xuất CSV thành công!");
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData?.message || `Xuất CSV thất bại! (${response.status})`;
+        toast.error(errorMessage);
+      }
+    } catch (error) {
+      console.error("CSV export error:", error);
+      toast.error("Có lỗi xảy ra khi xuất CSV!");
+    } finally {
+      setExportingCSV(null);
     }
   };
 
@@ -76,6 +118,13 @@ const DocumentCustomerTable: FC<DocumentCustomerProps> = ({ documentCustomers, l
                       disabled={loading}
                     >
                       Trích xuất
+                    </Button>
+                    <Button
+                      className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1"
+                      onClick={() => handleExportCSV(documentCustomer.id)}
+                      disabled={loading || exportingCSV === documentCustomer.id}
+                    >
+                      {exportingCSV === documentCustomer.id ? "Đang xuất..." : "Xuất CSV"}
                     </Button>
                   </div>
                 </td>
