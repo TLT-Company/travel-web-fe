@@ -55,7 +55,6 @@ export default function UserDropdown() {
         } else {
           setProfilePath("");
         }
-        
         // Convert the Admin type to match the context's expected type
         const convertedAdmin = {
           id: String(user.id),
@@ -64,16 +63,16 @@ export default function UserDropdown() {
           created_at: user.created_at,
           updated_at: user.updated_at,
           employer: {
-            id: String(user.employer.id),
-            admin_id: String(user.employer.admin_id),
-            full_name: user.employer.full_name || '',
-            referral_code: user.employer.position || '',
+            id: String(user.employer?.id),
+            admin_id: String(user.employer?.admin_id),
+            full_name: user.employer?.full_name || '',
+            referral_code: user.employer?.position || '',
             phone_number: '',
             picture: '',
             gender: '',
             address: '',
             day_of_birth: '',
-            created_at: user.employer.created_at
+            created_at: user.employer?.created_at
           }
         };
         
