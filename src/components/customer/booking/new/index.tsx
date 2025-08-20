@@ -55,10 +55,7 @@ const fetchAdminCurrent = async () => {
     },
     onSubmit: async (values) => {
       // validate: (values) => {
-      const errors: { frontImage?: string, backImage?: string, cccd?: string, pictureAvatar?: string } = {};
-      if(!values.cccd) {
-        errors.cccd = "CCCD không được để trống";
-      }
+      const errors: { frontImage?: string, backImage?: string, pictureAvatar?: string } = {};
       if (!frontImage) {
         errors.frontImage = "Ảnh CCCD mặt trước không được để trống";
       }
@@ -74,7 +71,7 @@ const fetchAdminCurrent = async () => {
       }
       // },
       const formData = new FormData();
-      formData.append("cccd", values.cccd);
+      // formData.append("cccd", values.cccd);
       formData.append("note", values.note);
       formData.append("tour_id", id);
       formData.append("referral_code", values.referral_code);
@@ -115,7 +112,7 @@ const fetchAdminCurrent = async () => {
       onSubmit={formik.handleSubmit}
       className="max-w-md mx-auto space-y-6 p-4 border rounded-lg shadow"
     >
-      <div>
+      {/* <div>
         <label className="block mb-1 font-medium">CCCD</label>
         <input
           type="text"
@@ -125,7 +122,7 @@ const fetchAdminCurrent = async () => {
           className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Nhập cccd"
         />
-      </div>
+      </div> */}
       <div>
         <label className="block mb-1 font-medium">Ghi chú</label>
         <input
