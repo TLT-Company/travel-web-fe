@@ -72,7 +72,7 @@ const AddDocumentModal: React.FC<AddDocumwntModalProps> = ({
           {() => (
             <Form className="space-y-6">
               <div>
-                <Label>Họ tên <span className="text-error-500">*</span></Label>
+                <Label>Nhập số thông hành <span className="text-error-500">*</span></Label>
                 <Field
                   type="text"
                   name="document_number"
