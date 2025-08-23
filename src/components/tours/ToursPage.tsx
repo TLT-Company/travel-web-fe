@@ -6,7 +6,8 @@ import {
   Tour,
   FormSearchTourParams,
   getListTours,
-  deleteTour
+  deleteTour,
+  downloadTourCustomerImages
 } from "@/services/tour.service";
 import Pagination from "../tables/Pagination";
 import TourTable from "./TourTable";
@@ -86,6 +87,20 @@ export default function ToursPage() {
     }
   }
 
+  const handleDownload = async (tour: Tour) => {
+    try {
+      setLoading(true);
+      const filename = `${tour.name}-customers-images-${new Date().toISOString().split('T')[0]}.zip`;
+      await downloadTourCustomerImages(tour.id, filename);
+      toast.success("Download ảnh khách hàng thành công!");
+    } catch (error) {
+      console.log("Download ảnh thất bại:", error);
+      toast.error("Download ảnh khách hàng thất bại!");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div>
       <FormSearchTour
@@ -104,7 +119,12 @@ export default function ToursPage() {
         </p>
       </div>
 
-      <TourTable tours={tours} loading={loading} onDelete={handleDelete} />
+      <TourTable 
+        tours={tours} 
+        loading={loading} 
+        onDelete={handleDelete}
+        onDownload={handleDownload}
+      />
 
       {totalPages > 1 && (
         <div className="mt-6">

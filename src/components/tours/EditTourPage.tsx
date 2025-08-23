@@ -12,6 +12,7 @@ import {
 } from "@/services/tour.service";
 import { uploadImages } from "@/services/upload-image.service";
 import TourForm from "@/components/tours/TourForm";
+import DownloadCustomerImagesButton from "./DownloadCustomerImagesButton";
 
 export default function EditTourPage() {
   const [tour, setTour] = useState<Tour | null>(null);
@@ -95,11 +96,21 @@ export default function EditTourPage() {
   if (!tour) return <div>Không tìm thấy tour</div>;
 
   return (
-    <TourForm
-      isCreate={false}
-      tour={tour}
-      onSubmit={handleSubmit}
-      loading={loading}
-    />
-  )
+    <div className="p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Chỉnh sửa tour</h1>
+        <DownloadCustomerImagesButton 
+          tourId={tour.id} 
+          tourName={tour.name}
+          disabled={!tour.bookings || tour.bookings.length === 0}
+        />
+      </div>
+      <TourForm
+        isCreate={false}
+        tour={tour}
+        onSubmit={handleSubmit}
+        loading={loading}
+      />
+    </div>
+  );
 }

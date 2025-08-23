@@ -201,6 +201,41 @@ class Http {
 
     return responseBody;
   }
+
+  async download(
+    endpoint: string,
+    filename?: string,
+    options: RequestInit & { withAuth?: boolean } = {}
+  ): Promise<void> {
+    const url = buildApiUrl(endpoint);
+    const withAuth = options.withAuth !== false;
+    const headers = injectToken({
+      ...options.headers,
+    }, withAuth);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers,
+      ...options,
+    });
+
+    if (!response.ok) {
+      throw new ApiError(
+        `HTTP error! status: ${response.status}`,
+        response.status
+      );
+    }
+
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = filename || 'download';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(downloadUrl);
+  }
 }
 
 export const http = new Http();

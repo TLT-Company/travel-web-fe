@@ -17,9 +17,10 @@ interface TourTableProps {
   tours: Tour[];
   loading: boolean;
   onDelete?: (id: number) => void;
+  onDownload?: (tour: Tour) => void;
 }
 
-const TourTable: FC<TourTableProps> = ({ tours, loading, onDelete }) => {
+const TourTable: FC<TourTableProps> = ({ tours, loading, onDelete, onDownload }) => {
   return (
     <div
       className="rounded-xl border border-gray-200 bg-white
@@ -130,7 +131,7 @@ const TourTable: FC<TourTableProps> = ({ tours, loading, onDelete }) => {
                       <Link href={`/admin/tours/${tour.id}/edit`} passHref>
                         <Button
                           size="sm"
-                          className="bg-gray-500 hover:bg-gray-600"
+                          className="bg-green-500 hover:bg-green-600"
                           disabled={loading}
                         >
                           Chỉnh sửa
@@ -138,9 +139,10 @@ const TourTable: FC<TourTableProps> = ({ tours, loading, onDelete }) => {
                       </Link>
                       <Button
                         size="sm"
-                        className="bg-green-500 hover:bg-green-600"
-                        onClick={() => {}}
-                        disabled={loading}
+                        className="bg-orange-500 hover:bg-orange-600"
+                        onClick={() => onDownload?.(tour)}
+                        disabled={loading || !tour.total_customers || tour.total_customers === 0}
+                        aria-label={!tour.total_customers || tour.total_customers === 0 ? "Tour không có khách hàng" : "Download ảnh khách hàng"}
                       >
                         Tải xuống
                       </Button>

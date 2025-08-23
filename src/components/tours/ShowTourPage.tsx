@@ -17,6 +17,7 @@ import Button from "@/components/ui/button/Button";
 import Badge from "../ui/badge/Badge";
 import { getTourDetail, Tour } from "@/services/tour.service";
 import ImageGallery from "../common/ImageGallery";
+import DownloadCustomerImagesButton from "./DownloadCustomerImagesButton";
 
 export default function ShowTourPage() {
   const [tour, setTour] = useState<Tour | null>(null);
@@ -56,9 +57,24 @@ export default function ShowTourPage() {
 
   return (
     <div className="p-4 bg-white rounded shadow-md">
-      <h1 className="text-2xl font-bold mb-4">
-        {tour.name}
-      </h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">
+          {tour.name}
+        </h1>
+        <div className="flex gap-2">
+          <DownloadCustomerImagesButton 
+            tourId={tour.id} 
+            tourName={tour.name}
+            disabled={!tour.bookings || tour.bookings.length === 0}
+          />
+          <Link href={`/admin/tours/${tour.id}/edit`}>
+            <Button className="flex items-center gap-2">
+              <PencilIcon className="w-4 h-4" />
+              Chỉnh sửa
+            </Button>
+          </Link>
+        </div>
+      </div>
 
       <div className="grid grid-cols-12 gap-4 mb-4">
         <div className="col-span-2 font-bold">Mô tả:</div>

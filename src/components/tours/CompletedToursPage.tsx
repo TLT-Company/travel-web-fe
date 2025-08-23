@@ -4,7 +4,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import LoadingOverlay from "@/components/common/LoadingOverlay";
 import {
   Tour,
-  getListToursByMonth
+  getListToursByMonth,
+  downloadTourCustomerImages
 } from "@/services/tour.service";
 import Pagination from "@/components/tables/Pagination";
 import TourTable from "./TourTable";
@@ -40,7 +41,7 @@ export default function ToursPage() {
       }
     } catch (e) {
       console.log("Error get tours: ", e);
-      toast.error("Lỗi khi lấy danh sách tour");
+      toast.error("Lỗi khi lấy danh sách tour");
     } finally {
       setLoading(false);
     }
@@ -67,6 +68,20 @@ export default function ToursPage() {
     }
   };
 
+  const handleDownload = async (tour: Tour) => {
+    try {
+      setLoading(true);
+      const filename = `${tour.name}-customers-images-${new Date().toISOString().split('T')[0]}.zip`;
+      await downloadTourCustomerImages(tour.id, filename);
+      toast.success("Download ảnh khách hàng thành công!");
+    } catch (error) {
+      console.log("Download ảnh thất bại:", error);
+      toast.error("Download ảnh khách hàng thất bại!");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div>
       <div className="w-[30%] mb-8">
@@ -79,7 +94,11 @@ export default function ToursPage() {
         />
       </div>
 
-      <TourTable tours={tours} loading={loading} />
+      <TourTable 
+        tours={tours} 
+        loading={loading}
+        onDownload={handleDownload}
+      />
 
       {totalPages > 1 && (
         <div className="mt-6">

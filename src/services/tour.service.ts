@@ -149,3 +149,15 @@ export const getListToursByMonth = async (
     withAuth: false,
   });
 };
+
+/**
+ * Download ảnh của các khách hàng trong tour dưới dạng file ZIP
+ * @param tourId - ID của tour
+ * @param filename - Tên file ZIP (mặc định: tour-customers-images.zip)
+ */
+export const downloadTourCustomerImages = async (
+  tourId: number,
+  filename: string = 'tour-customers-images.zip'
+): Promise<void> => {
+  return await http.download(`/tours/${tourId}/images/zip`, filename);
+};
