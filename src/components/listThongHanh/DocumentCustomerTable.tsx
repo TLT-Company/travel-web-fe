@@ -32,7 +32,7 @@ const DocumentCustomerTable: FC<DocumentCustomerProps> = ({ documentCustomers, l
     }
   };
 
-  const handleExportCSV = async (documentId: string) => {
+  const handleExportCSV = async (documentId: string, documentNumber: string) => {
     if (exportingCSV === documentId) return; // Prevent multiple clicks
     
     setExportingCSV(documentId);
@@ -52,7 +52,7 @@ const DocumentCustomerTable: FC<DocumentCustomerProps> = ({ documentCustomers, l
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `customers-${documentId}.csv`;
+        link.download = `${documentNumber}.csv`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -121,7 +121,7 @@ const DocumentCustomerTable: FC<DocumentCustomerProps> = ({ documentCustomers, l
                     </Button>
                     <Button
                       className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1"
-                      onClick={() => handleExportCSV(documentCustomer.id)}
+                      onClick={() => handleExportCSV(documentCustomer.id, documentCustomer.document_number)}
                       disabled={loading || exportingCSV === documentCustomer.id}
                     >
                       {exportingCSV === documentCustomer.id ? "Đang xuất..." : "Xuất CSV"}
