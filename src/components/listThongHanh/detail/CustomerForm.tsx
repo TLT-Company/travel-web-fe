@@ -186,6 +186,8 @@ const CustomerForm: FC<Props> = ({
   const validationSchema = Yup.object({
     card_id: Yup.string()
       .required('CCCD là bắt buộc'),
+    card_created_at: Yup.string()
+      .required('Ngày làm thẻ là bắt buộc'),
     full_name: Yup.string()
       .required('Họ và tên là bắt buộc'),
     day_of_birth: Yup.string()
@@ -194,8 +196,8 @@ const CustomerForm: FC<Props> = ({
       .required('Giới tính là bắt buộc'),
     national: Yup.string()
       .required('Quốc tịch là bắt buộc'),
-    card_created_at: Yup.string()
-      .required('Ngày làm thẻ là bắt buộc'),
+    village: Yup.string()
+      .required('Địa chỉ là bắt buộc'),
     province: Yup.string()
       .required('Tỉnh/Thành phố là bắt buộc'),
     // district: Yup.string()
@@ -239,6 +241,27 @@ const CustomerForm: FC<Props> = ({
                 />
                 <ErrorMessage
                   name="card_id"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
+
+              <div>
+                <Label>Ngày làm thẻ <span className="text-error-500">*</span></Label>
+                <DatePicker
+                  key={values.card_created_at}
+                  id="card_created_at"
+                  placeholder="Nhập ngày làm thẻ"
+                  defaultDate={values.card_created_at}
+                  onChange={([selected]) => 
+                    {
+                      setFieldValue('card_created_at', selected
+                          ? selected.toLocaleDateString("en-CA") :"");
+                    }
+                  }
+                />
+                <ErrorMessage
+                  name="card_created_at"
                   component="div"
                   className="text-red-500 text-sm mt-1"
                 />
@@ -325,37 +348,16 @@ const CustomerForm: FC<Props> = ({
               </div>
 
               <div>
-                <Label>Thôn <span className="text-error-500"></span></Label>
+                <Label>Địa chỉ <span className="text-error-500">*</span></Label>
                 <Field
                   type="village"
                   name="village"
-                  placeholder="Nhập thôn"
+                  placeholder="Nhập địa chỉ"
                   as={Input}
                   disabled={isLoading}
                 />
                 <ErrorMessage
                   name="village"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
-
-              <div>
-                <Label>Ngày làm thẻ <span className="text-error-500">*</span></Label>
-                <DatePicker
-                  key={values.card_created_at}
-                  id="card_created_at"
-                  placeholder="Nhập ngày làm thẻ"
-                  defaultDate={values.card_created_at}
-                  onChange={([selected]) => 
-                    {
-                      setFieldValue('card_created_at', selected
-                          ? selected.toLocaleDateString("en-CA") :"");
-                    }
-                  }
-                />
-                <ErrorMessage
-                  name="card_created_at"
                   component="div"
                   className="text-red-500 text-sm mt-1"
                 />
