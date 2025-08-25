@@ -179,7 +179,7 @@ const CustomerForm: FC<Props> = ({
         formData.province = values.province;
         // formData.district = values.district;
         formData.commune = values.commune;
-        
+
         onSubmit(formData);
   };
 
@@ -209,7 +209,7 @@ const CustomerForm: FC<Props> = ({
   if (isLoading) return <LoadingOverlay shown={isLoading} />;
 
   return (
-      <div className="max-w-2xl mx-auto">
+      <div className="mx-auto">
         <Formik<CustomerRequest>
           initialValues={{
             card_id: formData.card_id || "",
@@ -230,174 +230,182 @@ const CustomerForm: FC<Props> = ({
         >
           {({ values, setFieldValue, touched, errors }) => (
             <Form className="space-y-6">
-              <div>
-                <Label>ID thẻ <span className="text-error-500">*</span></Label>
-                <Field
-                  type="card_id"
-                  name="card_id"
-                  placeholder="Nhập ID thẻ"
-                  as={Input}
-                  disabled={submitLabel === "Cập nhật"}
-                />
-                <ErrorMessage
-                  name="card_id"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <Label>Họ và tên <span className="text-error-500">*</span></Label>
+                  <Field
+                    type="full_name"
+                    name="full_name"
+                    placeholder="Nhập họ và tên"
+                    as={Input}
+                    disabled={isLoading}
+                  />
+                  <ErrorMessage
+                    name="full_name"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
 
-              <div>
-                <Label>Ngày làm thẻ <span className="text-error-500">*</span></Label>
-                <DatePicker
-                  key={values.card_created_at}
-                  id="card_created_at"
-                  placeholder="Nhập ngày làm thẻ"
-                  defaultDate={values.card_created_at}
-                  onChange={([selected]) => 
-                    {
-                      setFieldValue('card_created_at', selected
-                          ? selected.toLocaleDateString("en-CA") :"");
+                <div>
+                  <Label>Ngày sinh <span className="text-error-500">*</span></Label>
+
+                  <DatePicker
+                    id="day_of_birth"
+                    placeholder="Nhập ngày sinh"
+                    defaultDate={values.day_of_birth}
+                    onChange={([selected]) => 
+                      {
+                        setFieldValue('day_of_birth',  selected
+                            ? selected.toLocaleDateString("en-CA") :"");
+                      }
                     }
-                  }
-                />
-                <ErrorMessage
-                  name="card_created_at"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
+                  />
+
+                  <ErrorMessage
+                    name="day_of_birth"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
+
+                <div>
+                  <Label>Giới tính<span className="text-error-500">*</span></Label>
+                  <Select
+                    options={genderOptions}
+                    placeholder="Chọn giới tính"
+                    onChange={(value) => setFieldValue('gender', value)}
+                    defaultValue={values.gender}
+                  />
+                  {touched.gender && errors.gender && (
+                    <div className="text-red-500 text-sm mt-1">{errors.gender}</div>
+                  )}
+                </div>
               </div>
 
-              <div>
-                <Label>Họ và tên <span className="text-error-500">*</span></Label>
-                <Field
-                  type="full_name"
-                  name="full_name"
-                  placeholder="Nhập họ và tên"
-                  as={Input}
-                  disabled={isLoading}
-                />
-                <ErrorMessage
-                  name="full_name"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <Label>Số CCCD <span className="text-error-500">*</span></Label>
+                  <Field
+                    type="card_id"
+                    name="card_id"
+                    placeholder="Nhập Số CCCD"
+                    as={Input}
+                    disabled={submitLabel === "Cập nhật"}
+                  />
+                  <ErrorMessage
+                    name="card_id"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
 
-              <div>
-                <Label>Ngày sinh <span className="text-error-500">*</span></Label>
-
-                <DatePicker
-                  id="day_of_birth"
-                  placeholder="Nhập ngày sinh"
-                  defaultDate={values.day_of_birth}
-                  onChange={([selected]) => 
-                    {
-                      setFieldValue('day_of_birth',  selected
-                          ? selected.toLocaleDateString("en-CA") :"");
+                <div>
+                  <Label>Ngày làm thẻ <span className="text-error-500">*</span></Label>
+                  <DatePicker
+                    key={values.card_created_at}
+                    id="card_created_at"
+                    placeholder="Nhập ngày làm thẻ"
+                    defaultDate={values.card_created_at}
+                    onChange={([selected]) =>
+                      {
+                        setFieldValue('card_created_at', selected
+                            ? selected.toLocaleDateString("en-CA") :"");
+                      }
                     }
-                  }
-                />
-
-                <ErrorMessage
-                  name="day_of_birth"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
+                  />
+                  <ErrorMessage
+                    name="card_created_at"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
               </div>
 
-              <div>
-                <Label>Giới tính<span className="text-error-500">*</span></Label>
-                <Select
-                  options={genderOptions}
-                  placeholder="Chọn giới tính"
-                  onChange={(value) => setFieldValue('gender', value)}
-                  defaultValue={values.gender}
-                />
-                {touched.gender && errors.gender && (
-                  <div className="text-red-500 text-sm mt-1">{errors.gender}</div>
-                )}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <Label>Quốc tịch<span className="text-error-500">*</span></Label>
+                  <Select
+                    options={nationalOptions}
+                    placeholder="Chọn quốc tịch"
+                    onChange={(value) => setFieldValue('national', value)}
+                    defaultValue={values.national}
+                  />
+                  {touched.national && errors.national && (
+                    <div className="text-red-500 text-sm mt-1">{errors.national}</div>
+                  )}
+                </div>
+
+                <div>
+                  <Label>Nơi sinh <span className="text-error-500"></span></Label>
+                  <Field
+                    type="place_of_birth"
+                    name="place_of_birth"
+                    placeholder="Nhập nơi sinh"
+                    as={Input}
+                    disabled={isLoading}
+                  />
+                  <ErrorMessage
+                    name="place_of_birth"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
               </div>
 
-              <div>
-                <Label>Quốc tịch<span className="text-error-500">*</span></Label>
-                <Select
-                  options={nationalOptions}
-                  placeholder="Chọn quốc tịch"
-                  onChange={(value) => setFieldValue('national', value)}
-                  defaultValue={values.national}
-                />
-                {touched.national && errors.national && (
-                  <div className="text-red-500 text-sm mt-1">{errors.national}</div>
-                )}
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <Label>Địa chỉ <span className="text-error-500">*</span></Label>
+                  <Field
+                    type="village"
+                    name="village"
+                    placeholder="Nhập địa chỉ"
+                    as={Input}
+                    disabled={isLoading}
+                  />
+                  <ErrorMessage
+                    name="village"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
 
-              <div>
-                <Label>Nơi sinh <span className="text-error-500"></span></Label>
-                <Field
-                  type="place_of_birth"
-                  name="place_of_birth"
-                  placeholder="Nhập nơi sinh"
-                  as={Input}
-                  disabled={isLoading}
-                />
-                <ErrorMessage
-                  name="place_of_birth"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
+                <div>
+                  <Label>Tỉnh/Thành Phố <span className="text-error-500">*</span></Label>
+                  <Select
+                    options={provinceOptions}
+                    placeholder="Chọn tỉnh/thành phố"
+                    onChange={ (value) =>
+                    {
+                      setFieldValue('province', value)
+                      const selected = provinceOptions.find(p => p.value === value);
+                      setSelectedProvinceCode(Number(selected?.code) || null);
+                      setCommuneOptions([])
+                      // setFieldValue('district', '');
+                      setFieldValue('commune', '');
+                    }}
+                    defaultValue={values.province}
+                  />
+                  <ErrorMessage
+                    name="province"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
 
-              <div>
-                <Label>Địa chỉ <span className="text-error-500">*</span></Label>
-                <Field
-                  type="village"
-                  name="village"
-                  placeholder="Nhập địa chỉ"
-                  as={Input}
-                  disabled={isLoading}
-                />
-                <ErrorMessage
-                  name="village"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
-
-              <div>
-                <Label>Tỉnh/Thành Phố <span className="text-error-500">*</span></Label>
-                <Select
-                  options={provinceOptions}
-                  placeholder="Chọn tỉnh/thành phố"
-                  onChange={ (value) => 
-                  {
-                    setFieldValue('province', value)
-                    const selected = provinceOptions.find(p => p.value === value);
-                    setSelectedProvinceCode(Number(selected?.code) || null);
-                    setCommuneOptions([])
-                    // setFieldValue('district', '');
-                    setFieldValue('commune', '');
-                  }}
-                  defaultValue={values.province}
-                />
-                <ErrorMessage
-                  name="province"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
-
-              <div>
-                <Label>Xã/Phường <span className="text-error-500">*</span></Label>
-                <Select
-                  options={communeOptions}
-                  onChange={(value) => setFieldValue('commune', value)}
-                  defaultValue={values.commune}
-                />
-                <ErrorMessage
-                  name="commune"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
+                <div>
+                  <Label>Xã/Phường <span className="text-error-500">*</span></Label>
+                  <Select
+                    options={communeOptions}
+                    onChange={(value) => setFieldValue('commune', value)}
+                    defaultValue={values.commune}
+                  />
+                  <ErrorMessage
+                    name="commune"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
               </div>
 
               {/* <div>
@@ -452,7 +460,7 @@ const CustomerForm: FC<Props> = ({
             </Form>
           )}
         </Formik>
-      </div> 
+      </div>
   );
 };
 

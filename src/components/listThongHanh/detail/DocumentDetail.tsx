@@ -97,7 +97,7 @@ const DocumentDetailPage = () => {
   };
 
 
-   const handleAddSuccess = () => {
+  const handleAddSuccess = () => {
     fetchCustomers();
   };
 
@@ -137,15 +137,15 @@ const DocumentDetailPage = () => {
 
         <div className="my-4 text-right">
           <p className="text-sm text-gray-600 mr-1">
-            số lượng tìm kiếm: <span className="text-black">{totalCustomers}</span>
+            Số lượng khách hàng: <span className="text-black">{totalCustomers}</span>
           </p>
         </div>
 
-        <CustomerTable 
-          // customers={customers} 
-          customers={documentCustomer?.customers ?? []} 
-          loading={loading} 
-          document_id={params.document_id} 
+        <CustomerTable
+          // customers={customers}
+          customers={documentCustomer?.customers ?? []}
+          loading={loading}
+          document_id={params.document_id}
           onSubmitDelete={(customerID) => {
             handleSubmit(customerID);
           }}/>

@@ -1,30 +1,32 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { Modal } from '../ui/modal';
-import Input from '../form/input/InputField';
-import Label from '../form/Label';
-import { toast } from 'react-toastify';
-import { addDocument } from '@/services/documentCustomer.service';
+import { useState } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { Modal } from "../ui/modal";
+import Input from "../form/input/InputField";
+import Label from "../form/Label";
+import { toast } from "react-toastify";
+import { updateDocument } from "@/services/documentCustomer.service";
 
-interface AddDocumwntModalProps {
+interface AddDocumentModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  documentId?: string;
 }
 
-const AddDocumentModal: React.FC<AddDocumwntModalProps> = ({
+const EditDocumentModal: React.FC<AddDocumentModalProps> = ({
   isOpen,
   onClose,
   onSuccess,
+  documentId,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const validationSchema = Yup.object({
     document_number: Yup.string()
-      .required('Số thông hành là bắt buộc')
+      .required("Số thông hành là bắt buộc")
   });
 
   const handleSubmit = async (values: {
@@ -32,15 +34,16 @@ const AddDocumentModal: React.FC<AddDocumwntModalProps> = ({
   }) => {
     setIsLoading(true);
     try {
-      await addDocument({
-        document_number: values.document_number,
+      await updateDocument({
+        id: documentId ?? "",
+        data: { document_number: values.document_number }
       });
 
-      toast.success('Thêm số thông hành thành công!');
+      toast.success("Chỉnh sửa số thông hành thành công!");
       onSuccess();
       onClose();
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Có lỗi xảy ra khi thêm số thông hành';
+      const errorMessage = error instanceof Error ? error.message : "Có lỗi xảy ra khi chỉnh sửa số thông hành";
       onClose();
       toast.error(errorMessage);
     } finally {
@@ -58,18 +61,16 @@ const AddDocumentModal: React.FC<AddDocumwntModalProps> = ({
     <Modal isOpen={isOpen} onClose={handleClose}>
       <div className="p-6 max-w-sm mx-auto">
         <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white text-center">
-          Thêm mới số thông hành
+          Chỉnh sửa số thông hành
         </h2>
 
         <Formik
-          initialValues={{
-            document_number: '',
-          }}
+          initialValues={{ document_number: "" }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {() => (
-            <Form className="space-y-6">
+            <Form className="space-y-6" noValidate>
               <div>
                 <Label>Nhập số thông hành <span className="text-error-500">*</span></Label>
                 <Field
@@ -110,7 +111,7 @@ const AddDocumentModal: React.FC<AddDocumwntModalProps> = ({
                             disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Đang thêm...' : 'Thêm số thông hành'}
+                  {isLoading ? "Đang chỉnh sửa..." : "Chỉnh sửa số thông hành"}
                 </button>
               </div>
             </Form>
@@ -121,4 +122,4 @@ const AddDocumentModal: React.FC<AddDocumwntModalProps> = ({
   );
 };
 
-export default AddDocumentModal;
+export default EditDocumentModal;
