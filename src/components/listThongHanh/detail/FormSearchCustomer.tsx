@@ -33,11 +33,11 @@ const FormSearchCustomer: FC<FormSearchCustomerProps> = ({
     <Form className="w-full" onSubmit={handleSubmit}>
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-6">
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-5 gap-2">
                 <Label htmlFor="id" className="col-span-1 my-auto">
                 ID thẻ:
                 </Label>
-                <div className="col-span-3">
+                <div className="col-span-4">
                 <Input
                     id="card_id"
                     name="card_id"
@@ -49,11 +49,11 @@ const FormSearchCustomer: FC<FormSearchCustomerProps> = ({
             </div>
         </div>
         <div className="col-span-6">
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-5 gap-2">
                 <Label htmlFor="id" className="col-span-1 my-auto">
                 Tên khách hàng:
                 </Label>
-                <div className="col-span-3">
+                <div className="col-span-4">
                 <Input
                     id="full_name"
                     name="full_name"
