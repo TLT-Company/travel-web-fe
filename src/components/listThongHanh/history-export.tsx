@@ -38,7 +38,7 @@ const ListThongHanh = () => {
     const kindMap: { [key: string]: string } = {
       'groupListCN': 'Danh sách nhóm CN',
       'groupListVN': 'Danh sách nhóm VN',
-      'declarationList': 'Danh sách khai báo',
+      'declarationList': 'Danh sách tờ khai TK08',
       // 'encryptedList': 'Danh sách mã hóa'
     };
     return kindMap[kind] || kind;
