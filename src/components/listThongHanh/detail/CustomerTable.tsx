@@ -88,7 +88,7 @@ const CustomerTable: FC<CustomerProps> = ({ customers, loading, document_id, onS
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
-                       {customer.full_name}
+                      {customer.full_name}
                     </TableCell>
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm
@@ -125,7 +125,7 @@ const CustomerTable: FC<CustomerProps> = ({ customers, loading, document_id, onS
                                 dark:text-gray-400"
                     >
                       {/* {customer.commune} */}
-                       {customer.address_mapping?.commune_new}
+                      {customer.address_mapping?.commune_new}
                     </TableCell>
                     {/* <TableCell
                       className="px-4 py-3 text-start text-theme-sm
@@ -133,7 +133,7 @@ const CustomerTable: FC<CustomerProps> = ({ customers, loading, document_id, onS
                     >
                       {customer.district}
                     </TableCell> */}
-                     <TableCell
+                    <TableCell
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
@@ -160,7 +160,7 @@ const CustomerTable: FC<CustomerProps> = ({ customers, loading, document_id, onS
                           onClick={() => onSubmitDelete(customer.id)}
                           disabled={loading}
                         >
-                          <TrashBinIcon />
+                          <TrashBinIcon className="w-6 h-6" />
                         </Button>
                       </div>
                     </TableCell>

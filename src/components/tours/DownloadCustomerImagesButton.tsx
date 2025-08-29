@@ -36,7 +36,7 @@ export default function DownloadCustomerImagesButton({
         disabled={isDownloading || disabled}
         className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
       >
-        <DownloadIcon className="w-4 h-4" />
+        <DownloadIcon className="w-5.5 h-5.5" />
         {isDownloading ? "Đang download..." : "Download ảnh khách hàng"}
       </Button>
       {error && (
@@ -44,4 +44,4 @@ export default function DownloadCustomerImagesButton({
       )}
     </div>
   );
-} 
+}

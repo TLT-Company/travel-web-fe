@@ -150,3 +150,14 @@ export const scanIDCard = async (
   const response = await http.post<unknown>(`/documents/scancccd/${document_id}`, formData);
   return response;
 };
+
+interface UpdateDocumentParams {
+  id: string;
+  data: unknown;
+}
+
+export const updateDocument = async (
+  params: UpdateDocumentParams
+): Promise<unknown> => {
+  return await http.patch<unknown>(`/documents/${params.id}`, params.data);
+};

@@ -8,19 +8,25 @@ import Button from "@/components/ui/button/Button";
 import { DocumentCustommer } from "@/services/documentCustomer.service";
 import { documentExportService } from "@/services/export-tour.service";
 import { toast } from "react-toastify";
+import EditDocumentModal from "./EditDocumentModal";
 
 interface DocumentCustomerProps {
   documentCustomers: DocumentCustommer[];
   loading: boolean;
+  onSuccess: () => void;
 }
 
-const DocumentCustomerTable: FC<DocumentCustomerProps> = ({ documentCustomers, loading }) => {
+const DocumentCustomerTable: FC<DocumentCustomerProps> = ({
+  documentCustomers, loading, onSuccess
+}) => {
   const [exportingCSV, setExportingCSV] = useState<string | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<DocumentCustommer | null>(null);
 
   const handleExport = async (documentNumber: string) => {
     try {
       const response = await documentExportService.performAnalysis(documentNumber);
-      
+
       if (response.success) {
         toast.success(response.message || "Trích xuất thông tin thành công!");
       } else {
@@ -34,19 +40,19 @@ const DocumentCustomerTable: FC<DocumentCustomerProps> = ({ documentCustomers, l
 
   const handleExportCSV = async (documentId: string, documentNumber: string) => {
     if (exportingCSV === documentId) return; // Prevent multiple clicks
-    
+
     setExportingCSV(documentId);
     try {
       const response = await documentExportService.exportCustomerCSV(documentId);
-      
+
       if (response.ok) {
         // Get the CSV content directly from the response
         const csvContent = await response.text();
-        
+
         // Add BOM for proper UTF-8 encoding (especially for Vietnamese characters)
         const BOM = '\uFEFF';
         const csvWithBOM = BOM + csvContent;
-        
+
         // Create and download CSV file
         const blob = new Blob([csvWithBOM], { type: 'text/csv;charset=utf-8;' });
         const url = window.URL.createObjectURL(blob);
@@ -57,7 +63,7 @@ const DocumentCustomerTable: FC<DocumentCustomerProps> = ({ documentCustomers, l
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-        
+
         toast.success("Xuất CSV thành công!");
       } else {
         const errorData = await response.json().catch(() => ({}));
@@ -113,6 +119,15 @@ const DocumentCustomerTable: FC<DocumentCustomerProps> = ({ documentCustomers, l
                       </Button>
                     </Link>
                     <Button
+                      className="bg-gray-500 hover:bg-gray-600 text-white text-xs px-3 py-1"
+                      onClick={() => {
+                        setSelectedDocument(documentCustomer);
+                        setIsEditModalOpen(true)
+                      }}
+                    >
+                      Chỉnh sửa
+                    </Button>
+                    <Button
                       className="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1"
                       onClick={() => handleExport(documentCustomer.document_number)}
                       disabled={loading}
@@ -133,6 +148,13 @@ const DocumentCustomerTable: FC<DocumentCustomerProps> = ({ documentCustomers, l
           )}
         </tbody>
       </table>
+
+      <EditDocumentModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSuccess={onSuccess}
+        documentId={selectedDocument?.id}
+      />
     </div>
   );
 };

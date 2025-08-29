@@ -47,6 +47,7 @@ const FormSearchCustomer: FC<FormSearchCustomerProps> = ({
                 />
                 </div>
             </div>
+          </div>
         </div>
         <div className="col-span-6">
             <div className="grid grid-cols-5 gap-2">

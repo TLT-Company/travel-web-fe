@@ -158,7 +158,7 @@ const FormSearchTour: FC<FormSearchTourProps> = ({
           className="bg-brand-500 hover:bg-brand-600 px-6 py-2.5 w-full sm:w-auto"
           disabled={loading}
         >
-          <EyeIcon className="w-4 h-4 mr-2" />
+          <EyeIcon className="w-5 h-5" />
           Tìm kiếm
         </Button>
       </div>

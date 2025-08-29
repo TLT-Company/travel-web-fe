@@ -86,7 +86,11 @@ const DocumentCustomerPage = () => {
         loading={loading}
       />
 
-      <DocumentCustomerTable documentCustomers={documents} loading={loading} />
+      <DocumentCustomerTable
+        documentCustomers={documents}
+        loading={loading}
+        onSuccess={handleAddSuccess}
+      />
 
       {totalPages > 1 && (
         <div className="mt-6">
@@ -100,13 +104,14 @@ const DocumentCustomerPage = () => {
       </ComponentCard>
 
       <Button
-        className="absolute top-4 right-6 z-10 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        className="absolute top-4 right-6 z-10 px-4 py-2 bg-blue-600
+                  text-white rounded hover:bg-blue-700"
         onClick={() => setIsAddModalOpen(true)}
       >
         Thêm mới
-     </Button>
+      </Button>
 
-    <AddDocumentModal
+      <AddDocumentModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSuccess={handleAddSuccess}
