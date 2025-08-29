@@ -45,6 +45,7 @@ export interface Custommer {
     district: string;
     commune: string;
     address_mapping: AddressMapping;
+    documentCustomers: DocumentCustomer[];
 }
 
 export interface AddressMapping {
@@ -69,6 +70,10 @@ export interface CustomerRequest {
     district: string;
     commune: string;
 }
+export interface DocumentCustomer {
+  file_name: string;
+}
+
 
 export const getListDocumentCustommers = async (
   queryParams?: FormSearchDocumentCustomerParams

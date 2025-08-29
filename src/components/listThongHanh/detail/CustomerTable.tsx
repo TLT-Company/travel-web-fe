@@ -35,7 +35,8 @@ const CustomerTable: FC<CustomerProps> = ({ customers, loading, document_id, onS
             >
               <TableRow>
                 {[
-                  "Số CCCD",
+                  "Tên file",
+                  "ID thẻ",
                   "Họ và tên",
                   "Ngày sinh",
                   "Giới tính",
@@ -71,6 +72,12 @@ const CustomerTable: FC<CustomerProps> = ({ customers, loading, document_id, onS
               ) : (
                 customers.map((customer, index) => (
                   <TableRow key={index}>
+                    <TableCell
+                      className="px-4 py-3 text-start text-theme-sm
+                                dark:text-gray-400"
+                    >
+                      {customer.documentCustomers?.[0]?.file_name || ''}
+                    </TableCell>
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
