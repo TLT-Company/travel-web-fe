@@ -3,6 +3,7 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.css';
 import 'flatpickr/dist/plugins/monthSelect/style.css';
 import monthSelectPlugin from 'flatpickr/dist/plugins/monthSelect';
+import { Vietnamese } from "flatpickr/dist/l10n/vn.js";
 import Label from './Label';
 import { CalenderIcon } from '../../icons';
 import Hook = flatpickr.Options.Hook;
@@ -34,11 +35,21 @@ export default function DatePicker({
       monthSelectorType: "static",
       defaultDate,
       onChange,
+      allowInput: true,
+      locale: Vietnamese,
+      onClose: (selectedDates, dateStr, instance) => {
+        if (onChange) {
+          const hooks = Array.isArray(onChange) ? onChange : [onChange];
+          hooks.forEach(fn => fn(selectedDates, dateStr, instance));
+        }
+      },
     };
 
     // Nếu bật chế độ chọn tháng
     if (monthSelectMode) {
       options.dateFormat = "Y-m"; // YYYY-MM
+      options.altInput = true;
+      options.altFormat = "m-Y";
       options.plugins = [
         monthSelectPlugin({
           shorthand: true,
@@ -49,6 +60,8 @@ export default function DatePicker({
       ];
     } else {
       options.dateFormat = "Y-m-d";
+      options.altInput = true;
+      options.altFormat = "d/m/Y";
     }
 
     const flatPickr = flatpickr(`#${id}`, options);

@@ -62,14 +62,14 @@ export default function ShowTourPage() {
           {tour.name}
         </h1>
         <div className="flex gap-2">
-          <DownloadCustomerImagesButton 
-            tourId={tour.id} 
+          <DownloadCustomerImagesButton
+            tourId={tour.id}
             tourName={tour.name}
             disabled={!tour.bookings || tour.bookings.length === 0}
           />
           <Link href={`/admin/tours/${tour.id}/edit`}>
             <Button className="flex items-center gap-2">
-              <PencilIcon className="w-4 h-4" />
+              <PencilIcon className="w-5.5 h-5.5" />
               Chỉnh sửa
             </Button>
           </Link>
@@ -222,7 +222,7 @@ export default function ShowTourPage() {
                               size="sm"
                               className="bg-gray-500 hover:bg-gray-600"
                             >
-                              <PencilIcon className="w-6 h-6" />
+                              <PencilIcon className="w-5.5 h-5.5" />
                             </Button>
                           </Link>
                         </div>
