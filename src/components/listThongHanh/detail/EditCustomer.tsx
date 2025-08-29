@@ -16,7 +16,8 @@ const defaultData: CustomerRequest = {
   card_created_at: "",
   province: "",
   district: "",
-  commune: ""
+  commune: "",
+  address: ""
 };
 
 const EditCustomerPage = () => {

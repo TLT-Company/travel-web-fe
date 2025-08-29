@@ -223,6 +223,7 @@ const CustomerForm: FC<Props> = ({
             province: formData.province || "",
             district: formData.district || "",
             commune: formData.commune || "",
+            address: formData.address || ""
           }}
           enableReinitialize={true}
           validationSchema={validationSchema}
@@ -352,6 +353,14 @@ const CustomerForm: FC<Props> = ({
                   />
                 </div>
               </div>
+
+              {submitLabel === "Cập nhật" && values.address && (
+                <div className="grid grid-cols-1 gap-6">
+                  <Label>
+                    Địa chỉ cũ quét được từ căn cước công dân: {values.address}
+                  </Label>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>

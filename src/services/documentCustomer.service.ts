@@ -69,6 +69,7 @@ export interface CustomerRequest {
     province: string;
     district: string;
     commune: string;
+    address: string;
 }
 export interface DocumentCustomer {
   file_name: string;
