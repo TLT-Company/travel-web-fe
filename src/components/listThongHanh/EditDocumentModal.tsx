@@ -104,7 +104,7 @@ const EditDocumentModal: React.FC<AddDocumentModalProps> = ({
                 <Label>Nhập ngày khởi hành <span className="text-error-500">*</span></Label>
                 <DatePicker
                   key={values.departure_date}
-                  id="card_created_at"
+                  id="departure_date"
                   placeholder="Nhập ngày khởi hành"
                   defaultDate={values.departure_date}
                   onChange={([selected]) =>
