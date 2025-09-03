@@ -85,6 +85,7 @@ const DocumentCustomerTable: FC<DocumentCustomerProps> = ({
           <tr className="bg-gray-100 text-left text-sm font-medium text-gray-700">
             <th className="px-4 py-3">Số thông hành</th>
             <th className="px-4 py-3">Ngày tạo</th>
+            <th className="px-4 py-3">Ngày khởi hành</th>
             <th className="px-4 py-3">Số lượng khách hàng</th>
             <th className="px-4 py-3">Thao tác</th>
           </tr>
@@ -104,6 +105,9 @@ const DocumentCustomerTable: FC<DocumentCustomerProps> = ({
                 </td>
                 <td className="px-4 py-3">
                   {format(new Date(documentCustomer.created_at), 'dd/MM/yyyy')}
+                </td>
+                <td className="px-4 py-3">
+                  {format(new Date(documentCustomer.departure_date), 'dd/MM/yyyy')}
                 </td>
                 <td className="px-4 py-3">
                   {documentCustomer.customer_count}
@@ -154,6 +158,8 @@ const DocumentCustomerTable: FC<DocumentCustomerProps> = ({
         onClose={() => setIsEditModalOpen(false)}
         onSuccess={onSuccess}
         documentId={selectedDocument?.id}
+        documentNumber = {selectedDocument?.document_number}
+        departureDate = {selectedDocument?.departure_date}
       />
     </div>
   );

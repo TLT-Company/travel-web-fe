@@ -5,6 +5,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Modal } from '../ui/modal';
 import Input from '../form/input/InputField';
+import DatePicker from "@/components/form/date-picker";
 import Label from '../form/Label';
 import { toast } from 'react-toastify';
 import { addDocument } from '@/services/documentCustomer.service';
@@ -23,17 +24,21 @@ const AddDocumentModal: React.FC<AddDocumwntModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const validationSchema = Yup.object({
-    document_number: Yup.string()
-      .required('Số thông hành là bắt buộc')
+    document_number: Yup.string().required('Số thông hành là bắt buộc'),
+    departure_date: Yup.date()
+      .required('Ngày khởi hành là bắt buộc')
+      .typeError('Ngày khởi hành không hợp lệ'),
   });
 
   const handleSubmit = async (values: {
     document_number: string;
+    departure_date: string
   }) => {
     setIsLoading(true);
     try {
       await addDocument({
         document_number: values.document_number,
+        departure_date: values.departure_date,
       });
 
       toast.success('Thêm số thông hành thành công!');
@@ -64,11 +69,12 @@ const AddDocumentModal: React.FC<AddDocumwntModalProps> = ({
         <Formik
           initialValues={{
             document_number: '',
+            departure_date: '',
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {() => (
+          {({ values, setFieldValue }) => (
             <Form className="space-y-6">
               <div>
                 <Label>Nhập số thông hành <span className="text-error-500">*</span></Label>
@@ -81,6 +87,27 @@ const AddDocumentModal: React.FC<AddDocumwntModalProps> = ({
                 />
                 <ErrorMessage
                   name="document_number"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
+
+              <div>
+                <Label>Nhập ngày khởi hành <span className="text-error-500">*</span></Label>
+                <DatePicker
+                  key={values.departure_date}
+                  id="card_created_at"
+                  placeholder="Nhập ngày khởi hành"
+                  defaultDate={values.departure_date}
+                  onChange={([selected]) =>
+                    {
+                      setFieldValue('departure_date', selected
+                          ? selected.toLocaleDateString("en-CA") :"");
+                    }
+                  }
+                />
+                <ErrorMessage
+                  name="departure_date"
                   component="div"
                   className="text-red-500 text-sm mt-1"
                 />

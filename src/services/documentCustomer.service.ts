@@ -5,6 +5,7 @@ export interface DocumentCustommer {
   id:string
   document_number: string;
   created_at: string;
+  departure_date: string;
   customer_count: string;
   customers : Custommer[]
 }
