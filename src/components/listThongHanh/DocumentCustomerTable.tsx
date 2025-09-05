@@ -5,13 +5,13 @@ import { format } from "date-fns";
 import Link from "next/link";
 import Button from "@/components/ui/button/Button";
 
-import { DocumentCustommer } from "@/services/documentCustomer.service";
+import { Document } from "@/services/documentCustomer.service";
 import { documentExportService } from "@/services/export-tour.service";
 import { toast } from "react-toastify";
 import EditDocumentModal from "./EditDocumentModal";
 
 interface DocumentCustomerProps {
-  documentCustomers: DocumentCustommer[];
+  documentCustomers: Document[];
   loading: boolean;
   onSuccess: () => void;
 }
@@ -19,9 +19,9 @@ interface DocumentCustomerProps {
 const DocumentCustomerTable: FC<DocumentCustomerProps> = ({
   documentCustomers, loading, onSuccess
 }) => {
-  const [exportingCSV, setExportingCSV] = useState<string | null>(null);
+  // const [exportingCSV, setExportingCSV] = useState<string | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedDocument, setSelectedDocument] = useState<DocumentCustommer | null>(null);
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
 
   const handleExport = async (documentNumber: string) => {
     try {
@@ -38,45 +38,45 @@ const DocumentCustomerTable: FC<DocumentCustomerProps> = ({
     }
   };
 
-  const handleExportCSV = async (documentId: string, documentNumber: string) => {
-    if (exportingCSV === documentId) return; // Prevent multiple clicks
+  // const handleExportCSV = async (documentId: string, documentNumber: string) => {
+  //   if (exportingCSV === documentId) return; // Prevent multiple clicks
 
-    setExportingCSV(documentId);
-    try {
-      const response = await documentExportService.exportCustomerCSV(documentId);
+  //   setExportingCSV(documentId);
+  //   try {
+  //     const response = await documentExportService.exportCustomerCSV(documentId);
 
-      if (response.ok) {
-        // Get the CSV content directly from the response
-        const csvContent = await response.text();
+  //     if (response.ok) {
+  //       // Get the CSV content directly from the response
+  //       const csvContent = await response.text();
 
-        // Add BOM for proper UTF-8 encoding (especially for Vietnamese characters)
-        const BOM = '\uFEFF';
-        const csvWithBOM = BOM + csvContent;
+  //       // Add BOM for proper UTF-8 encoding (especially for Vietnamese characters)
+  //       const BOM = '\uFEFF';
+  //       const csvWithBOM = BOM + csvContent;
 
-        // Create and download CSV file
-        const blob = new Blob([csvWithBOM], { type: 'text/csv;charset=utf-8;' });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${documentNumber}.csv`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
+  //       // Create and download CSV file
+  //       const blob = new Blob([csvWithBOM], { type: 'text/csv;charset=utf-8;' });
+  //       const url = window.URL.createObjectURL(blob);
+  //       const link = document.createElement('a');
+  //       link.href = url;
+  //       link.download = `${documentNumber}.csv`;
+  //       document.body.appendChild(link);
+  //       link.click();
+  //       document.body.removeChild(link);
+  //       window.URL.revokeObjectURL(url);
 
-        toast.success("Xuất CSV thành công!");
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData?.message || `Xuất CSV thất bại! (${response.status})`;
-        toast.error(errorMessage);
-      }
-    } catch (error) {
-      console.error("CSV export error:", error);
-      toast.error("Có lỗi xảy ra khi xuất CSV!");
-    } finally {
-      setExportingCSV(null);
-    }
-  };
+  //       toast.success("Xuất CSV thành công!");
+  //     } else {
+  //       const errorData = await response.json().catch(() => ({}));
+  //       const errorMessage = errorData?.message || `Xuất CSV thất bại! (${response.status})`;
+  //       toast.error(errorMessage);
+  //     }
+  //   } catch (error) {
+  //     console.error("CSV export error:", error);
+  //     toast.error("Có lỗi xảy ra khi xuất CSV!");
+  //   } finally {
+  //     setExportingCSV(null);
+  //   }
+  // };
 
   return (
     <div className="overflow-x-auto">
@@ -138,13 +138,13 @@ const DocumentCustomerTable: FC<DocumentCustomerProps> = ({
                     >
                       Trích xuất
                     </Button>
-                    <Button
+                    {/* <Button
                       className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1"
                       onClick={() => handleExportCSV(documentCustomer.id, documentCustomer.document_number)}
                       disabled={loading || exportingCSV === documentCustomer.id}
                     >
                       {exportingCSV === documentCustomer.id ? "Đang xuất..." : "Xuất CSV"}
-                    </Button>
+                    </Button> */}
                   </div>
                 </td>
               </tr>
