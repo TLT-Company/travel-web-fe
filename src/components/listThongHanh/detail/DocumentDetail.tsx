@@ -47,8 +47,8 @@ const DocumentDetailPage = () => {
           params.document_id,
           {
             ...searchParams,
-            page: currentPage,
-            limit: customersPerPage,
+            // page: currentPage,
+            // limit: customersPerPage,
           });
 
         if (result.success) {
@@ -65,11 +65,20 @@ const DocumentDetailPage = () => {
       } finally {
         setLoading(false);
       }
-    }, [params.document_id, currentPage, searchParams]);
+    // }, [params.document_id, currentPage, searchParams]);
+    }, [params.document_id, searchParams]);
 
   useEffect(() => {
     fetchCustomers();
   }, [fetchCustomers]);
+
+  // Calculate the customer array to display per page
+  const paginatedCustomers = React.useMemo(() => {
+    if (!documentCustomer?.document_customers) return [];
+    const startIndex = (currentPage - 1) * customersPerPage;
+    const endIndex = startIndex + customersPerPage;
+    return documentCustomer.document_customers.slice(startIndex, endIndex);
+  }, [documentCustomer, currentPage, customersPerPage]);
 
   if (loading) return <LoadingOverlay shown={loading} />;
 
@@ -104,7 +113,7 @@ const DocumentDetailPage = () => {
   
       setExportingCSV(documentId);
       try {
-        const response = await documentExportService.exportCustomerCSV(documentId, selectedCustomers);
+        const response = await documentExportService.exportCustomerCSV(documentId, selectedCustomers, formSearch.card_id, formSearch.full_name);
   
         if (response.ok) {
           // Get the CSV content directly from the response
@@ -196,6 +205,7 @@ const DocumentDetailPage = () => {
         <CustomerTable
           // customers={customers}
           documentCustomers={documentCustomer?.document_customers ?? []}
+          visibleCustomers={paginatedCustomers ?? []}
           loading={loading}
           document_id={params.document_id}
           onSubmitDelete={(customerID) => {

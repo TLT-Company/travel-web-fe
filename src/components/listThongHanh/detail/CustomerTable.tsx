@@ -17,6 +17,7 @@ import { DocumentCustomer } from "@/services/documentCustomer.service";
 
 interface CustomerProps {
   documentCustomers: DocumentCustomer[];
+  visibleCustomers: DocumentCustomer[];
   document_id: string;
   loading: boolean;
   onSubmitDelete: (customerId: string) => void;
@@ -26,6 +27,7 @@ interface CustomerProps {
 
 const CustomerTable: FC<CustomerProps> = ({ 
   documentCustomers,
+  visibleCustomers,
   loading,
   document_id,
   onSubmitDelete,
@@ -74,7 +76,7 @@ const CustomerTable: FC<CustomerProps> = ({
                   <Checkbox 
                   checked={selectedCustomers?.length === documentCustomers.length && documentCustomers.length > 0} 
                   onChange={toggleSelectAll}
-                />
+                  />
                 </TableCell>
                 {[
                   "Tên file",
@@ -105,14 +107,14 @@ const CustomerTable: FC<CustomerProps> = ({
             <TableBody
               className="divide-y divide-gray-100 dark:divide-white/[0.05]"
             >
-              {documentCustomers.length === 0 ? (
+              {visibleCustomers.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="px-5 py-4 text-center">
                     Không có khách hàng nào
                   </TableCell>
                 </TableRow>
               ) : (
-                documentCustomers.map((documentCustomer, index) => (
+                visibleCustomers.map((documentCustomer, index) => (
                   <TableRow key={index}>
                     <TableCell className="px-4 py-3">
                       <Checkbox 
