@@ -113,7 +113,21 @@ const DocumentDetailPage = () => {
   
       setExportingCSV(documentId);
       try {
-        const response = await documentExportService.exportCustomerCSV(documentId, selectedCustomers, formSearch.card_id, formSearch.full_name);
+
+        // Get all customerIds
+        const allCustomerIds = documentCustomer?.document_customers.map(c => c.customer.id) ?? [];
+
+        // Filter out customerIds that are NOT in selectedCustomers
+        const notSelectedCustomers = allCustomerIds.filter(id => !selectedCustomers.includes(id));
+
+        // If there are no customers left to export, throw an error and return
+        if (notSelectedCustomers.length === 0) {
+          toast.error("Không có khách hàng nào để xuất CSV!");
+          setExportingCSV(null);
+          return;
+        }
+
+        const response = await documentExportService.exportCustomerCSV(documentId, notSelectedCustomers);
   
         if (response.ok) {
           // Get the CSV content directly from the response
