@@ -33,8 +33,18 @@ export const documentExportService = {
   update: (id: number, data: Partial<DocumentExport>) => http.put<DocumentExport>(`/document-export/${id}/`, data),
   delete: (id: number) => http.delete(`/document-export/${id}/`),
   performAnalysis: (file_name: string) => http.post<ApiResponse>('/document-export/perform-analysis', { file_name }),
-  exportCustomerCSV: (document_id: string) => {
-    const url = `${ENV_CONFIG.API_BASE_URL}/document-export/customer-csv?document_id=${document_id}`;
+  exportCustomerCSV: (document_id: string, selectedCustomers?: string[] ) => {
+
+    const params = new URLSearchParams();
+    params.append("document_id", document_id);
+
+    if (selectedCustomers && selectedCustomers.length > 0) {
+      selectedCustomers.forEach(id => params.append("customerIds", id));
+    }
+
+    // const url = `${ENV_CONFIG.API_BASE_URL}/document-export/customer-csv?document_id=${document_id}`;
+    const url = `${ENV_CONFIG.API_BASE_URL}/document-export/customer-csv?${params.toString()}`;
+
     return fetch(url, {
       method: 'GET',
       headers: {

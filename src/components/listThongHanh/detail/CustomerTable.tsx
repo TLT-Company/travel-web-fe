@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -8,20 +8,58 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Checkbox from "@/components/form/input/Checkbox";
 import { format } from "date-fns";
 import Link from "next/link";
 import Button from "@/components/ui/button/Button";
 import { PencilIcon, TrashBinIcon  } from "@/icons";
-import { Custommer } from "@/services/documentCustomer.service";
+import { DocumentCustomer } from "@/services/documentCustomer.service";
 
 interface CustomerProps {
-  customers: Custommer[];
+  documentCustomers: DocumentCustomer[];
+  visibleCustomers: DocumentCustomer[];
   document_id: string;
   loading: boolean;
   onSubmitDelete: (customerId: string) => void;
+  selectedCustomers: string[];
+  onChangeSelectedCustomers: (selected: string[]) => void;
 }
 
-const CustomerTable: FC<CustomerProps> = ({ customers, loading, document_id, onSubmitDelete }) => {
+const CustomerTable: FC<CustomerProps> = ({ 
+  documentCustomers,
+  visibleCustomers,
+  loading,
+  document_id,
+  onSubmitDelete,
+  selectedCustomers,
+  onChangeSelectedCustomers
+  }) => {
+
+  useEffect(() => {
+      const initiallySelected = documentCustomers
+        .filter(c => c.print_flag === "1")
+        .map(c => c.customer.id);
+      onChangeSelectedCustomers(initiallySelected);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [documentCustomers]);
+
+  const toggleSelectAll = () => {
+    if (selectedCustomers.length === documentCustomers.length) {
+      onChangeSelectedCustomers([]);
+    } else {
+      onChangeSelectedCustomers(documentCustomers.map(c => c.customer.id));
+    }
+  };
+
+  const toggleSelectCustomer = (id: string) => {
+    if (selectedCustomers.includes(id)) {
+      onChangeSelectedCustomers(selectedCustomers.filter(cid => cid !== id));
+    } else {
+      onChangeSelectedCustomers([...selectedCustomers, id]);
+    }
+  };
+
+  
   return (
     <div
       className="overflow-hidden rounded-xl border border-gray-200 bg-white
@@ -34,6 +72,12 @@ const CustomerTable: FC<CustomerProps> = ({ customers, loading, document_id, onS
               className="border-b border-gray-100 dark:border-white/[0.05]"
             >
               <TableRow>
+                <TableCell isHeader className="px-5 py-3">
+                  <Checkbox 
+                  checked={selectedCustomers?.length === documentCustomers.length && documentCustomers.length > 0} 
+                  onChange={toggleSelectAll}
+                  />
+                </TableCell>
                 {[
                   "Tên file",
                   "ID thẻ",
@@ -63,69 +107,76 @@ const CustomerTable: FC<CustomerProps> = ({ customers, loading, document_id, onS
             <TableBody
               className="divide-y divide-gray-100 dark:divide-white/[0.05]"
             >
-              {customers.length === 0 ? (
+              {visibleCustomers.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="px-5 py-4 text-center">
                     Không có khách hàng nào
                   </TableCell>
                 </TableRow>
               ) : (
-                customers.map((customer, index) => (
+                visibleCustomers.map((documentCustomer, index) => (
                   <TableRow key={index}>
+                    <TableCell className="px-4 py-3">
+                      <Checkbox 
+                      checked={selectedCustomers?.includes(documentCustomer.customer.id)} 
+                      onChange={() => toggleSelectCustomer(documentCustomer.customer.id)} 
+                    />
+                    </TableCell>
+
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
-                      {customer.documentCustomers?.[0]?.file_name || ''}
+                      {documentCustomer.file_name || ''}
                     </TableCell>
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
-                      {customer.card_id}
+                      {documentCustomer.customer.card_id}
                     </TableCell>
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
-                      {customer.full_name}
+                      {documentCustomer.customer.full_name}
                     </TableCell>
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
-                      {format(new Date(customer.day_of_birth), 'dd/MM/yyyy')}
+                      {format(new Date(documentCustomer.customer.day_of_birth), 'dd/MM/yyyy')}
                     </TableCell>
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
-                      {customer.gender}
+                      {documentCustomer.customer.gender}
                     </TableCell>
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
-                      {customer.national}
+                      {documentCustomer.customer.national}
                     </TableCell>
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
-                      {format(new Date(customer.card_created_at), 'dd/MM/yyyy')}
+                      {format(new Date(documentCustomer.customer.card_created_at), 'dd/MM/yyyy')}
                     </TableCell>
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
-                      {customer.village}
+                      {documentCustomer.customer.village}
                     </TableCell>
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
                       {/* {customer.commune} */}
-                      {customer.address_mapping?.commune_new}
+                      {documentCustomer.customer.address_mapping?.commune_new}
                     </TableCell>
                     {/* <TableCell
                       className="px-4 py-3 text-start text-theme-sm
@@ -138,14 +189,14 @@ const CustomerTable: FC<CustomerProps> = ({ customers, loading, document_id, onS
                                 dark:text-gray-400"
                     >
                       {/* {customer.province} */}
-                      {customer.address_mapping?.province_new}
+                      {documentCustomer.customer.address_mapping?.province_new}
                     </TableCell>
                     <TableCell
                       className="px-4 py-3 text-start text-theme-sm
                                 dark:text-gray-400"
                     >
                       <div className="flex items-center gap-2">
-                        <Link href={`/admin/thong-hanh/${document_id}/customer/edit/${customer.id}`} passHref>
+                        <Link href={`/admin/thong-hanh/${document_id}/customer/edit/${documentCustomer.customer.id}`} passHref>
                           <Button
                             size="sm"
                             className="bg-gray-500 hover:bg-gray-600"
@@ -157,7 +208,7 @@ const CustomerTable: FC<CustomerProps> = ({ customers, loading, document_id, onS
                         <Button
                           size="sm"
                           className="bg-red-500 hover:bg-blue-400"
-                          onClick={() => onSubmitDelete(customer.id)}
+                          onClick={() => onSubmitDelete(documentCustomer.customer.id)}
                           disabled={loading}
                         >
                           <TrashBinIcon className="w-6 h-6" />

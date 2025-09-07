@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import LoadingOverlay from "../common/LoadingOverlay";
 import {
-  DocumentCustommer,
+  Document,
   FormSearchDocumentCustomerParams,
   getListDocumentCustommers
 } from "@/services/documentCustomer.service";
@@ -17,7 +17,7 @@ import AddDocumentModal from "./AddDocumentModal";
 
 
 const DocumentCustomerPage = () => {
-  const [documents, setDocuments] = useState<DocumentCustommer[]>([]);
+  const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalDocuments, setTotalDocuments] = useState<number>(0);

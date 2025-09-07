@@ -6,8 +6,9 @@ import {
   getListCustommersByDocumentId,
   FormSearchCustomerParams,
   deleteCustomerById,
-  DocumentCustommer
+  Document
 } from "@/services/documentCustomer.service";
+import { documentExportService } from "@/services/export-tour.service";
 import Pagination from "../../tables/Pagination";
 import CustomerTable from "./CustomerTable"
 import FormSearchCustomer from "./FormSearchCustomer";
@@ -22,7 +23,7 @@ import SanIDModal from "./IdCardScanPage";
 
 const DocumentDetailPage = () => {
   // const [customers, setCustomers] = useState<Custommer[]>([]);
-  const [documentCustomer, setDocumentCustomer] = useState<DocumentCustommer>();
+  const [documentCustomer, setDocumentCustomer] = useState<Document>();
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalCustomers, setTotalCustomers] = useState<number>(0);
@@ -36,6 +37,8 @@ const DocumentDetailPage = () => {
   const customersPerPage = 20;
   const params = useParams<{ document_id: string }>()
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedCustomers, setSelectedCustomers] = useState<string[]>([]);
+  const [exportingCSV, setExportingCSV] = useState<string | null>(null);
 
   const fetchCustomers = useCallback(async () => {
       setLoading(true);
@@ -44,8 +47,8 @@ const DocumentDetailPage = () => {
           params.document_id,
           {
             ...searchParams,
-            page: currentPage,
-            limit: customersPerPage,
+            // page: currentPage,
+            // limit: customersPerPage,
           });
 
         if (result.success) {
@@ -62,11 +65,20 @@ const DocumentDetailPage = () => {
       } finally {
         setLoading(false);
       }
-    }, [params.document_id, currentPage, searchParams]);
+    // }, [params.document_id, currentPage, searchParams]);
+    }, [params.document_id, searchParams]);
 
   useEffect(() => {
     fetchCustomers();
   }, [fetchCustomers]);
+
+  // Calculate the customer array to display per page
+  const paginatedCustomers = React.useMemo(() => {
+    if (!documentCustomer?.document_customers) return [];
+    const startIndex = (currentPage - 1) * customersPerPage;
+    const endIndex = startIndex + customersPerPage;
+    return documentCustomer.document_customers.slice(startIndex, endIndex);
+  }, [documentCustomer, currentPage, customersPerPage]);
 
   if (loading) return <LoadingOverlay shown={loading} />;
 
@@ -96,6 +108,61 @@ const DocumentDetailPage = () => {
     }
   };
 
+  const handleExportCSV = async (documentId: string, documentNumber: string) => {
+      if (exportingCSV === documentId) return; // Prevent multiple clicks
+  
+      setExportingCSV(documentId);
+      try {
+
+        // Get all customerIds
+        const allCustomerIds = documentCustomer?.document_customers.map(c => c.customer.id) ?? [];
+
+        // Filter out customerIds that are NOT in selectedCustomers
+        const notSelectedCustomers = allCustomerIds.filter(id => !selectedCustomers.includes(id));
+
+        // If there are no customers left to export, throw an error and return
+        if (notSelectedCustomers.length === 0) {
+          toast.error("Không có khách hàng nào để xuất CSV!");
+          setExportingCSV(null);
+          return;
+        }
+
+        const response = await documentExportService.exportCustomerCSV(documentId, notSelectedCustomers);
+  
+        if (response.ok) {
+          // Get the CSV content directly from the response
+          const csvContent = await response.text();
+  
+          // Add BOM for proper UTF-8 encoding (especially for Vietnamese characters)
+          const BOM = '\uFEFF';
+          const csvWithBOM = BOM + csvContent;
+  
+          // Create and download CSV file
+          const blob = new Blob([csvWithBOM], { type: 'text/csv;charset=utf-8;' });
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${documentNumber}.csv`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+  
+          toast.success("Xuất CSV thành công!");
+
+          fetchCustomers();
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          const errorMessage = errorData?.message || `Xuất CSV thất bại! (${response.status})`;
+          toast.error(errorMessage);
+        }
+      } catch (error) {
+        console.error("CSV export error:", error);
+        toast.error("Có lỗi xảy ra khi xuất CSV!");
+      } finally {
+        setExportingCSV(null);
+      }
+    };
 
   const handleAddSuccess = () => {
     fetchCustomers();
@@ -113,6 +180,14 @@ const DocumentDetailPage = () => {
           <div className="col-span-10">
             {documentCustomer?.created_at
               ? format(new Date(documentCustomer.created_at), 'dd/MM/yyyy')
+              : ''}
+          </div>
+        </div>
+        <div className="grid grid-cols-12 gap-4 mb-4">
+          <div className="col-span-2">Ngày khởi hành:</div>
+          <div className="col-span-10">
+            {documentCustomer?.departure_date
+              ? format(new Date(documentCustomer.departure_date), 'dd/MM/yyyy')
               : ''}
           </div>
         </div>
@@ -143,12 +218,16 @@ const DocumentDetailPage = () => {
 
         <CustomerTable
           // customers={customers}
-          customers={documentCustomer?.customers ?? []}
+          documentCustomers={documentCustomer?.document_customers ?? []}
+          visibleCustomers={paginatedCustomers ?? []}
           loading={loading}
           document_id={params.document_id}
           onSubmitDelete={(customerID) => {
             handleSubmit(customerID);
-          }}/>
+          }}
+          selectedCustomers={selectedCustomers}
+          onChangeSelectedCustomers={setSelectedCustomers}
+          />
 
         {totalPages > 1 && (
           <div className="mt-6">
@@ -160,13 +239,21 @@ const DocumentDetailPage = () => {
           </div>
         )}
 
+        <Button
+          className="absolute top-4 right-6 z-10 px-4 py-2 bg-green-500 hover:bg-green-600"
+          onClick={() => handleExportCSV(documentCustomer!.id, documentCustomer!.document_number)}
+          disabled={loading || exportingCSV === documentCustomer!.id}
+        >
+          {exportingCSV === documentCustomer!.id ? "Đang xuất..." : "Xuất CSV"}
+        </Button>
+
         <Link href={`/admin/thong-hanh/${params.document_id}/customer/new`} passHref>
-          <Button  className="absolute top-4 right-6 z-10 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" disabled={loading}>
+          <Button  className="absolute top-4 right-35 z-10 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" disabled={loading}>
             Thêm mới
           </Button>
         </Link>
 
-        <Button  className="absolute top-4 right-40 z-10 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" 
+        <Button  className="absolute top-4 right-65 z-10 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" 
             disabled={loading}
              onClick={() => setIsAddModalOpen(true)}
              >

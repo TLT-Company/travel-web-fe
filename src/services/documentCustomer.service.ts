@@ -1,13 +1,13 @@
 import { http } from "../lib/http";
 import { SetStateAction } from 'react';
 
-export interface DocumentCustommer {
+export interface Document {
   id:string
   document_number: string;
   created_at: string;
   departure_date: string;
   customer_count: string;
-  customers : Custommer[]
+  document_customers : DocumentCustomer[]
 }
 
 export interface ApiResponse<T = unknown> {
@@ -46,7 +46,6 @@ export interface Custommer {
     district: string;
     commune: string;
     address_mapping: AddressMapping;
-    documentCustomers: DocumentCustomer[];
 }
 
 export interface AddressMapping {
@@ -74,12 +73,14 @@ export interface CustomerRequest {
 }
 export interface DocumentCustomer {
   file_name: string;
+  print_flag: string;
+  customer: Custommer;
 }
 
 
 export const getListDocumentCustommers = async (
   queryParams?: FormSearchDocumentCustomerParams
-): Promise<ApiResponse<DocumentCustommer[]>> => {
+): Promise<ApiResponse<Document[]>> => {
   const query = new URLSearchParams(
     Object.entries(queryParams || {}).reduce((acc, [key, value]) => {
       if (value !== undefined && value !== '' && value !== null) {
@@ -89,14 +90,14 @@ export const getListDocumentCustommers = async (
     }, {} as Record<string, string>)
   );
 
-  return await http.get<DocumentCustommer[]>(`/documents?${query}`);
+  return await http.get<Document[]>(`/documents?${query}`);
 };
 
 
 export const getListCustommersByDocumentId = async (
   document_id: string,
   queryParams?: FormSearchCustomerParams
-): Promise<ApiResponse<DocumentCustommer>> => {
+): Promise<ApiResponse<Document>> => {
   const query = new URLSearchParams(
     Object.entries(queryParams || {}).reduce((acc, [key, value]) => {
       if (value !== undefined && value !== '' && value !== null) {
@@ -106,7 +107,7 @@ export const getListCustommersByDocumentId = async (
     }, {} as Record<string, string>)
   );
 
-  return await http.get<DocumentCustommer>(`/documents/${document_id}/?${query}`);
+  return await http.get<Document>(`/documents/${document_id}/?${query}`);
 };
 
 export const addCustomer = async (
