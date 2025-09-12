@@ -74,6 +74,7 @@ export interface CustomerRequest {
 export interface DocumentCustomer {
   file_name: string;
   print_flag: string;
+  display_order?: number;
   customer: Custommer;
 }
 
@@ -163,4 +164,13 @@ export const updateDocument = async (
   params: UpdateDocumentParams
 ): Promise<unknown> => {
   return await http.patch<unknown>(`/documents/${params.id}`, params.data);
+};
+
+export const updateDocumentCustomersOrder = async (
+  document_id: string,
+  document_customers: DocumentCustomer[]
+): Promise<unknown> => {
+  return await http.patch<unknown>(`/documents/${document_id}`, {
+    document_customers
+  });
 };

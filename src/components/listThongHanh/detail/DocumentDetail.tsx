@@ -6,7 +6,8 @@ import {
   getListCustommersByDocumentId,
   FormSearchCustomerParams,
   deleteCustomerById,
-  Document
+  Document,
+  DocumentCustomer
 } from "@/services/documentCustomer.service";
 import { documentExportService } from "@/services/export-tour.service";
 import Pagination from "../../tables/Pagination";
@@ -114,20 +115,17 @@ const DocumentDetailPage = () => {
       setExportingCSV(documentId);
       try {
 
-        // Get all customerIds
-        const allCustomerIds = documentCustomer?.document_customers.map(c => c.customer.id) ?? [];
+        // Get selected customerIds for export
+        const customersToExport = selectedCustomers;
 
-        // Filter out customerIds that are NOT in selectedCustomers
-        const notSelectedCustomers = allCustomerIds.filter(id => !selectedCustomers.includes(id));
-
-        // If there are no customers left to export, throw an error and return
-        if (notSelectedCustomers.length === 0) {
-          toast.error("Không có khách hàng nào để xuất CSV!");
+        // If there are no customers selected to export, throw an error and return
+        if (customersToExport.length === 0) {
+          toast.error("Không có khách hàng nào được chọn để xuất CSV!");
           setExportingCSV(null);
           return;
         }
 
-        const response = await documentExportService.exportCustomerCSV(documentId, notSelectedCustomers);
+        const response = await documentExportService.exportCustomerCSV(documentId, customersToExport);
   
         if (response.ok) {
           // Get the CSV content directly from the response
@@ -166,6 +164,17 @@ const DocumentDetailPage = () => {
 
   const handleAddSuccess = () => {
     fetchCustomers();
+  };
+
+  const handleReorderCustomers = (reorderedCustomers: DocumentCustomer[]) => {
+    // Update the local state to reflect the new order
+    if (documentCustomer) {
+      const updatedDocumentCustomer = {
+        ...documentCustomer,
+        document_customers: reorderedCustomers
+      };
+      setDocumentCustomer(updatedDocumentCustomer);
+    }
   };
 
   return (
@@ -227,6 +236,7 @@ const DocumentDetailPage = () => {
           }}
           selectedCustomers={selectedCustomers}
           onChangeSelectedCustomers={setSelectedCustomers}
+          onReorderCustomers={handleReorderCustomers}
           />
 
         {totalPages > 1 && (
