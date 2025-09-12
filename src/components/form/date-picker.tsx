@@ -28,6 +28,51 @@ export default function DatePicker({
   placeholder,
   monthSelectMode = false,
 }: PropsType) {
+  // useEffect(() => {
+  //   const options: flatpickr.Options.Options = {
+  //     mode: mode || "single",
+  //     static: true,
+  //     monthSelectorType: "static",
+  //     defaultDate,
+  //     onChange,
+  //     allowInput: true,
+  //     locale: Vietnamese,
+  //     onClose: (selectedDates, dateStr, instance) => {
+  //       if (onChange) {
+  //         const hooks = Array.isArray(onChange) ? onChange : [onChange];
+  //         hooks.forEach(fn => fn(selectedDates, dateStr, instance));
+  //       }
+  //     },
+  //   };
+
+  //   // Nếu bật chế độ chọn tháng
+  //   if (monthSelectMode) {
+  //     options.dateFormat = "Y-m"; // YYYY-MM
+  //     options.altInput = true;
+  //     options.altFormat = "m-Y";
+  //     options.plugins = [
+  //       monthSelectPlugin({
+  //         shorthand: true,
+  //         dateFormat: "Y-m",
+  //         altFormat: "F Y",
+  //         theme: "light",
+  //       }),
+  //     ];
+  //   } else {
+  //     options.dateFormat = "Y-m-d";
+  //     options.altInput = true;
+  //     options.altFormat = "d/m/Y";
+  //   }
+
+  //   const flatPickr = flatpickr(`#${id}`, options);
+
+  //   return () => {
+  //     if (!Array.isArray(flatPickr)) {
+  //       flatPickr.destroy();
+  //     }
+  //   };
+  // }, [mode, onChange, id, defaultDate, monthSelectMode]);
+
   useEffect(() => {
     const options: flatpickr.Options.Options = {
       mode: mode || "single",
@@ -43,36 +88,66 @@ export default function DatePicker({
           hooks.forEach(fn => fn(selectedDates, dateStr, instance));
         }
       },
+      dateFormat: "Y-m-d",   // giá trị thực lưu
+      altInput: true,
+      altFormat: "d/m/Y",    // giá trị hiển thị
     };
-
-    // Nếu bật chế độ chọn tháng
-    if (monthSelectMode) {
-      options.dateFormat = "Y-m"; // YYYY-MM
-      options.altInput = true;
-      options.altFormat = "m-Y";
-      options.plugins = [
-        monthSelectPlugin({
-          shorthand: true,
-          dateFormat: "Y-m",
-          altFormat: "F Y",
-          theme: "light",
-        }),
-      ];
-    } else {
-      options.dateFormat = "Y-m-d";
-      options.altInput = true;
-      options.altFormat = "d/m/Y";
-    }
-
-    const flatPickr = flatpickr(`#${id}`, options);
-
+  
+    const fp = flatpickr(`#${id}`, options);
+  
+    if (!Array.isArray(fp) && fp.altInput) {
+      const inputEl = fp.altInput as HTMLInputElement;
+    
+      // ✅ Xử lý nhập số
+      inputEl.addEventListener("input", (e: any) => {
+        let val = e.target.value.replace(/\D/g, ""); // chỉ giữ số
+    
+        if (val.length >= 2) {
+          val = val.slice(0, 2) + "/" + val.slice(2);
+        }
+        if (val.length >= 5) {
+          val = val.slice(0, 5) + "/" + val.slice(5, 9);
+        }
+    
+        e.target.value = val;
+    
+        // Khi nhập đủ dd/mm/yyyy
+        if (val.length === 10) {
+          const [d, m, y] = val.split("/").map(Number);
+          const parsed = new Date(y, m - 1, d);
+    
+          if (
+            parsed.getFullYear() === y &&
+            parsed.getMonth() === m - 1 &&
+            parsed.getDate() === d
+          ) {
+            fp.setDate(parsed, true, "Y-m-d");
+          }
+        }
+      });
+    
+      // ✅ Xử lý xoá lùi/backspace
+      inputEl.addEventListener("keydown", (e: KeyboardEvent) => {
+        if (e.key === "Backspace") {
+          const pos = inputEl.selectionStart || 0;
+          if (pos > 0 && inputEl.value[pos - 1] === "/") {
+            e.preventDefault();
+            const newPos = pos - 1;
+            inputEl.value =
+              inputEl.value.slice(0, pos - 1) + inputEl.value.slice(pos);
+            inputEl.setSelectionRange(newPos, newPos);
+          }
+        }
+      });
+    }    
+  
     return () => {
-      if (!Array.isArray(flatPickr)) {
-        flatPickr.destroy();
+      if (!Array.isArray(fp)) {
+        fp.destroy();
       }
     };
   }, [mode, onChange, id, defaultDate, monthSelectMode]);
-
+  
   return (
     <div>
       {label && <Label htmlFor={id}>{label}</Label>}

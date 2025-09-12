@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useRef } from "react";
 import {
   Table,
   TableBody,
@@ -13,7 +13,8 @@ import { format } from "date-fns";
 import Link from "next/link";
 import Button from "@/components/ui/button/Button";
 import { PencilIcon, TrashBinIcon  } from "@/icons";
-import { DocumentCustomer } from "@/services/documentCustomer.service";
+import { DocumentCustomer, FormSearchCustomerParams } from "@/services/documentCustomer.service";
+import Sortable from "sortablejs";
 
 interface CustomerProps {
   documentCustomers: DocumentCustomer[];
@@ -23,6 +24,7 @@ interface CustomerProps {
   onSubmitDelete: (customerId: string) => void;
   selectedCustomers: string[];
   onChangeSelectedCustomers: (selected: string[]) => void;
+  searchParams: FormSearchCustomerParams | null;
 }
 
 const CustomerTable: FC<CustomerProps> = ({ 
@@ -32,16 +34,118 @@ const CustomerTable: FC<CustomerProps> = ({
   document_id,
   onSubmitDelete,
   selectedCustomers,
-  onChangeSelectedCustomers
+  onChangeSelectedCustomers,
+  searchParams
   }) => {
+
+  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
   useEffect(() => {
       const initiallySelected = documentCustomers
         .filter(c => c.print_flag === "1")
         .map(c => c.customer.id);
       onChangeSelectedCustomers(initiallySelected);
+
+      if (tableBodyRef.current && (searchParams?.card_id == '' && searchParams?.full_name == '' || searchParams == null)) {
+        const sortable = Sortable.create(tableBodyRef.current, {
+          animation: 150,
+          ghostClass: "bg-blue-100", // hàng đang kéo
+          chosenClass: "bg-gray-100", // hàng được chọn
+          dragClass: "opacity-50",   // khi kéo sẽ mờ
+          onEnd: (evt) => {
+            if (!visibleCustomers || visibleCustomers.length === 0) {
+              console.log("visibleCustomers is empty or null");
+              return;
+            }
+            
+            // Lấy thứ tự mới từ DOM sau khi kéo thả
+            const tableRows = tableBodyRef.current?.querySelectorAll('tr[data-id]');
+            
+            if (!tableRows || tableRows.length === 0) {
+              console.log("No table rows found");
+              return;
+            }
+            
+            const newOrder = Array.from(tableRows).map((row, index) => {
+              const customerId = row.getAttribute('data-id');
+              const found = visibleCustomers.find(c => {
+                return c.customer.id == customerId; // Sử dụng == thay vì === để so sánh string và number
+              });
+              return found;
+            }).filter(Boolean) as DocumentCustomer[];
+
+            // console.log(
+            //   "Thứ tự mới:",
+            //   newOrder.map((c, index) => ({
+            //     id: c.customer.id,
+            //     stt: index + 1,
+            //     name: c.customer.full_name,
+            //   }))
+            // )
+            const customerList = newOrder.map((c, index) => ({
+              id: c.customer.id,
+              stt: index + 1,
+              name: c.customer.full_name,
+            }));
+            handleUpdateSttCustomer(customerList);
+            // 👉 Có thể truyền callback để update state từ cha
+          },
+        });
+    
+        return () => sortable.destroy();
+      }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [documentCustomers]);
+
+  console.log(searchParams, "searchParams");
+
+  // useEffect(() => {
+  //   if (tableBodyRef.current) {
+  //     const sortable = Sortable.create(tableBodyRef.current, {
+  //       animation: 150,
+  //       ghostClass: "bg-blue-100", // hàng đang kéo
+  //       chosenClass: "bg-gray-100", // hàng được chọn
+  //       dragClass: "opacity-50",   // khi kéo sẽ mờ
+  //       onEnd: (evt) => {
+  //         if (!visibleCustomers || visibleCustomers.length === 0) {
+  //           console.log("visibleCustomers is empty or null");
+  //           return;
+  //         }
+          
+  //         // Lấy thứ tự mới từ DOM sau khi kéo thả
+  //         const tableRows = tableBodyRef.current?.querySelectorAll('tr[data-id]');
+          
+  //         if (!tableRows || tableRows.length === 0) {
+  //           console.log("No table rows found");
+  //           return;
+  //         }
+          
+  //         const newOrder = Array.from(tableRows).map((row, index) => {
+  //           const customerId = row.getAttribute('data-id');
+  //           const found = visibleCustomers.find(c => {
+  //             return c.customer.id == customerId; // Sử dụng == thay vì === để so sánh string và number
+  //           });
+  //           return found;
+  //         }).filter(Boolean) as DocumentCustomer[];
+  
+  //         console.log("Thứ tự mới:", newOrder.map(c => c.customer.full_name));
+  //         // 👉 Có thể truyền callback để update state từ cha
+  //       },
+  //     });
+  
+  //     return () => sortable.destroy();
+  //   }
+  // }, []);
+
+  const handleUpdateSttCustomer = async (customerList: any) => {
+    console.log("customerList", customerList);
+    // try {
+    //   await updateSttCustomer(id, stt);
+    // } catch (error) {
+    //   console.error("Error updating customer:", error);
+    //   toast.error("Có lý khi cập nhật thư tự khách hàng");
+    // }
+  };
 
   const toggleSelectAll = () => {
     if (selectedCustomers.length === documentCustomers.length) {
@@ -105,6 +209,8 @@ const CustomerTable: FC<CustomerProps> = ({
             </TableHeader>
 
             <TableBody
+              ref={tableBodyRef}
+              // ✅ thêm ref
               className="divide-y divide-gray-100 dark:divide-white/[0.05]"
             >
               {visibleCustomers.length === 0 ? (
@@ -115,7 +221,8 @@ const CustomerTable: FC<CustomerProps> = ({
                 </TableRow>
               ) : (
                 visibleCustomers.map((documentCustomer, index) => (
-                  <TableRow key={index}>
+                  <TableRow key={documentCustomer.customer.id} data-id={documentCustomer.customer.id} className="cursor-move">
+                    {/* <TableCell className="px-4 py-3 drag-handle cursor-move">☰</TableCell> */}
                     <TableCell className="px-4 py-3">
                       <Checkbox 
                       checked={selectedCustomers?.includes(documentCustomer.customer.id)} 

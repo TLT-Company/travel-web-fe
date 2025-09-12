@@ -219,7 +219,8 @@ const DocumentDetailPage = () => {
         <CustomerTable
           // customers={customers}
           documentCustomers={documentCustomer?.document_customers ?? []}
-          visibleCustomers={paginatedCustomers ?? []}
+          // visibleCustomers={paginatedCustomers ?? []}
+          visibleCustomers={documentCustomer?.document_customers ?? []}
           loading={loading}
           document_id={params.document_id}
           onSubmitDelete={(customerID) => {
@@ -227,9 +228,10 @@ const DocumentDetailPage = () => {
           }}
           selectedCustomers={selectedCustomers}
           onChangeSelectedCustomers={setSelectedCustomers}
+          searchParams={searchParams}
           />
 
-        {totalPages > 1 && (
+        {/* {totalPages > 1 && (
           <div className="mt-6">
             <Pagination
               currentPage={currentPage}
@@ -237,7 +239,7 @@ const DocumentDetailPage = () => {
               onPageChange={handlePageChange}
             />
           </div>
-        )}
+        )} */}
 
         <Button
           className="absolute top-4 right-6 z-10 px-4 py-2 bg-green-500 hover:bg-green-600"
