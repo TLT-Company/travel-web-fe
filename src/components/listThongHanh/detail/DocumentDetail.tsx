@@ -10,7 +10,6 @@ import {
   DocumentCustomer
 } from "@/services/documentCustomer.service";
 import { documentExportService } from "@/services/export-tour.service";
-import Pagination from "../../tables/Pagination";
 import CustomerTable from "./CustomerTable"
 import FormSearchCustomer from "./FormSearchCustomer";
 import { toast } from 'react-toastify';
@@ -26,7 +25,6 @@ const DocumentDetailPage = () => {
   // const [customers, setCustomers] = useState<Custommer[]>([]);
   const [documentCustomer, setDocumentCustomer] = useState<Document>();
   const [loading, setLoading] = useState<boolean>(true);
-  const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalCustomers, setTotalCustomers] = useState<number>(0);
   const [
     searchParams, setSearchParams
@@ -35,7 +33,6 @@ const DocumentDetailPage = () => {
     card_id : '',
     full_name : ''
   });
-  const customersPerPage = 20;
   const params = useParams<{ document_id: string }>()
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedCustomers, setSelectedCustomers] = useState<string[]>([]);
@@ -74,21 +71,17 @@ const DocumentDetailPage = () => {
   }, [fetchCustomers]);
 
   // Calculate the customer array to display per page
-  const paginatedCustomers = React.useMemo(() => {
-    if (!documentCustomer?.document_customers) return [];
-    const startIndex = (currentPage - 1) * customersPerPage;
-    const endIndex = startIndex + customersPerPage;
-    return documentCustomer.document_customers.slice(startIndex, endIndex);
-  }, [documentCustomer, currentPage, customersPerPage]);
+  // const paginatedCustomers = React.useMemo(() => {
+  //   if (!documentCustomer?.document_customers) return [];
+  //   const startIndex = (currentPage - 1) * customersPerPage;
+  //   const endIndex = startIndex + customersPerPage;
+  //   return documentCustomer.document_customers.slice(startIndex, endIndex);
+  // }, [documentCustomer, currentPage, customersPerPage]);
 
   if (loading) return <LoadingOverlay shown={loading} />;
 
-  const totalPages = Math.ceil(totalCustomers / customersPerPage);
 
-  const handlePageChange = (page: number) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-  };
+
 
   const handleSubmit = async (customnerId: string) => {
 
@@ -212,7 +205,6 @@ const DocumentDetailPage = () => {
           formSearch={formSearch}
           setFormSearch={setFormSearch}
           onSubmitSearch={(params) => {
-            setCurrentPage(1);
             setSearchParams(params);
           }}
           loading={loading}
@@ -228,7 +220,8 @@ const DocumentDetailPage = () => {
         <CustomerTable
           // customers={customers}
           documentCustomers={documentCustomer?.document_customers ?? []}
-          visibleCustomers={paginatedCustomers ?? []}
+          // visibleCustomers={paginatedCustomers ?? []}
+          visibleCustomers={documentCustomer?.document_customers ?? []}
           loading={loading}
           document_id={params.document_id}
           onSubmitDelete={(customerID) => {
@@ -239,15 +232,6 @@ const DocumentDetailPage = () => {
           onReorderCustomers={handleReorderCustomers}
           />
 
-        {totalPages > 1 && (
-          <div className="mt-6">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
-          </div>
-        )}
 
         <Button
           className="absolute top-4 right-6 z-10 px-4 py-2 bg-green-500 hover:bg-green-600"
