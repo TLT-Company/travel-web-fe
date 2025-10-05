@@ -156,6 +156,21 @@ const DocumentDetailPage = () => {
       }
     };
 
+  const handleExport = async (documentNumber: string) => {
+    try {
+      const response = await documentExportService.performAnalysis(documentNumber);
+
+      if (response.success) {
+        toast.success(response.message || "Trích xuất thông tin thành công!");
+      } else {
+        toast.error(response.message || "Trích xuất thông tin thất bại!");
+      }
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Có lỗi xảy ra khi trích xuất thông tin!");
+    }
+  };
+
   const handleAddSuccess = () => {
     fetchCustomers();
   };
@@ -242,13 +257,21 @@ const DocumentDetailPage = () => {
           {exportingCSV === documentCustomer!.id ? "Đang xuất..." : "Xuất CSV"}
         </Button>
 
+        <Button
+          className="absolute top-4 right-32 z-10 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm"
+          onClick={() => handleExport(documentCustomer!.document_number)}
+          disabled={loading}
+        >
+          Trích xuất
+        </Button>
+
         <Link href={`/admin/thong-hanh/${params.document_id}/customer/new`} passHref>
-          <Button  className="absolute top-4 right-35 z-10 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" disabled={loading}>
+          <Button  className="absolute top-4 right-60 z-10 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" disabled={loading}>
             Thêm mới
           </Button>
         </Link>
 
-        <Button  className="absolute top-4 right-65 z-10 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" 
+        <Button  className="absolute top-4 right-90 z-10 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" 
             disabled={loading}
              onClick={() => setIsAddModalOpen(true)}
              >
