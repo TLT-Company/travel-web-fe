@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useEffect, useRef } from "react";
 import {
   CustomerRequest,
 } from "@/services/documentCustomer.service";
@@ -12,7 +12,7 @@ import DatePicker from "@/components/form/date-picker";
 import * as Yup from 'yup';
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import LoadingOverlay from "@/components/common/LoadingOverlay";
-import { getAllCommunesByProvinceID, getProvinces } from "@/services/province.service";
+import { getAllCommunesByProvinceID, getProvinces, getProvinceByCCCD } from "@/services/province.service";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -45,6 +45,8 @@ const CustomerForm: FC<Props> = ({
   const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null);
   const [communeOptions, setCommuneOptions] = useState<{ value: string; label: string }[]>([]);
   // const [selectedDistrictCode, setSelectedDistrictCode] = useState<number | null>(null);
+  const [isLoadingCCCD, setIsLoadingCCCD] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
   const fetchProvinces = async () => {
@@ -68,6 +70,50 @@ const CustomerForm: FC<Props> = ({
   function cleanLocationName (name: string) {
     return name.replace(/^(Thủ đô |tỉnh |Tỉnh |thành phố |Thành phố |Quận |Huyện |Thị xã |Phường |Xã |Thị trấn )/, '').trim();
   }
+
+  const handleCCCDBlur = async (cccd: string, setFieldValue: (field: string, value: string) => void) => {
+    console.log("handleCCCDBlur called with CCCD:", cccd);
+    if (!cccd || cccd.length < 4) {
+      console.log("CCCD too short or empty, skipping API call");
+      return;
+    }
+    
+    console.log("Calling API for CCCD:", cccd);
+    setIsLoadingCCCD(true);
+    try {
+      const response = await getProvinceByCCCD(cccd);
+      
+      // Chỉ điền nơi sinh khi API trả về thành công và có dữ liệu
+      if (response.success && response.data && response.data.ten_tinh) {
+        setFieldValue('place_of_birth', response.data.ten_tinh);
+      } else {
+        console.log("API response không thành công hoặc không có dữ liệu, không điền nơi sinh");
+      }
+    } catch (error) {
+      console.error("Error fetching province by CCCD:", error);
+      console.log("Có lỗi xảy ra, không điền nơi sinh");
+    } finally {
+      setIsLoadingCCCD(false);
+    }
+  };
+
+  const handleCCCDChange = (value: string, setFieldValue: (field: string, value: string) => void) => {
+    console.log("handleCCCDChange called with CCCD:", value);
+    setFieldValue('card_id', value);
+    
+    // Clear previous timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    
+    // Use setTimeout to delay API call after user stops typing
+    timeoutRef.current = setTimeout(() => {
+      if (value && value.length >= 4) {
+        console.log("Delayed API call for CCCD:", value);
+        handleCCCDBlur(value, setFieldValue);
+      }
+    }, 1000); // 1 second delay
+  };
 
   useEffect(() => {
   const fetchCommunes = async () => {
@@ -145,6 +191,7 @@ const CustomerForm: FC<Props> = ({
       }
     }
   }, [formData.province, provinceOptions]);
+
 
   // useEffect(() => {
   //   if (formData.district) {
@@ -293,7 +340,14 @@ const CustomerForm: FC<Props> = ({
                     placeholder="Nhập Số CCCD"
                     as={Input}
                     disabled={submitLabel === "Cập nhật"}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      console.log("onChange event triggered, CCCD value:", e.target.value);
+                      handleCCCDChange(e.target.value, setFieldValue);
+                    }}
                   />
+                  {isLoadingCCCD && (
+                    <div className="text-blue-500 text-sm mt-1">Đang tìm kiếm thông tin tỉnh từ CCCD...</div>
+                  )}
                   <ErrorMessage
                     name="card_id"
                     component="div"

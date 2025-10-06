@@ -20,3 +20,17 @@ export const getAllCommunesByProvinceID = async (
   });
   return response;
 };
+
+export interface ProvinceByCCCD {
+  ma_tinh: string;
+  ten_tinh: string;
+  ky_tu: string;
+  cccd: string;
+}
+
+export const getProvinceByCCCD = async (cccd: string): Promise<ApiResponse<ProvinceByCCCD>> => {
+  const response = await http.get<ProvinceByCCCD>(`/provinces/cccd/${cccd}`, {
+    withAuth: true,
+  });
+  return response;
+};
